@@ -1,0 +1,20 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-mpsdriverapp-staging-14411-authRole",
+      "UnauthRoleArn": "arn:aws:iam::846348182673:role/amplify-mpsdriverapp-staging-14411-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::846348182673:role/amplify-mpsdriverapp-staging-14411-authRole",
+      "Region": "us-west-1",
+      "DeploymentBucketName": "amplify-mpsdriverapp-staging-14411-deployment",
+      "UnauthRoleName": "amplify-mpsdriverapp-staging-14411-unauthRole",
+      "StackName": "amplify-mpsdriverapp-staging-14411",
+      "StackId": "arn:aws:cloudformation:us-west-1:846348182673:stack/amplify-mpsdriverapp-staging-14411/d567dc80-e3a7-11ec-8053-02a7ce4d171d",
+      "AmplifyAppId": "d12ndfno7firh3"
+    },
+    "categories": {
+      "auth": {
+        "mpsdriverapp": {}
+      }
+    }
+  }
+}

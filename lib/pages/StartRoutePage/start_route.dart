@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -6,13 +7,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:developer';
+import '../../Services/geocoding_api';
+import 'package:tuple/tuple.dart';
 
 class StartRoutePage extends StatelessWidget {
   const StartRoutePage();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Start Route',
       home: StartRouteComponent(),
@@ -21,20 +24,23 @@ class StartRoutePage extends StatelessWidget {
 }
 
 class Client {
-  String name='';
-  String phone='';
-  String address='';
+  String name = '';
+  String phone = '';
+  String address = '';
+  Tuple2<double, double> coordinates =
+      const Tuple2<double, double>(0.25345, 10.34343);
+  int indexOnRoute = 0;
 
   Client();
 
   void _getDataFromLine(String line) {
     var endNameIndex = line.indexOf(')') + 1;
     name = line.substring(0, endNameIndex);
-    log(name!);
-    phone = line.substring(name!.length, name!.length + 13);
-    log(phone!);
-    address = line.substring(name!.length + phone!.length);
-    log(address!);
+    // log(name);
+    phone = line.substring(name.length, name.length + 13);
+    // log(phone);
+    address = line.substring(name.length + phone.length);
+    // log(address);
   }
 }
 
@@ -51,12 +57,9 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   List<Client> _clientList = [];
   String? _saveAsFileName;
   List<PlatformFile>? _paths;
-  String? _directoryPath;
   String? _extension;
   bool _isLoading = false;
   bool _userAborted = false;
-  bool _multiPick = false;
-  FileType _pickingType = FileType.any;
   TextEditingController _controller = TextEditingController();
 
   @override
@@ -68,10 +71,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   void _pickFiles() async {
     _resetState();
     try {
-      _directoryPath = null;
       _paths = (await FilePicker.platform.pickFiles(
-        type: _pickingType,
-        allowMultiple: _multiPick,
         onFileLoading: (FilePickerStatus status) => print(status),
         allowedExtensions: (_extension?.isNotEmpty ?? false)
             ? _extension?.replaceAll(' ', '').split(',')
@@ -103,15 +103,36 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
               _clientList.add(client),
             });
 
-    log('client name 1: $_clientList');
+    GeocodingApi geocodingApi = new GeocodingApi();
+    for (var i = 0; i < _clientList.length; i++) {
+      Future<Tuple2<double, double>> coordinates =
+          geocodingApi.getCoordinates(_clientList[i].address);
+
+      coordinates.then((data) {
+        _clientList[i].coordinates = data;
+        if (i == _clientList.length - 1) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        log('$data');
+      }, onError: (e) {
+        log(e);
+      });
+    }
 
     setState(() {
-      _isLoading = false;
       _fileName =
           _paths != null ? _paths!.map((e) => e.name).toString() : '...';
       _userAborted = _paths == null;
       _clientList = _clientList;
     });
+  }
+
+  List<Client> _optimizeRoute(List<Client> clientList) {
+    //get all coordinates
+
+    return <Client>[];
   }
 
   void _logException(String message) {
@@ -130,7 +151,6 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     }
     setState(() {
       _isLoading = true;
-      _directoryPath = null;
       _fileName = null;
       _paths = null;
       _saveAsFileName = null;
@@ -187,7 +207,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         onPressed: () => _pickFiles(),
         tooltip: 'Add Route',
         label: Row(
-          children: [Icon(Icons.flag), Text('Start Route')],
+          children: [Icon(Icons.flag), Text('Start Routes')],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -204,13 +224,15 @@ class ClientItem extends StatelessWidget {
     return Card(
       child: InkWell(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(15),
           child: Row(children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(client.name, style:TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(client.name,
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   Text(client.address),
                 ],
               ),

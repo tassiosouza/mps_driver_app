@@ -6,9 +6,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mps_driver_app/models/Coordinates.dart';
 import 'dart:developer';
 import '../../Services/geocoding_api';
 import 'package:tuple/tuple.dart';
+import '../../Services/route_optimization_api';
+import '../../models/Client.dart';
 
 class StartRoutePage extends StatelessWidget {
   const StartRoutePage();
@@ -20,27 +23,6 @@ class StartRoutePage extends StatelessWidget {
       title: 'Start Route',
       home: StartRouteComponent(),
     );
-  }
-}
-
-class Client {
-  String name = '';
-  String phone = '';
-  String address = '';
-  Tuple2<double, double> coordinates =
-      const Tuple2<double, double>(0.25345, 10.34343);
-  int indexOnRoute = 0;
-
-  Client();
-
-  void _getDataFromLine(String line) {
-    var endNameIndex = line.indexOf(')') + 1;
-    name = line.substring(0, endNameIndex);
-    // log(name);
-    phone = line.substring(name.length, name.length + 13);
-    // log(phone);
-    address = line.substring(name.length + phone.length);
-    // log(address);
   }
 }
 
@@ -99,23 +81,35 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         .transform(new LineSplitter())
         .forEach((l) => {
               client = Client(),
-              client._getDataFromLine(l),
+              client.getDataFromLine(l),
               _clientList.add(client),
             });
 
     GeocodingApi geocodingApi = new GeocodingApi();
     for (var i = 0; i < _clientList.length; i++) {
-      Future<Tuple2<double, double>> coordinates =
+      Future<Coordinates> coordinates =
           geocodingApi.getCoordinates(_clientList[i].address);
 
-      coordinates.then((data) {
+      await coordinates.then((data) async {
         _clientList[i].coordinates = data;
         if (i == _clientList.length - 1) {
-          setState(() {
-            _isLoading = false;
+          //call optimize api using coordinates
+
+          RouteOptimizationApi routeOptimizationApi =
+              new RouteOptimizationApi();
+
+          Future<List<Client>> orderedClients =
+              routeOptimizationApi.getOrderedClients(_clientList);
+
+          await orderedClients.then((data) {
+            _clientList = data;
+            setState(() {
+              _isLoading = false;
+            });
+          }, onError: (e) {
+            log(e);
           });
         }
-        log('$data');
       }, onError: (e) {
         log(e);
       });
@@ -155,6 +149,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
       _paths = null;
       _saveAsFileName = null;
       _userAborted = false;
+      _clientList = [];
     });
   }
 
@@ -234,6 +229,10 @@ class ClientItem extends StatelessWidget {
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   Text(client.address),
+                  Text('lat: ' +
+                      client.coordinates.latitude.toString() +
+                      ' | long: ' +
+                      client.coordinates.longitude.toString()),
                 ],
               ),
             )

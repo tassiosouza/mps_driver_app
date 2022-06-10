@@ -12,6 +12,7 @@ import '../../Services/geocoding_api';
 import 'package:tuple/tuple.dart';
 import '../../Services/route_optimization_api';
 import '../../models/Client.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class StartRoutePage extends StatelessWidget {
   const StartRoutePage();
@@ -43,9 +44,15 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   bool _isLoading = false;
   bool _userAborted = false;
   TextEditingController _controller = TextEditingController();
+  late TwilioFlutter twilioFlutter;
 
   @override
   void initState() {
+    twilioFlutter = TwilioFlutter(
+        accountSid: 'ACfcf134f0de9f85c19790e91e29cb6d63',
+        authToken: '4335317aa987c70f6263b960ef453d2f',
+        twilioNumber: '4122741864');
+
     super.initState();
     _controller.addListener(() => _extension = _controller.text);
   }
@@ -123,6 +130,25 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     });
   }
 
+  void sendSms(String client_name, int client_eta) {
+    int spaceIndex = client_name.indexOf(' ');
+    String firstName = client_name.substring(0, spaceIndex);
+    String eta = _printDuration(Duration(seconds: client_eta));
+    String message = """Hello, $firstName""" +
+        """\nI am Tassio and I will be your driver today. I will be delivering your meals from Meal Prep Sunday San Diego. I want to inform you that your meals will be leaving our facilities soon and you can expect to receive them in $eta.""" +
+        """\n\nIn case you won’t be home and it is needed further information to get into your building or gated community, please reply this text with the instructions.""" +
+        """\n\nThank you very much,""" +
+        """\n\nTassio""";
+    twilioFlutter.sendSMS(toNumber: '+16197634382', messageBody: message);
+  }
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    return "${twoDigits(duration.inHours)}h${twoDigitMinutes}m"
+        .replaceAll('00h', '');
+  }
+
   List<Client> _optimizeRoute(List<Client> clientList) {
     //get all coordinates
 
@@ -184,7 +210,10 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                                   child: ListView(
                                       padding: EdgeInsets.all(8),
                                       children: _clientList
-                                          .map((client) => ClientItem(client))
+                                          .map((client) => ClientItem(
+                                              client,
+                                              () => sendSms(
+                                                  client.name, client.eta)))
                                           .toList()))
                               : _saveAsFileName != null
                                   ? ListTile(
@@ -211,8 +240,16 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
 }
 
 class ClientItem extends StatelessWidget {
+  final Function sendSms;
   Client client;
-  ClientItem(this.client, {Key? key}) : super(key: key);
+  ClientItem(this.client, this.sendSms, {Key? key}) : super(key: key);
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    return "${twoDigits(duration.inHours)}h${twoDigitMinutes}m"
+        .replaceAll('00h', '');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -229,10 +266,13 @@ class ClientItem extends StatelessWidget {
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   Text(client.address),
-                  Text('lat: ' +
-                      client.coordinates.latitude.toString() +
-                      ' | long: ' +
-                      client.coordinates.longitude.toString()),
+                  Text('ETA: ' + _printDuration(Duration(seconds: client.eta))),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () {
+                      sendSms();
+                    },
+                  ),
                 ],
               ),
             )

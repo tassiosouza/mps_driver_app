@@ -8,6 +8,7 @@ class Client {
   String address = '';
   Coordinates coordinates = Coordinates(0, 0);
   int indexOnRoute = 0;
+  int eta = 0;
 
   Client();
 

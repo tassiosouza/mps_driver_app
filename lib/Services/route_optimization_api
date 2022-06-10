@@ -47,14 +47,17 @@ class RouteOptimizationApi {
     var distance = data['solution']['distance'];
     var route = data['solution']['routes'][0]['activities'];
     List<String> orderedLocationsId = [];
+    List<int> orderedETAs = [];
     for(int i = 0; i < route.length; i++) {
       orderedLocationsId.add(route[i]['location_id']);
+      orderedETAs.add(route[i]['driving_time']);
     }
 
     List<Client> orderedClients = [];
     for (int i =1; i < clients.length -1; i ++) {
       Client findClient(String name) => clients.firstWhere((client) => client.name == name);
       Client client = findClient(orderedLocationsId[i]);
+      client.eta = orderedETAs[i];
       orderedClients.add(client);
     }
 

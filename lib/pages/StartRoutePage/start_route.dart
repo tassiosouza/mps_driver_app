@@ -13,6 +13,8 @@ import 'package:tuple/tuple.dart';
 import '../../Services/route_optimization_api';
 import '../../models/Client.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class StartRoutePage extends StatelessWidget {
   const StartRoutePage();
@@ -45,13 +47,14 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   bool _userAborted = false;
   TextEditingController _controller = TextEditingController();
   late TwilioFlutter twilioFlutter;
-
+  
   @override
   void initState() {
     twilioFlutter = TwilioFlutter(
         accountSid: 'ACfcf134f0de9f85c19790e91e29cb6d63',
         authToken: '4335317aa987c70f6263b960ef453d2f',
         twilioNumber: '4122741864');
+    
 
     super.initState();
     _controller.addListener(() => _extension = _controller.text);
@@ -59,6 +62,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
 
   void _pickFiles() async {
     _resetState();
+    
     try {
       _paths = (await FilePicker.platform.pickFiles(
         onFileLoading: (FilePickerStatus status) => print(status),
@@ -243,12 +247,22 @@ class ClientItem extends StatelessWidget {
   final Function sendSms;
   Client client;
   ClientItem(this.client, this.sendSms, {Key? key}) : super(key: key);
+  late var availableMaps;
 
   String _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     return "${twoDigits(duration.inHours)}h${twoDigitMinutes}m"
         .replaceAll('00h', '');
+  }
+
+  void _launchMapsUrl() async {
+    availableMaps = await MapLauncher.installedMaps;
+    await availableMaps.first.showMarker(
+      coords: Coords(client.coordinates.latitude, client.coordinates.longitude),
+      title: client.name,
+      description: client.name,
+    );
   }
 
   @override
@@ -271,6 +285,12 @@ class ClientItem extends StatelessWidget {
                     icon: const Icon(Icons.send),
                     onPressed: () {
                       sendSms();
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.gps_fixed),
+                    onPressed: () {
+                      _launchMapsUrl();
                     },
                   ),
                 ],

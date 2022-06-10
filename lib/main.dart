@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route.dart';
 
 import 'pages/PrepNewsPage/amplify.dart';
-
 void main() {
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -16,7 +14,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class MainPage extends StatefulWidget {
   @override
    MainPageState createState() =>  MainPageState();

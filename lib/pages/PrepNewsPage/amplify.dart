@@ -2,11 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
-import '../../amplifyconfiguration.dart';
-import '../../models/ModelProvider.dart';
 import '../../models/Todo.dart';
-import 'package:amplify_api/amplify_api.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'dart:developer';
 
 class MyAppTodos extends StatelessWidget {
   const MyAppTodos();
@@ -36,18 +33,13 @@ class _TodosPageState extends State<TodosPage> {
   // list of Todos - initially empty
   List<Todo> _todos = [];
 
-  // amplify plugins
-  final AmplifyDataStore _dataStorePlugin =
-      AmplifyDataStore(modelProvider: ModelProvider.instance);
-
-  final AmplifyAPI _apiPlugin = AmplifyAPI();
-  final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
-
   @override
   void initState() {
-    // kick off app initialization
-    _initializeApp();
-
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // kick off app initialization
+      _initializeApp();
+    });
+    
     // to be filled in a later step
     super.initState();
   }
@@ -59,9 +51,6 @@ class _TodosPageState extends State<TodosPage> {
   }
 
   Future<void> _initializeApp() async {
-    // configure Amplify
-    await _configureAmplify();
-
     // Query and Observe updates to Todo models. DataStore.observeQuery() will
     // emit an initial QuerySnapshot with a list of Todo models in the local store,
     // and will emit subsequent snapshots as updates are made
@@ -72,26 +61,10 @@ class _TodosPageState extends State<TodosPage> {
     _subscription = Amplify.DataStore.observeQuery(Todo.classType)
         .listen((QuerySnapshot<Todo> snapshot) {
       setState(() {
-        if (_isLoading) _isLoading = false;
         _todos = snapshot.items;
+        if (_isLoading) _isLoading = false;
       });
     });
-  }
-
-  Future<void> _configureAmplify() async {
-    try {
-      // add Amplify plugins
-      await Amplify.addPlugins([_dataStorePlugin, _apiPlugin, _authPlugin]);
-
-      // configure Amplify
-      //
-      // note that Amplify cannot be configured more than once!
-      await Amplify.configure(amplifyconfig);
-    } catch (e) {
-      // error handling can be improved for sure!
-      // but this will be sufficient for the purposes of this tutorial
-      print('An error occurred while configuring Amplify: $e');
-    }
   }
 
   @override
@@ -168,7 +141,10 @@ class TodoItem extends StatelessWidget {
           _toggleIsComplete();
         },
         onLongPress: () {
-          _deleteTodo(context);
+          //_deleteTodo(context);
+                    
+          Amplify.Auth.signOut();
+          
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),

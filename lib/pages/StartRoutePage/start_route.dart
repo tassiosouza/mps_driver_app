@@ -11,6 +11,7 @@ import 'dart:developer';
 import '../../Services/geocoding_api';
 import 'package:tuple/tuple.dart';
 import '../../Services/route_optimization_api';
+import '../../components/client_item.dart';
 import '../../models/Client.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -239,72 +240,6 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-}
-
-class ClientItem extends StatelessWidget {
-  final Function sendSms;
-  Client client;
-  ClientItem(this.client, this.sendSms, {Key? key}) : super(key: key);
-  late var availableMaps;
-
-  String _printDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    return "${twoDigits(duration.inHours)}h${twoDigitMinutes}m"
-        .replaceAll('00h', '');
-  }
-
-  void _launchMapsUrl() async {
-    availableMaps = await MapLauncher.installedMaps;
-    await availableMaps.first.showMarker(
-      coords: Coords(client.coordinates.latitude, client.coordinates.longitude),
-      title: client.name,
-      description: client.name,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Row(children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(client.name,
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  Text(client.address),
-                  Text('ETA: ' + _printDuration(Duration(seconds: client.eta))),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: () {
-                      sendSms();
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.gps_fixed),
-                    onPressed: () {
-                      _launchMapsUrl();
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.photo),
-                    onPressed: () {
-                      _launchMapsUrl();
-                    },
-                  ),
-                ],
-              ),
-            )
-          ]),
-        ),
-      ),
     );
   }
 }

@@ -3,7 +3,7 @@
   "serviceConfiguration": {
     "apiName": "mpsdriverapp",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-bac487f9-2e2b-4dc8-8ff0-c43774ab9b17/amplify/backend/api/mpsdriverapp/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-ce381c93-ab77-40f0-940e-e29ba4389e2b/amplify/backend/api/mpsdriverapp/schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
       "keyDescription": "api key description",
@@ -12,10 +12,6 @@
     "additionalAuthTypes": [
       {
         "mode": "AWS_IAM"
-      },
-      {
-        "mode": "AMAZON_COGNITO_USER_POOLS",
-        "cognitoUserPoolId": "authmpsdriverapp"
       }
     ],
     "conflictResolution": {

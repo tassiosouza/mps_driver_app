@@ -9,6 +9,7 @@ import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import '../../models/ModelProvider.dart';
 import 'pages/PrepNewsPage/amplify.dart';
+import 'pages/AccountPage/account.dart';
 import 'dart:developer';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -45,17 +46,7 @@ class MainPageState extends State<MainPage> {
   static const List<Widget> _pages = <Widget>[
     TodosPage(),
     StartRoutePage(),
-    Icon(
-      Icons.manage_accounts,
-      size: 150,
-    ),
-  ];
-  static const List<Widget> _pages1 = <Widget>[
-    StartRoutePage(),
-    Icon(
-      Icons.manage_accounts,
-      size: 150,
-    ),
+    AccountPage(),
   ];
 
   @override

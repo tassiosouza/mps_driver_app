@@ -293,6 +293,12 @@ class ClientItem extends StatelessWidget {
                       _launchMapsUrl();
                     },
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.photo),
+                    onPressed: () {
+                      _launchMapsUrl();
+                    },
+                  ),
                 ],
               ),
             )

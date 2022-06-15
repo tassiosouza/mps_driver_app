@@ -153,10 +153,7 @@ class Todo extends Model {
     
     modelSchemaDefinition.authRules = [
       AuthRule(
-        authStrategy: AuthStrategy.OWNER,
-        ownerField: "owner",
-        identityClaim: "cognito:username",
-        provider: AuthRuleProvider.USERPOOLS,
+        authStrategy: AuthStrategy.PUBLIC,
         operations: [
           ModelOperation.CREATE,
           ModelOperation.UPDATE,

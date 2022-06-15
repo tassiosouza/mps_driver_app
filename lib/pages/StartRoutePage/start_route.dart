@@ -1,40 +1,32 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mps_driver_app/models/Coordinates.dart';
 import 'dart:developer';
+import '../../Services/geocoding_api';
+import 'package:tuple/tuple.dart';
+import '../../Services/route_optimization_api';
+import '../../components/client_item.dart';
+import '../../models/Client.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class StartRoutePage extends StatelessWidget {
   const StartRoutePage();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Start Route',
       home: StartRouteComponent(),
     );
-  }
-}
-
-class Client {
-  String name='';
-  String phone='';
-  String address='';
-
-  Client();
-
-  void _getDataFromLine(String line) {
-    var endNameIndex = line.indexOf(')') + 1;
-    name = line.substring(0, endNameIndex);
-    log(name!);
-    phone = line.substring(name!.length, name!.length + 13);
-    log(phone!);
-    address = line.substring(name!.length + phone!.length);
-    log(address!);
   }
 }
 
@@ -51,27 +43,29 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   List<Client> _clientList = [];
   String? _saveAsFileName;
   List<PlatformFile>? _paths;
-  String? _directoryPath;
   String? _extension;
   bool _isLoading = false;
   bool _userAborted = false;
-  bool _multiPick = false;
-  FileType _pickingType = FileType.any;
   TextEditingController _controller = TextEditingController();
-
+  late TwilioFlutter twilioFlutter;
+  
   @override
   void initState() {
+    twilioFlutter = TwilioFlutter(
+        accountSid: 'ACfcf134f0de9f85c19790e91e29cb6d63',
+        authToken: '4335317aa987c70f6263b960ef453d2f',
+        twilioNumber: '4122741864');
+    
+
     super.initState();
     _controller.addListener(() => _extension = _controller.text);
   }
 
   void _pickFiles() async {
     _resetState();
+    
     try {
-      _directoryPath = null;
       _paths = (await FilePicker.platform.pickFiles(
-        type: _pickingType,
-        allowMultiple: _multiPick,
         onFileLoading: (FilePickerStatus status) => print(status),
         allowedExtensions: (_extension?.isNotEmpty ?? false)
             ? _extension?.replaceAll(' ', '').split(',')
@@ -99,19 +93,71 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         .transform(new LineSplitter())
         .forEach((l) => {
               client = Client(),
-              client._getDataFromLine(l),
+              client.getDataFromLine(l),
               _clientList.add(client),
             });
 
-    log('client name 1: $_clientList');
+    GeocodingApi geocodingApi = new GeocodingApi();
+    for (var i = 0; i < _clientList.length; i++) {
+      Future<Coordinates> coordinates =
+          geocodingApi.getCoordinates(_clientList[i].address);
+
+      await coordinates.then((data) async {
+        _clientList[i].coordinates = data;
+        if (i == _clientList.length - 1) {
+          //call optimize api using coordinates
+
+          RouteOptimizationApi routeOptimizationApi =
+              new RouteOptimizationApi();
+
+          Future<List<Client>> orderedClients =
+              routeOptimizationApi.getOrderedClients(_clientList);
+
+          await orderedClients.then((data) {
+            _clientList = data;
+            setState(() {
+              _isLoading = false;
+            });
+          }, onError: (e) {
+            log(e);
+          });
+        }
+      }, onError: (e) {
+        log(e);
+      });
+    }
 
     setState(() {
-      _isLoading = false;
       _fileName =
           _paths != null ? _paths!.map((e) => e.name).toString() : '...';
       _userAborted = _paths == null;
       _clientList = _clientList;
     });
+  }
+
+  void sendSms(String client_name, int client_eta) {
+    int spaceIndex = client_name.indexOf(' ');
+    String firstName = client_name.substring(0, spaceIndex);
+    String eta = _printDuration(Duration(seconds: client_eta));
+    String message = """Hello, $firstName""" +
+        """\nI am Tassio and I will be your driver today. I will be delivering your meals from Meal Prep Sunday San Diego. I want to inform you that your meals will be leaving our facilities soon and you can expect to receive them in $eta.""" +
+        """\n\nIn case you won’t be home and it is needed further information to get into your building or gated community, please reply this text with the instructions.""" +
+        """\n\nThank you very much,""" +
+        """\n\nTassio""";
+    twilioFlutter.sendSMS(toNumber: '+16197634382', messageBody: message);
+  }
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    return "${twoDigits(duration.inHours)}h${twoDigitMinutes}m"
+        .replaceAll('00h', '');
+  }
+
+  List<Client> _optimizeRoute(List<Client> clientList) {
+    //get all coordinates
+
+    return <Client>[];
   }
 
   void _logException(String message) {
@@ -130,11 +176,11 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     }
     setState(() {
       _isLoading = true;
-      _directoryPath = null;
       _fileName = null;
       _paths = null;
       _saveAsFileName = null;
       _userAborted = false;
+      _clientList = [];
     });
   }
 
@@ -169,7 +215,10 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                                   child: ListView(
                                       padding: EdgeInsets.all(8),
                                       children: _clientList
-                                          .map((client) => ClientItem(client))
+                                          .map((client) => ClientItem(
+                                              client,
+                                              () => sendSms(
+                                                  client.name, client.eta)))
                                           .toList()))
                               : _saveAsFileName != null
                                   ? ListTile(
@@ -187,37 +236,10 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         onPressed: () => _pickFiles(),
         tooltip: 'Add Route',
         label: Row(
-          children: [Icon(Icons.flag), Text('Start Route')],
+          children: [Icon(Icons.flag), Text('Start Routes')],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-}
-
-class ClientItem extends StatelessWidget {
-  Client client;
-  ClientItem(this.client, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(client.name, style:TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text(client.address),
-                ],
-              ),
-            )
-          ]),
-        ),
-      ),
     );
   }
 }

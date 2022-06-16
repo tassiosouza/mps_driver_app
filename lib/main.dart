@@ -92,6 +92,7 @@ class MainPageState extends State<MainPage> {
         home: Scaffold(
           appBar: AppBar(
             title: Text('MPS Driver'),
+            backgroundColor: Theme.of(context).primaryColor,
           ),
           body: Center(
             child: _pages.elementAt(_selectedIndex),

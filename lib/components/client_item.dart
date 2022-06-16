@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:mps_driver_app/theme/CustomIcon.dart';
+import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../models/Client.dart';
 
 class ClientItem extends StatelessWidget {
@@ -43,12 +45,23 @@ class ClientItem extends StatelessWidget {
                   child: Column(
                     children: [
                       Row(children: [
-                        Icon(Icons.person, size: 50),
+                        Container(
+                          margin: EdgeInsets.all(2),
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            border: Border.all(width: 1, color: Colors.grey)
+                          ),
+                          child: Icon(Icons.person, size: 40, color: Colors.grey),
+                        ),
+                        SizedBox(width: 10),
                         Flexible(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(client.name,
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold)),
+                            RichText(overflow: TextOverflow.ellipsis,
+                                text: TextSpan(text: client.name,
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black))
+                            ),
                             RichText( overflow: TextOverflow.ellipsis,
                             text: TextSpan(text: client.address,
                             style: TextStyle(color: Colors.black))),
@@ -60,34 +73,23 @@ class ClientItem extends StatelessWidget {
                       const Divider(color: Colors.grey, thickness: 1),
                       Row(
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.phone),
-                            onPressed: () {
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.sms),
-                            onPressed: () {
-                              sendSms();
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.shopping_bag),
-                            onPressed: () {
-                            },
-                          ),
-                          SizedBox(width: 20),
+                          getButtonIcon(CustomIcon.sms_driver_icon, (){}),
+                          getButtonIcon(CustomIcon.call_driver_icon, sendSms),
+                          getButtonIcon(CustomIcon.bag_driver_icon, (){}),
+                          SizedBox(width: 10),
                           ElevatedButton(onPressed: (){
                             _launchMapsUrl();
-                            }, child: Row(children: [
-                            Text("Start"),
-                            Icon(Icons.route)
-                          ],
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: App_Colors.primary_color.value
+                            ),
+                            child: Row(children: [
+                            Text("Start", style: TextStyle(fontSize: 15)),
+                            SizedBox(width: 10),
+                            Icon(CustomIcon.start_driver_icon, size: 10)]
                           ),
                           )
-                        ],
-                      ),
-                    ],
+                        ],),],
                   ),
                 ),
                 ),
@@ -98,18 +100,41 @@ class ClientItem extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("#45758"),
-                        IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.camera_alt_outlined)),
-                        Text("Deliver")
+                        Text("#45758", style: TextStyle(fontSize: 14),),
+                  GestureDetector(
+                    onTap: () => {},
+                    child: Container(
+                      margin: EdgeInsets.only(top: 20, bottom: 20, left: 10,right: 10),
+                      padding: EdgeInsets.only(top: 7, bottom: 7, left: 6, right: 8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          border: Border.all(width: 1, color: Colors.grey)
+                      ),
+                      child: Icon(CustomIcon.camera_driver_icon, size: 20,
+                          color: App_Colors.primary_color.value),
+                    ),
+                  ),
+                        Text("Deliver", style: TextStyle(fontSize: 12),)
                       ],
                     )
                   ]),
-                )
-              ]
+                )]
           ),
         )
+    );
+  }
+  getButtonIcon(IconData icon, Function function){
+    return GestureDetector(
+      onTap: () => function,
+      child: Container(
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(7),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(width: 1, color: Colors.grey)
+        ),
+        child: Icon(icon, size: 20, color: App_Colors.primary_color.value),
+      ),
     );
   }
 }

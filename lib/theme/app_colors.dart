@@ -29,7 +29,7 @@ extension ColorsExtension on App_Colors {
       case App_Colors.grey_text:
         return Color(0xFF878787);
       case App_Colors.grey_background:
-        return Color(0xFFF4F4F4);
+        return Color(0xFFE6E6E6);
     }
   }
 }

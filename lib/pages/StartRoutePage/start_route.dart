@@ -188,7 +188,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: App_Colors.grey_background.value,
+      backgroundColor: App_Colors.white_background.value,
       body: Center(
         child: SingleChildScrollView(
             child: Column(

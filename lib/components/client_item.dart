@@ -31,6 +31,7 @@ class ClientItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
       margin: EdgeInsets.all(5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),
       side: BorderSide(width: 1.0, color: App_Colors.grey_light.value)
@@ -40,7 +41,7 @@ class ClientItem extends StatelessWidget {
           child: Flexible(child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(width: 10),
+                SizedBox(width: 15),
                 Expanded(child: IntrinsicWidth(
                   child: Column(
                     children: [
@@ -58,17 +59,15 @@ class ClientItem extends StatelessWidget {
                         Flexible(child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
+                            SizedBox(height: 5),
                             RichText(overflow: TextOverflow.ellipsis,
                                 text: TextSpan(text: client.name,
-                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,
+                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
                                         color: App_Colors.black_text.value, fontFamily: 'Poppins'))
                             ),
-                            RichText( overflow: TextOverflow.ellipsis,
-                                text: TextSpan(text: client.address,
+                            Text(client.address,
                                     style: TextStyle(color: App_Colors.black_text.value,
-                                        fontFamily: 'Poppins'))),
-                            Text('ETA: ' +
-                                _printDuration(Duration(seconds: client.eta)))
+                                        fontFamily: 'Poppins', fontSize: 12)),
                           ],
                         ))
                       ]),
@@ -78,7 +77,7 @@ class ClientItem extends StatelessWidget {
                           getButtonIcon(CustomIcon.sms_driver_icon, (){}),
                           getButtonIcon(CustomIcon.call_driver_icon, sendSms),
                           getButtonIcon(CustomIcon.bag_driver_icon, (){}),
-                          SizedBox(width: 10),
+                          SizedBox(width: 1),
                           ElevatedButton(onPressed: (){
                             _launchMapsUrl();
                           },
@@ -109,10 +108,11 @@ class ClientItem extends StatelessWidget {
                             margin: EdgeInsets.only(top: 20, bottom: 20, left: 10,right: 10),
                             padding: EdgeInsets.only(top: 7, bottom: 7, left: 6, right: 8),
                             decoration: BoxDecoration(
+                                color: App_Colors.white_background.value,
                                 borderRadius: BorderRadius.circular(40),
                                 border: Border.all(width: 1, color: App_Colors.grey_dark.value)
                             ),
-                            child: Icon(CustomIcon.camera_driver_icon, size: 20,
+                            child: Icon(CustomIcon.camera_driver_icon, size: 17,
                                 color: App_Colors.primary_color.value),
                           ),
                         ),
@@ -129,12 +129,13 @@ class ClientItem extends StatelessWidget {
     return GestureDetector(
       onTap: () => function,
       child: Container(
-        padding: EdgeInsets.all(7),
+        padding: EdgeInsets.all(6),
         decoration: BoxDecoration(
+            color: App_Colors.white_background.value,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(width: 1, color: App_Colors.grey_dark.value)
         ),
-        child: Icon(icon, size: 20, color: App_Colors.primary_color.value),
+        child: Icon(icon, size: 16, color: App_Colors.primary_color.value),
       ),
     );
   }

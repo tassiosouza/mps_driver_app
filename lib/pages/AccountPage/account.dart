@@ -187,12 +187,12 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     } else if (_pickImageError != null) {
       return Text(
-        'Pick image error: $_pickImageError',
+        'Pick images error: $_pickImageError',
         textAlign: TextAlign.center,
       );
     } else {
       return const Text(
-        'You have not yet picked an image.',
+        'You have not yet picked an images.',
         textAlign: TextAlign.center,
       );
     }
@@ -242,7 +242,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
                       return const Text(
-                        'You have not yet picked an image.',
+                        'You have not yet picked an images.',
                         textAlign: TextAlign.center,
                       );
                     case ConnectionState.done:
@@ -250,12 +250,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     default:
                       if (snapshot.hasError) {
                         return Text(
-                          'Pick image/video error: ${snapshot.error}}',
+                          'Pick images/video error: ${snapshot.error}}',
                           textAlign: TextAlign.center,
                         );
                       } else {
                         return const Text(
-                          'You have not yet picked an image.',
+                          'You have not yet picked an images.',
                           textAlign: TextAlign.center,
                         );
                       }

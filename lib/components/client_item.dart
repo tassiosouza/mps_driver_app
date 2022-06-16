@@ -33,11 +33,11 @@ class ClientItem extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),
-      side: BorderSide(width: 1.0, color: Colors.grey)
+      side: BorderSide(width: 1.0, color: App_Colors.grey_light.value)
       ),
         child: Padding(
           padding: EdgeInsets.all(10),
-          child: Row(
+          child: Flexible(child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(width: 10),
@@ -49,10 +49,10 @@ class ClientItem extends StatelessWidget {
                           margin: EdgeInsets.all(2),
                           padding: EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            border: Border.all(width: 1, color: Colors.grey)
+                              borderRadius: BorderRadius.circular(40),
+                              border: Border.all(width: 1, color: App_Colors.grey_light.value)
                           ),
-                          child: Icon(Icons.person, size: 40, color: Colors.grey),
+                          child: Icon(Icons.person, size: 40, color: App_Colors.grey_light.value),
                         ),
                         SizedBox(width: 10),
                         Flexible(child: Column(
@@ -60,17 +60,19 @@ class ClientItem extends StatelessWidget {
                           children: <Widget>[
                             RichText(overflow: TextOverflow.ellipsis,
                                 text: TextSpan(text: client.name,
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black))
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,
+                                        color: App_Colors.black_text.value, fontFamily: 'Poppins'))
                             ),
                             RichText( overflow: TextOverflow.ellipsis,
-                            text: TextSpan(text: client.address,
-                            style: TextStyle(color: Colors.black))),
+                                text: TextSpan(text: client.address,
+                                    style: TextStyle(color: App_Colors.black_text.value,
+                                        fontFamily: 'Poppins'))),
                             Text('ETA: ' +
                                 _printDuration(Duration(seconds: client.eta)))
                           ],
                         ))
                       ]),
-                      const Divider(color: Colors.grey, thickness: 1),
+                      Divider(color: App_Colors.grey_light.value, thickness: 1),
                       Row(
                         children: [
                           getButtonIcon(CustomIcon.sms_driver_icon, (){}),
@@ -79,47 +81,47 @@ class ClientItem extends StatelessWidget {
                           SizedBox(width: 10),
                           ElevatedButton(onPressed: (){
                             _launchMapsUrl();
-                            },
+                          },
                             style: ElevatedButton.styleFrom(
-                              primary: App_Colors.primary_color.value
+                                primary: App_Colors.primary_color.value
                             ),
                             child: Row(children: [
-                            Text("Start", style: TextStyle(fontSize: 15)),
-                            SizedBox(width: 10),
-                            Icon(CustomIcon.start_driver_icon, size: 10)]
-                          ),
+                              Text("Start", style: TextStyle(fontSize: 15, fontFamily: 'Poppins')),
+                              SizedBox(width: 10),
+                              Icon(CustomIcon.start_driver_icon, size: 10)]
+                            ),
                           )
                         ],),],
                   ),
                 ),
                 ),
-                const VerticalDivider(color: Colors.grey, thickness: 2),
+                VerticalDivider(color: App_Colors.grey_light.value, thickness: 2),
                 IntrinsicHeight(
                   child: Row(children: [
-                    const VerticalDivider(color: Colors.grey, thickness: 1),
+                    VerticalDivider(color: App_Colors.grey_light.value, thickness: 1),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("#45758", style: TextStyle(fontSize: 14),),
-                  GestureDetector(
-                    onTap: () => {},
-                    child: Container(
-                      margin: EdgeInsets.only(top: 20, bottom: 20, left: 10,right: 10),
-                      padding: EdgeInsets.only(top: 7, bottom: 7, left: 6, right: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                          border: Border.all(width: 1, color: Colors.grey)
-                      ),
-                      child: Icon(CustomIcon.camera_driver_icon, size: 20,
-                          color: App_Colors.primary_color.value),
-                    ),
-                  ),
-                        Text("Deliver", style: TextStyle(fontSize: 12),)
+                        Text("#45758", style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),),
+                        GestureDetector(
+                          onTap: () => {},
+                          child: Container(
+                            margin: EdgeInsets.only(top: 20, bottom: 20, left: 10,right: 10),
+                            padding: EdgeInsets.only(top: 7, bottom: 7, left: 6, right: 8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40),
+                                border: Border.all(width: 1, color: App_Colors.grey_dark.value)
+                            ),
+                            child: Icon(CustomIcon.camera_driver_icon, size: 20,
+                                color: App_Colors.primary_color.value),
+                          ),
+                        ),
+                        Text("Deliver", style: TextStyle(fontSize: 12, fontFamily: 'Poppins'),)
                       ],
                     )
                   ]),
                 )]
-          ),
+          )),
         )
     );
   }
@@ -131,7 +133,7 @@ class ClientItem extends StatelessWidget {
         padding: EdgeInsets.all(7),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(40),
-            border: Border.all(width: 1, color: Colors.grey)
+            border: Border.all(width: 1, color: App_Colors.grey_dark.value)
         ),
         child: Icon(icon, size: 20, color: App_Colors.primary_color.value),
       ),

@@ -188,9 +188,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -231,7 +229,6 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
             ),
           ),
         ),
-      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _pickFiles(),
         tooltip: 'Add Route',

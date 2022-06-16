@@ -1,6 +1,8 @@
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
+import 'package:mps_driver_app/pages/AccountPage/profile.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route.dart';
+import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../amplifyconfiguration.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
@@ -46,7 +48,7 @@ class MainPageState extends State<MainPage> {
   static const List<Widget> _pages = <Widget>[
     TodosPage(),
     StartRoutePage(),
-    AccountPage(),
+    ProfilePage(),
   ];
 
   @override
@@ -88,12 +90,11 @@ class MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Authenticator(
       child: MaterialApp(
+        theme: ThemeData(
+          fontFamily: 'Poppins'
+        ),
         builder: Authenticator.builder(),
         home: Scaffold(
-          appBar: AppBar(
-            title: Text('MPS Driver'),
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
           body: Center(
             child: _pages.elementAt(_selectedIndex),
           ),
@@ -104,12 +105,12 @@ class MainPageState extends State<MainPage> {
                 label: 'Prep News',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.route),
-                label: 'Start Route',
+                icon: Icon(Icons.directions_car),
+                label: 'My route',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Account',
+                icon: Icon(Icons.person_outline),
+                label: 'Profile',
               )
             ],
             currentIndex: _selectedIndex,

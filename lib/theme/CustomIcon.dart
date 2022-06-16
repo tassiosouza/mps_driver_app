@@ -11,4 +11,5 @@ class CustomIcon {
   static const IconData bag_driver_icon = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData camera_driver_icon = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData start_driver_icon = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData config_driver_icon = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

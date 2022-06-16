@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
+import 'package:mps_driver_app/theme/app_colors.dart';
 import 'dart:developer';
 import '../../Services/geocoding_api';
 import 'package:tuple/tuple.dart';
@@ -187,6 +188,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: App_Colors.grey_background.value,
       body: Center(
         child: SingleChildScrollView(
             child: Column(

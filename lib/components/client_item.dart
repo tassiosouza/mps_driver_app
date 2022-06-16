@@ -73,7 +73,7 @@ class ClientItem extends StatelessWidget {
                         ))
                       ]),
                       Divider(color: App_Colors.grey_light.value, thickness: 1),
-                      Row(
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           getButtonIcon(CustomIcon.sms_driver_icon, (){}),
                           getButtonIcon(CustomIcon.call_driver_icon, sendSms),
@@ -129,7 +129,6 @@ class ClientItem extends StatelessWidget {
     return GestureDetector(
       onTap: () => function,
       child: Container(
-        margin: EdgeInsets.all(10),
         padding: EdgeInsets.all(7),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(40),

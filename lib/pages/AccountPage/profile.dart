@@ -78,9 +78,9 @@ class _ProfilePageState extends State<ProfilePageState>{
               padding: EdgeInsets.only(left: 25, top: 5, right: 25, bottom: 5),
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Profile", style: TextStyle(fontSize: 16, fontFamily: 'Poppins',
+                Text("Profile", style: TextStyle(fontSize: 16,
                 fontWeight: FontWeight.w500),),
-                Text("Edit", style: TextStyle(fontSize: 12, fontFamily: 'Poppins'),)
+                Text("Edit", style: TextStyle(fontSize: 12),)
               ])),
             SizedBox(height: 15),
             getInfoRow("Username", mark.userName),
@@ -94,7 +94,7 @@ class _ProfilePageState extends State<ProfilePageState>{
             Container(color: App_Colors.grey_background.value,
                 padding: EdgeInsets.only(left: 25, top: 5, bottom: 5),
                 child: Row(children: [
-                      Text("Account", style: TextStyle(fontSize: 16, fontFamily: 'Poppins',
+                      Text("Account", style: TextStyle(fontSize: 16,
                           fontWeight: FontWeight.w500),),
                     ])),
             SizedBox(height: 25),
@@ -123,15 +123,15 @@ class _ProfilePageState extends State<ProfilePageState>{
           fontWeight: FontWeight.w500, fontSize: 20
       ),),
       SizedBox(height: 10),
-      Text(label, style: TextStyle(fontSize: 14, fontFamily: 'Poppins'))
+      Text(label, style: TextStyle(fontSize: 14))
     ]);
   }
   getInfoRow(String label, String value){
     return Container(
       padding: EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 3),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(label, style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),),
-        Text(value, style: TextStyle(fontSize: 14, fontFamily: 'Poppins',
+        Text(label, style: TextStyle(fontSize: 14),),
+        Text(value, style: TextStyle(fontSize: 14,
         fontWeight: FontWeight.w500))],
       ),
     );

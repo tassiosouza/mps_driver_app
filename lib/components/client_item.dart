@@ -78,6 +78,18 @@ class ClientItem extends StatelessWidget {
                           getButtonIcon(CustomIcon.bag_driver_icon, (){}),
                           SizedBox(width: 10),
                           ElevatedButton(onPressed: (){
+                            sendSms();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: App_Colors.primary_color.value
+                            ),
+                            child: Row(children: [
+                            Text("Start", style: TextStyle(fontSize: 15)),
+                            SizedBox(width: 10),
+                            Icon(CustomIcon.start_driver_icon, size: 10)]
+                          ),
+                          ),
+                          ElevatedButton(onPressed: (){
                             _launchMapsUrl();
                             },
                             style: ElevatedButton.styleFrom(
@@ -88,7 +100,8 @@ class ClientItem extends StatelessWidget {
                             SizedBox(width: 10),
                             Icon(CustomIcon.start_driver_icon, size: 10)]
                           ),
-                          )
+                          ),
+                          
                         ],),],
                   ),
                 ),

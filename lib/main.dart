@@ -46,7 +46,6 @@ class MainPageState extends State<MainPage> {
   final AmplifyAPI _apiPlugin = AmplifyAPI();
   final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
   static const List<Widget> _pages = <Widget>[
-    TodosPage(),
     StartRoutePage(),
     ProfilePage(),
   ];
@@ -99,14 +98,10 @@ class MainPageState extends State<MainPage> {
             child: _pages.elementAt(_selectedIndex),
           ),
           bottomNavigationBar: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.newspaper),
-                label: 'Prep News',
-              ),
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.directions_car),
-                label: 'My route',
+                label: 'My route'
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_outline),
@@ -115,6 +110,8 @@ class MainPageState extends State<MainPage> {
             ],
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
+            selectedItemColor: App_Colors.primary_color.value,
+            unselectedItemColor: App_Colors.grey_dark.value,
           ),
         ),
       ),

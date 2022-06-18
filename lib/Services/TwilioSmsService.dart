@@ -2,11 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 
 class TwilioSmsService {
-
   TwilioFlutter twilioFlutter = TwilioFlutter(
-  accountSid: 'ACfcf134f0de9f85c19790e91e29cb6d63',
-  authToken: '4335317aa987c70f6263b960ef453d2f',
-  twilioNumber: '4122741864');
+      accountSid: 'ACfcf134f0de9f85c19790e91e29cb6d63',
+      authToken: '4335317aa987c70f6263b960ef453d2f',
+      twilioNumber: '4122741864');
 
   void sendSms(String client_name, int client_eta) {
     String _printDuration(Duration duration) {
@@ -24,7 +23,7 @@ class TwilioSmsService {
         """\n\nIn case you won’t be home and it is needed further information to get into your building or gated community, please reply this text with the instructions.""" +
         """\n\nThank you very much,""" +
         """\n\nTassio""";
-    twilioFlutter.sendSMS(toNumber: '+16197634382', messageBody: message);
+    twilioFlutter.sendSMS(
+        toNumber: '+16197634382', messageBody: message, messageMediaUrl: '');
   }
-
 }

@@ -98,7 +98,7 @@ class MainPageState extends State<MainPage> {
             child: _pages.elementAt(_selectedIndex),
           ),
           bottomNavigationBar: BottomNavigationBar(
-            items: <BottomNavigationBarItem>[
+            items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.directions_car),
                 label: 'My route'

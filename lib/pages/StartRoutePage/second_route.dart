@@ -39,7 +39,7 @@ class _ExampleState extends State<SecondRoute> {
 
     final Uint8List customMarker = await getBytesFromAsset(
         path: 'assets/images/marker' + index.toString() + '.png',
-        width: 50 // size of custom image as marker
+        width: 30 // size of custom image as marker
         );
 
     final Marker marker = Marker(

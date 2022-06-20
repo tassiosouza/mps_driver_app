@@ -55,5 +55,12 @@
         ]
       }
     }
+  },
+  "storage": {
+    "s3mpsdriverappstorage": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
   }
 }

@@ -1,16 +1,27 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:mps_driver_app/Services/TwilioSmsService.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../models/Client.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 
 class ClientItem extends StatelessWidget {
-  final Function sendSms;
   Client client;
 
-  ClientItem(this.client, this.sendSms, {Key? key}) : super(key: key);
+  ClientItem(this.client, {Key? key}) : super(key: key);
   late var availableMaps;
+
+  final ImagePicker _picker = ImagePicker();
+
+  TwilioSmsService smsService = new TwilioSmsService();
+  XFile? _imageFile;
 
   String _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -26,6 +37,53 @@ class ClientItem extends StatelessWidget {
       title: client.name,
       description: client.name,
     );
+  }
+
+  Future<void> sendSms(XFile? photo) async {
+    String url = await createAndUploadFile(photo!);
+    smsService.sendSmsWithPhoto('fulano', 21, url);
+  }
+
+  void _setImageFileFromFile(XFile? value) {
+    _imageFile = value;
+  }
+
+  dynamic _pickImageError;
+  String? _retrieveDataError;
+
+  Future<String> createAndUploadFile(XFile pickedFile) async {
+    // Upload image with the current time as the key
+    final key = DateTime.now().toString();
+    final file = File(pickedFile.path);
+    try {
+      final UploadFileResult result = await Amplify.Storage.uploadFile(
+          local: file,
+          key: key,
+          onProgress: (progress) {
+            print("Fraction completed: " +
+                progress.getFractionCompleted().toString());
+          });
+      print('Successfully uploaded image: ${result.key}');
+      GetUrlResult urlResult = await Amplify.Storage.getUrl(key: result.key);
+      return urlResult.url;
+    } on StorageException catch (e) {
+      print('Error uploading image: $e');
+      return '';
+    }
+  }
+
+  Future<void> _onImageButtonPressed(ImageSource source,
+      {BuildContext? context}) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        maxWidth: 600,
+        maxHeight: 800,
+        imageQuality: 100,
+      );
+      sendSms(pickedFile);
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   @override
@@ -92,11 +150,11 @@ class ClientItem extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 getButtonIcon(
-                                    CustomIcon.sms_driver_icon, () {}),
+                                    CustomIcon.sms_driver_icon, client),
                                 getButtonIcon(
-                                    CustomIcon.call_driver_icon, sendSms),
+                                    CustomIcon.call_driver_icon, client),
                                 getButtonIcon(
-                                    CustomIcon.bag_driver_icon, () {}),
+                                    CustomIcon.bag_driver_icon, client),
                                 SizedBox(width: 1),
                                 ElevatedButton(
                                   onPressed: () {
@@ -134,7 +192,10 @@ class ClientItem extends StatelessWidget {
                                   fontSize: 14, fontFamily: 'Poppins'),
                             ),
                             GestureDetector(
-                              onTap: () => {},
+                              onTap: () {
+                                _onImageButtonPressed(ImageSource.camera,
+                                    context: context);
+                              },
                               child: Container(
                                 margin: EdgeInsets.only(
                                     top: 20, bottom: 20, left: 10, right: 10),
@@ -164,9 +225,9 @@ class ClientItem extends StatelessWidget {
         ));
   }
 
-  getButtonIcon(IconData icon, Function function) {
+  getButtonIcon(IconData icon, Client client) {
     return GestureDetector(
-      onTap: () => function,
+      onTap: () => smsService.sendSms(client.name, client.eta),
       child: Container(
         padding: EdgeInsets.all(6),
         decoration: BoxDecoration(

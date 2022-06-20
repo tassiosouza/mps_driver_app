@@ -85,64 +85,83 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
             children: <Widget>[
               Column(
                 children: [
-                  Container(
-                    padding: EdgeInsets.only(left: 30),
-                    child: Text("Mark Larson"),
-                    alignment: Alignment.centerLeft,
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 30),
-                        child: Text("check-in: "),
-                        alignment: Alignment.centerLeft,
-                      ),
-                      Text("07:34")
-                    ],
-                  ),
-                  Divider(thickness: 1),
-                  Container(
-                    padding: EdgeInsets.only(left: 30),
-                    child: Text("Status Route"),
-                    alignment: Alignment.centerLeft,
-                  ),
+                  // Container(
+                  //   padding: EdgeInsets.only(left: 30),
+                  //   child: Text("Mark Larson"),
+                  //   alignment: Alignment.centerLeft,
+                  // ),
+                  // Container(
+                  //     child: ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => SecondRoute(
+                  //               clients: screenViewModel.clientList.value)),
+                  //     );
+                  //   },
+                  //   style: ElevatedButton.styleFrom(
+                  //       primary: App_Colors.primary_color.value),
+                  //   child: Row(children: const [
+                  //     Text("Start",
+                  //         style:
+                  //             TextStyle(fontSize: 15, fontFamily: 'Poppins')),
+                  //     SizedBox(width: 10),
+                  //     Icon(CustomIcon.start_driver_icon, size: 10)
+                  //   ]),
+                  // )),
+                  // Row(
+                  //   children: [
+                  //     Container(
+                  //       padding: EdgeInsets.only(left: 30),
+                  //       child: Text("check-in: "),
+                  //       alignment: Alignment.centerLeft,
+                  //     ),
+                  //     Text("07:34")
+                  //   ],
+                  // ),
+                  // Divider(thickness: 1),
+                  Row(children: [
+                    Container(
+                      padding: EdgeInsets.only(left: 30, top: 50),
+                      child: Text("Destinations"),
+                      alignment: Alignment.centerLeft,
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 50, top: 50),
+                      child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SecondRoute(
+                                      clients:
+                                          screenViewModel.clientList.value)),
+                            );
+                          },
+                          child: Text("View on map",
+                              style: TextStyle(
+                                color: App_Colors.primary_color.value,
+                                fontFamily: 'Poppins',
+                                fontSize: 12,
+                                decoration: TextDecoration.underline,
+                              ))),
+                      alignment: Alignment.centerLeft,
+                    ),
+                  ]),
                 ],
               ),
               Observer(
                   builder: (_) => Column(
                         children: [
                           Container(
-                              padding: const EdgeInsets.only(bottom: 30.0),
-                              height: MediaQuery.of(context).size.height * 0.50,
+                              padding: const EdgeInsets.only(top: 10),
+                              height: MediaQuery.of(context).size.height,
                               child: ListView(
                                   padding: const EdgeInsets.all(8),
                                   children: screenViewModel.clientList.value
-                                      .map((client) => ClientItem(
-                                          client,
-                                          () => TwilioSmsService().sendSms(
-                                              client.name, client.eta)))
+                                      .map((client) => ClientItem(client))
                                       .toList())),
-                          Container(
-                              child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SecondRoute(
-                                        clients:
-                                            screenViewModel.clientList.value)),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                                primary: App_Colors.primary_color.value),
-                            child: Row(children: const [
-                              Text("Start",
-                                  style: TextStyle(
-                                      fontSize: 15, fontFamily: 'Poppins')),
-                              SizedBox(width: 10),
-                              Icon(CustomIcon.start_driver_icon, size: 10)
-                            ]),
-                          )),
                         ],
                       ))
             ],

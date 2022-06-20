@@ -13,7 +13,7 @@ import '../../models/ModelProvider.dart';
 import 'pages/PrepNewsPage/amplify.dart';
 import 'pages/AccountPage/account.dart';
 import 'dart:developer';
-// import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +41,7 @@ class MainPageState extends State<MainPage> {
   // amplify plugins
   final AmplifyDataStore _dataStorePlugin =
       AmplifyDataStore(modelProvider: ModelProvider.instance);
-
+  final AmplifyStorageS3 _storagePlugin = AmplifyStorageS3();
   final AmplifyAPI _apiPlugin = AmplifyAPI();
   final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
   static List<Widget> _pages = <Widget>[
@@ -101,7 +101,8 @@ class MainPageState extends State<MainPage> {
 
   Future<void> _configureAmplify() async {
     // add Amplify plugins
-    await Amplify.addPlugins([_dataStorePlugin, _apiPlugin, _authPlugin]);
+    await Amplify.addPlugins(
+        [_dataStorePlugin, _apiPlugin, _authPlugin, _storagePlugin]);
 
     try {
       // configure Amplify

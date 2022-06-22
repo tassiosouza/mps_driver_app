@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mps_driver_app/Services/TwilioSmsService.dart';
+import 'package:mps_driver_app/pages/StartRoutePage/start_route_init.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
 import 'package:flutter/services.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
@@ -45,7 +46,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     late Widget widget;
     switch (screenState) {
       case ScreenState.init:
-        widget = init();
+        widget = StartRouteInitPage(screenViewModel);
         break;
       case ScreenState.loading:
         widget = Loading();
@@ -57,23 +58,6 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         break;
     }
     return widget;
-  }
-
-  init() {
-    return Material(
-      child: Center(
-        child: TextButton(
-          onPressed: () {
-            screenViewModel.getClientList();
-            screenViewModel.goToLoadingScreen();
-          },
-          child: Text(
-            "Start route",
-            style: TextStyle(color: App_Colors.primary_color.value),
-          ),
-        ),
-      ),
-    );
   }
 
   routeScreen() {

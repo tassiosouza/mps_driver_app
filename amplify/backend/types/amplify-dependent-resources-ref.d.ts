@@ -1,11 +1,4 @@
 export type AmplifyDependentResourcesAttributes = {
-    "api": {
-        "mpsdriverapp": {
-            "GraphQLAPIKeyOutput": "string",
-            "GraphQLAPIIdOutput": "string",
-            "GraphQLAPIEndpointOutput": "string"
-        }
-    },
     "auth": {
         "mpsdriverapp": {
             "IdentityPoolId": "string",
@@ -17,10 +10,11 @@ export type AmplifyDependentResourcesAttributes = {
             "AppClientID": "string"
         }
     },
-    "storage": {
-        "s3mpsdriverappstorage": {
-            "BucketName": "string",
-            "Region": "string"
+    "api": {
+        "mpsdriverapp": {
+            "GraphQLAPIKeyOutput": "string",
+            "GraphQLAPIIdOutput": "string",
+            "GraphQLAPIEndpointOutput": "string"
         }
     }
 }

@@ -1,6 +1,11 @@
+import 'dart:core';
+
+import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
-import 'package:mps_driver_app/pages/AccountPage/profile.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/start_route.dart';
+import 'package:mps_driver_app/Services/DriverService.dart';
+import 'package:mps_driver_app/components/Loading.dart';
+import 'package:mps_driver_app/pages/AccountPage/ProfilePage.dart';
+import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePage.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../amplifyconfiguration.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -9,13 +14,14 @@ import '/amplifyconfiguration.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import '../../models/ModelProvider.dart';
-import 'pages/PrepNewsPage/amplify.dart';
-import 'pages/AccountPage/account.dart';
+import 'pages/PrepNewsPage/AmplifyPage.dart';
 import 'dart:developer';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(MyApp());
 }
 
@@ -44,18 +50,7 @@ class MainPageState extends State<MainPage> {
   // final AmplifyAPI _apiPlugin = AmplifyAPI();
   // final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
   static List<Widget> _pages = <Widget>[
-    Center(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image(image: AssetImage('assets/images/wip.png')),
-            SizedBox(height: 30),
-            Text("Wait while we are working on this feature",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
-          ]),
-    ),
+    MyAppTodos(),
     Center(
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -86,8 +81,10 @@ class MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    // kick off app initialization
-    _initializeApp();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // kick off app initialization
+      _initializeApp();
+    });
 
     // to be filled in a later step
     super.initState();
@@ -95,7 +92,11 @@ class MainPageState extends State<MainPage> {
 
   Future<void> _initializeApp() async {
     // configure Amplify
-    //await _configureAmplify();
+    await _configureAmplify();
+    // configure driver login
+    await DriverService.login();
+    // remove splash screen
+    FlutterNativeSplash.remove();
   }
 
   // Future<void> _configureAmplify() async {
@@ -122,38 +123,38 @@ class MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData(fontFamily: 'Poppins'),
-        home: Scaffold(
-          body: Center(
-            child: _pages.elementAt(_selectedIndex),
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.newspaper), label: 'Prep News'),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.history),
-                label: 'History',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.directions_car),
-                label: 'New Route',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.star),
-                label: 'Rating',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline),
-                label: 'Profile',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            selectedItemColor: App_Colors.primary_color.value,
-            unselectedItemColor: App_Colors.grey_dark.value,
-          ),
+      theme: ThemeData(fontFamily: 'Poppins'),
+      home: Scaffold(
+        body: Center(
+          child: _pages.elementAt(_selectedIndex),
         ),
-      );
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(Icons.newspaper), label: 'Prep News'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.history),
+              label: 'History',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.directions_car),
+              label: 'New Route',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.star),
+              label: 'Rating',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              label: 'Profile',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          selectedItemColor: App_Colors.primary_color.value,
+          unselectedItemColor: App_Colors.grey_dark.value,
+        ),
+      ),
+    );
   }
 }

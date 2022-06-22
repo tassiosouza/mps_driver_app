@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:async';
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mps_driver_app/Services/route_optimization_api';
@@ -51,21 +52,33 @@ class PickRouteFile {
     final file = File(_filePath);
 
     // Read the file
-    Client client;
-    await file
-        .openRead()
-        .map(utf8.decode)
-        .transform(new LineSplitter())
-        .forEach((l) => {
-      client = Client(),
-      client.getDataFromLine(l),
-      _clientList.add(client),
-    });
+    final input = file.openRead();
+    final fields = await input.transform(utf8.decoder).transform(new CsvToListConverter()).toList();
+    print(fields);
+
+    List<Client> getClientsList(List<List<dynamic>> fields){
+      List<Client> clients = [];
+      Client client = Client();
+      for(var element in fields){
+          client.id = element[0];
+          client.name = element[1];
+          client.phone = element[2];
+          client.address = element[3];
+          client.secondAddress = element[4].toString();
+          client.city = element[5];
+          client.stateZipCode = element[6];
+          client.deliveryInstructions = element[7];
+          client.mealInstructions = element[8];
+          clients.add(client);
+      }
+      return clients;
+    }
+    _clientList.addAll(getClientsList(fields));
 
     GeocodingApi geocodingApi = new GeocodingApi();
     for (var i = 0; i < _clientList.length; i++) {
       Future<Coordinates> coordinates =
-      geocodingApi.getCoordinates(_clientList[i].address) as Future<Coordinates>;
+      geocodingApi.getCoordinates(_clientList[i].secondAddress +" "+ _clientList[i].address) as Future<Coordinates>;
 
       await coordinates.then((data) async {
         _clientList[i].coordinates = data;
@@ -78,11 +91,11 @@ class PickRouteFile {
           Future<List<Client>> orderedClients =
           routeOptimizationApi.getOrderedClients(_clientList);
 
-          await orderedClients.then((data) {
-            _clientList = data;
-          }, onError: (e) {
-            log(e);
-          });
+          // await orderedClients.then((data) {
+          //   _clientList = data;
+          // }, onError: (e) {
+          //   log(e);
+          // });
         }
       }, onError: (e) {
         log(e);

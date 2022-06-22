@@ -60,8 +60,7 @@ class ClientItem extends StatelessWidget {
           local: file,
           key: key,
           onProgress: (progress) {
-            print("Fraction completed: " +
-                progress.getFractionCompleted().toString());
+            print("Fraction completed: ${progress.getFractionCompleted()}");
           });
       print('Successfully uploaded image: ${result.key}');
       GetUrlResult urlResult = await Amplify.Storage.getUrl(key: result.key);
@@ -162,7 +161,7 @@ class ClientItem extends StatelessWidget {
                                   },
                                   style: ElevatedButton.styleFrom(
                                       primary: App_Colors.primary_color.value),
-                                  child: Row(children: [
+                                  child: Row(children: const [
                                     Text("Start",
                                         style: TextStyle(
                                             fontSize: 15,
@@ -197,9 +196,9 @@ class ClientItem extends StatelessWidget {
                                     context: context);
                               },
                               child: Container(
-                                margin: EdgeInsets.only(
+                                margin: const EdgeInsets.only(
                                     top: 20, bottom: 20, left: 10, right: 10),
-                                padding: EdgeInsets.only(
+                                padding: const EdgeInsets.only(
                                     top: 7, bottom: 7, left: 6, right: 8),
                                 decoration: BoxDecoration(
                                     color: App_Colors.white_background.value,

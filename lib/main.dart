@@ -1,4 +1,3 @@
-import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
 import 'package:mps_driver_app/pages/AccountPage/profile.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route.dart';
@@ -39,11 +38,11 @@ class MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   // amplify plugins
-  final AmplifyDataStore _dataStorePlugin =
-      AmplifyDataStore(modelProvider: ModelProvider.instance);
-  final AmplifyStorageS3 _storagePlugin = AmplifyStorageS3();
-  final AmplifyAPI _apiPlugin = AmplifyAPI();
-  final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
+  // final AmplifyDataStore _dataStorePlugin =
+  //     AmplifyDataStore(modelProvider: ModelProvider.instance);
+  // final AmplifyStorageS3 _storagePlugin = AmplifyStorageS3();
+  // final AmplifyAPI _apiPlugin = AmplifyAPI();
+  // final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
   static List<Widget> _pages = <Widget>[
     Center(
       child: Column(
@@ -96,23 +95,23 @@ class MainPageState extends State<MainPage> {
 
   Future<void> _initializeApp() async {
     // configure Amplify
-    await _configureAmplify();
+    //await _configureAmplify();
   }
 
-  Future<void> _configureAmplify() async {
-    // add Amplify plugins
-    await Amplify.addPlugins(
-        [_dataStorePlugin, _apiPlugin, _authPlugin, _storagePlugin]);
-
-    try {
-      // configure Amplify
-      await Amplify.configure(amplifyconfig);
-    } catch (e) {
-      // error handling can be improved for sure!
-      // but this will be sufficient for the purposes of this tutorial
-      print('An error occurred while configuring Amplify: $e');
-    }
-  }
+  // Future<void> _configureAmplify() async {
+  //   // add Amplify plugins
+  //   await Amplify.addPlugins(
+  //       [_dataStorePlugin, _apiPlugin, _authPlugin, _storagePlugin]);
+  //
+  //   try {
+  //     // configure Amplify
+  //     await Amplify.configure(amplifyconfig);
+  //   } catch (e) {
+  //     // error handling can be improved for sure!
+  //     // but this will be sufficient for the purposes of this tutorial
+  //     print('An error occurred while configuring Amplify: $e');
+  //   }
+  // }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -122,10 +121,8 @@ class MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Authenticator(
-      child: MaterialApp(
+    return MaterialApp(
         theme: ThemeData(fontFamily: 'Poppins'),
-        builder: Authenticator.builder(),
         home: Scaffold(
           body: Center(
             child: _pages.elementAt(_selectedIndex),
@@ -157,7 +154,6 @@ class MainPageState extends State<MainPage> {
             unselectedItemColor: App_Colors.grey_dark.value,
           ),
         ),
-      ),
-    );
+      );
   }
 }

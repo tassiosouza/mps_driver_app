@@ -49,6 +49,7 @@ dependencies:
   status_change: ^2.0.0
   google_maps_flutter: ^2.1.8
   amplify_storage_s3: ^0.5.1
+  csv: ^5.0.1
 
 dev_dependencies:
   flutter_test:

@@ -13,11 +13,10 @@ import '../../models/ModelProvider.dart';
 import 'pages/PrepNewsPage/amplify.dart';
 import 'pages/AccountPage/account.dart';
 import 'dart:developer';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(MyApp());
 }
 
@@ -42,11 +41,47 @@ class MainPageState extends State<MainPage> {
   // amplify plugins
   final AmplifyDataStore _dataStorePlugin =
       AmplifyDataStore(modelProvider: ModelProvider.instance);
-
+  final AmplifyStorageS3 _storagePlugin = AmplifyStorageS3();
   final AmplifyAPI _apiPlugin = AmplifyAPI();
   final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
-  static const List<Widget> _pages = <Widget>[
+  static List<Widget> _pages = <Widget>[
+    Center(
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image(image: AssetImage('assets/images/wip.png')),
+            SizedBox(height: 30),
+            Text("Wait while we are working on this feature",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
+          ]),
+    ),
+    Center(
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image(image: AssetImage('assets/images/wip.png')),
+            SizedBox(height: 30),
+            Text("Wait while we are working on this feature",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
+          ]),
+    ),
     StartRoutePage(),
+    Center(
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image(image: AssetImage('assets/images/wip.png')),
+            SizedBox(height: 30),
+            Text("Wait while we are working on this feature",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
+          ]),
+    ),
     ProfilePage(),
   ];
 
@@ -66,12 +101,12 @@ class MainPageState extends State<MainPage> {
 
   Future<void> _configureAmplify() async {
     // add Amplify plugins
-    await Amplify.addPlugins([_dataStorePlugin, _apiPlugin, _authPlugin]);
+    await Amplify.addPlugins(
+        [_dataStorePlugin, _apiPlugin, _authPlugin, _storagePlugin]);
 
     try {
       // configure Amplify
       await Amplify.configure(amplifyconfig);
-      FlutterNativeSplash.remove(); //remove splash screen after amplify configuration
     } catch (e) {
       // error handling can be improved for sure!
       // but this will be sufficient for the purposes of this tutorial
@@ -89,9 +124,7 @@ class MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Authenticator(
       child: MaterialApp(
-        theme: ThemeData(
-          fontFamily: 'Poppins'
-        ),
+        theme: ThemeData(fontFamily: 'Poppins'),
         builder: Authenticator.builder(),
         home: Scaffold(
           body: Center(
@@ -100,13 +133,23 @@ class MainPageState extends State<MainPage> {
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
+                  icon: Icon(Icons.newspaper), label: 'Prep News'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.history),
+                label: 'History',
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.directions_car),
-                label: 'My route'
+                label: 'New Route',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.star),
+                label: 'Rating',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_outline),
                 label: 'Profile',
-              )
+              ),
             ],
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,

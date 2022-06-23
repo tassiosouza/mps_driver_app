@@ -12,7 +12,8 @@
         ],
         "signupAttributes": [
           "EMAIL",
-          "NAME"
+          "NAME",
+          "PHONE_NUMBER"
         ],
         "passwordProtectionSettings": {
           "passwordPolicyMinLength": 8,
@@ -34,9 +35,8 @@
     }
   },
   "storage": {
-    "mpsdriverapp9490ef53": {
+    "s3mpsdriverappstorage3f06b925": {
       "service": "S3",
-      "serviceType": "imported",
       "providerPlugin": "awscloudformation",
       "dependsOn": []
     }

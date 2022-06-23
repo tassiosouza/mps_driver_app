@@ -2,8 +2,8 @@
   "version": "1",
   "cognitoConfig": {
     "identityPoolName": "testAuthIdentityPool",
-    "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "mpsdri79304bea",
+    "allowUnauthenticatedIdentities": true,
+    "resourceNameTruncated": "mpsdri4eb4c16a",
     "userPoolName": "mpsdriverapp",
     "autoVerifiedAttributes": [
       "email"
@@ -26,16 +26,17 @@
     ],
     "requiredAttributes": [
       "email",
-      "name"
+      "name",
+      "phone_number"
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "mpsdri79304bea_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "mpsdri4eb4c16a_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "79304bea",
+    "sharedId": "4eb4c16a",
     "resourceName": "mpsdriverapp",
     "authSelections": "identityPoolAndUserPool",
     "serviceName": "Cognito",
@@ -49,6 +50,20 @@
     "thirdPartyAuth": false,
     "authProviders": [],
     "usernameCaseSensitive": false,
-    "useEnabledMfas": true
+    "useEnabledMfas": true,
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "dependsOn": []
   }
 }

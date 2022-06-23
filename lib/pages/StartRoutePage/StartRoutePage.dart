@@ -1,183 +1,78 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mps_driver_app/Services/TwilioSmsService.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/start_route_init.dart';
-import 'package:mps_driver_app/Services/TwilioService.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
-import 'package:flutter/services.dart';
-import 'package:mps_driver_app/models/Coordinates.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
-import 'package:mps_driver_app/theme/app_colors.dart';
-import '../../components/ClientListItem.dart';
-import '../../components/Loading.dart';
-import '../../shared/ScreenState.dart';
-import 'package:status_change/status_change.dart';
 
-import 'MapsPage.dart';
+import '../../theme/app_colors.dart';
 
-class StartRoutePage extends StatelessWidget {
-  const StartRoutePage();
+class StartRouteInitPage extends StatefulWidget {
+  StartRouteViewModel startRouteViewModel;
+  StartRouteInitPage(this.startRouteViewModel);
+  _StartRouteInitPage createState() => _StartRouteInitPage();
+}
+
+class _StartRouteInitPage extends State<StartRouteInitPage> {
+  void getClientList() {
+    widget.startRouteViewModel.goToLoadingScreen();
+    widget.startRouteViewModel.getClientList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Start Route',
-      home: StartRouteComponent(),
-    );
-  }
-}
-
-class StartRouteComponent extends StatefulWidget {
-  const StartRouteComponent();
-  @override
-  _StartRouteComponentState createState() => _StartRouteComponentState();
-}
-
-class _StartRouteComponentState extends State<StartRouteComponent> {
-  final screenViewModel = StartRouteViewModel();
-
-  @override
-  Widget build(BuildContext context) {
-    return Observer(
-        builder: (_) => getStateScreen(screenViewModel.screenState.value));
-  }
-
-  Widget getStateScreen(ScreenState screenState) {
-    late Widget widget;
-    switch (screenState) {
-      case ScreenState.init:
-        widget = StartRouteInitPage(screenViewModel);
-        break;
-      case ScreenState.loading:
-        widget = Loading();
-        break;
-      case ScreenState.success:
-        widget = routeScreen();
-        break;
-      case ScreenState.error:
-        break;
-    }
-    return widget;
-  }
-
-  routeScreen() {
-    return Scaffold(
-      backgroundColor: App_Colors.white_background.value,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                children: [
-                  SizedBox(
-                    height: 60,
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 25),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Mark Larson  ",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
-                        ),
-                        DotIndicator(
-                          color: App_Colors.primary_color.value,
-                          size: 8,
-                        )
-                      ],
-                    ),
-                    alignment: Alignment.centerLeft,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 25, top: 5),
-                        child: Text(
-                          "To check-in",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: App_Colors.primary_color.value),
-                        ),
-                        alignment: Alignment.centerLeft,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(right: 25, top: 5),
-                        child: Text(
-                          "Welcome message",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: App_Colors.primary_color.value),
-                        ),
-                        alignment: Alignment.centerLeft,
-                      )
-                    ],
-                  ),
-                  Divider(thickness: 1),
-                  Divider(thickness: 1),
-                ],
-              ),
-              Observer(
-                  builder: (_) => Column(children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(left: 25),
-                                child: Text(
-                                  "Deliveries",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16),
-                                ),
-                              ),
-                              GestureDetector(
-                                  child: Container(
-                                      padding: EdgeInsets.only(right: 25),
-                                      child: Column(children: [
-                                        Icon(
-                                          Icons.location_on_outlined,
-                                          color: App_Colors.primary_color.value,
-                                        ),
-                                        Text(
-                                          "Route map",
-                                          style: TextStyle(
-                                              color: App_Colors
-                                                  .primary_color.value),
-                                        )
-                                      ])),
-                                  onTap: goToViewOnMap)
-                            ]),
-                        Container(
-                            height: MediaQuery.of(context).size.height,
-                            child: ListView(
-                                padding: const EdgeInsets.all(8),
-                                children: screenViewModel.clientList.value
-                                    .map((client) => ClientItem(
-                                        client,
-                                        screenViewModel.clientList.value
-                                            .indexOf(client)))
-                                    .toList()))
-                      ]))
-            ],
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 80,
           ),
-        ),
+          Image(image: AssetImage('assets/images/initNewRouteScreen.png')),
+          SizedBox(height: 48),
+          Text(
+            "Upload your route",
+            style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 25,
+                color: App_Colors.black_text.value,
+                fontFamily: 'Poppins',
+                decoration: TextDecoration.none),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Container(
+              padding: EdgeInsets.only(left: 30, right: 30),
+              child: Text(
+                "Please, upload the route you received from the logistics team",
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: App_Colors.grey_text.value,
+                    fontSize: 16,
+                    decoration: TextDecoration.none),
+                textAlign: TextAlign.center,
+              )),
+          SizedBox(
+            height: 70,
+          ),
+          Container(
+              padding: EdgeInsets.only(left: 30, right: 30),
+              child: ElevatedButton(
+                onPressed: () => getClientList(),
+                style: ElevatedButton.styleFrom(
+                    primary: App_Colors.primary_color.value),
+                child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(CustomIcon.upload_icon, size: 20),
+                          SizedBox(width: 20),
+                          Text("Upload route",
+                              style: TextStyle(
+                                  fontSize: 20, fontFamily: 'Poppins')),
+                        ])),
+              ))
+        ],
       ),
-    );
-  }
-
-  void goToViewOnMap() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              SecondRoute(clients: screenViewModel.clientList.value)),
     );
   }
 }

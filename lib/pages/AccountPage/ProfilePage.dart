@@ -72,7 +72,7 @@ class _ProfilePageState extends State<ProfilePageState> {
                               ),
                               SizedBox(height: 15),
                               Text(
-                                "${_currentDriver?.firstName} ${_currentDriver?.lastName}",
+                                "${_currentDriver?.firstName}",
                                 style: TextStyle(
                                     fontSize: 18, color: Colors.white),
                               ),
@@ -111,13 +111,13 @@ class _ProfilePageState extends State<ProfilePageState> {
                           )
                         ])),
                 SizedBox(height: 15),
+                getInfoRow("Full Name", _currentDriver!.firstName),
+                Divider(thickness: 1, color: App_Colors.grey_light.value),
                 getInfoRow("Email", _currentDriver!.email),
                 Divider(thickness: 1, color: App_Colors.grey_light.value),
-                getInfoRow("First name", _currentDriver!.firstName),
-                Divider(thickness: 1, color: App_Colors.grey_light.value),
-                getInfoRow("Last name", _currentDriver?.lastName),
-                Divider(thickness: 1, color: App_Colors.grey_light.value),
                 getInfoRow("Phone number", _currentDriver?.phone),
+                Divider(thickness: 1, color: App_Colors.grey_light.value),
+                getInfoRow("Car Capacity", _currentDriver?.carCapacity),
                 SizedBox(height: 20),
                 Container(
                     color: App_Colors.grey_background.value,

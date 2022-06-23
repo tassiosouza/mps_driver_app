@@ -7,7 +7,14 @@ export type AmplifyDependentResourcesAttributes = {
             "UserPoolArn": "string",
             "UserPoolName": "string",
             "AppClientIDWeb": "string",
-            "AppClientID": "string"
+            "AppClientID": "string",
+            "CreatedSNSRole": "string"
+        }
+    },
+    "storage": {
+        "s3mpsdriverappstorage3f06b925": {
+            "BucketName": "string",
+            "Region": "string"
         }
     },
     "api": {

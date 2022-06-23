@@ -31,6 +31,7 @@ class Todo extends Model {
   final String? _name;
   final String? _description;
   final bool? _isComplete;
+  final String? _owner;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -72,6 +73,19 @@ class Todo extends Model {
     }
   }
   
+  String get owner {
+    try {
+      return _owner!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -80,14 +94,15 @@ class Todo extends Model {
     return _updatedAt;
   }
   
-  const Todo._internal({required this.id, required name, description, required isComplete, createdAt, updatedAt}): _name = name, _description = description, _isComplete = isComplete, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Todo._internal({required this.id, required name, description, required isComplete, required owner, createdAt, updatedAt}): _name = name, _description = description, _isComplete = isComplete, _owner = owner, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Todo({String? id, required String name, String? description, required bool isComplete}) {
+  factory Todo({String? id, required String name, String? description, required bool isComplete, required String owner}) {
     return Todo._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
       description: description,
-      isComplete: isComplete);
+      isComplete: isComplete,
+      owner: owner);
   }
   
   bool equals(Object other) {
@@ -101,7 +116,8 @@ class Todo extends Model {
       id == other.id &&
       _name == other._name &&
       _description == other._description &&
-      _isComplete == other._isComplete;
+      _isComplete == other._isComplete &&
+      _owner == other._owner;
   }
   
   @override
@@ -116,6 +132,7 @@ class Todo extends Model {
     buffer.write("name=" + "$_name" + ", ");
     buffer.write("description=" + "$_description" + ", ");
     buffer.write("isComplete=" + (_isComplete != null ? _isComplete!.toString() : "null") + ", ");
+    buffer.write("owner=" + "$_owner" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -123,12 +140,13 @@ class Todo extends Model {
     return buffer.toString();
   }
   
-  Todo copyWith({String? id, String? name, String? description, bool? isComplete}) {
+  Todo copyWith({String? id, String? name, String? description, bool? isComplete, String? owner}) {
     return Todo._internal(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
-      isComplete: isComplete ?? this.isComplete);
+      isComplete: isComplete ?? this.isComplete,
+      owner: owner ?? this.owner);
   }
   
   Todo.fromJson(Map<String, dynamic> json)  
@@ -136,17 +154,19 @@ class Todo extends Model {
       _name = json['name'],
       _description = json['description'],
       _isComplete = json['isComplete'],
+      _owner = json['owner'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'description': _description, 'isComplete': _isComplete, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'description': _description, 'isComplete': _isComplete, 'owner': _owner, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "todo.id");
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
   static final QueryField ISCOMPLETE = QueryField(fieldName: "isComplete");
+  static final QueryField OWNER = QueryField(fieldName: "owner");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Todo";
     modelSchemaDefinition.pluralName = "Todos";
@@ -180,6 +200,12 @@ class Todo extends Model {
       key: Todo.ISCOMPLETE,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.bool)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Todo.OWNER,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

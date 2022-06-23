@@ -56,24 +56,22 @@ class PickRouteFile {
     final fields = await input.transform(utf8.decoder).transform(new CsvToListConverter()).toList();
     print(fields);
 
-    List<Client> getClientsList(List<List<dynamic>> fields){
-      List<Client> clients = [];
-      Client client = Client();
-      for(var element in fields){
-          client.id = element[0];
-          client.name = element[1];
-          client.phone = element[2];
-          client.address = element[3];
-          client.secondAddress = element[4].toString();
-          client.city = element[5];
-          client.stateZipCode = element[6];
-          client.deliveryInstructions = element[7];
-          client.mealInstructions = element[8];
-          clients.add(client);
+    getClientsList(List<List<dynamic>> fields){
+      for(var i = 1; i < fields.length; i++){
+        Client client = Client();
+        client.id = fields[i][0];
+          client.name = fields[i][1];
+          client.phone = fields[i][2];
+          client.address = fields[i][3];
+          client.secondAddress = fields[i][4].toString();
+          client.city = fields[i][5];
+          client.stateZipCode = fields[i][6];
+          client.deliveryInstructions = fields[i][7];
+          client.mealInstructions = fields[i][8];
+          _clientList.add(client);
       }
-      return clients;
     }
-    _clientList.addAll(getClientsList(fields));
+    getClientsList(fields);
 
     GeocodingApi geocodingApi = new GeocodingApi();
     for (var i = 0; i < _clientList.length; i++) {

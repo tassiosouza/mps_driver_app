@@ -65,93 +65,75 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
       backgroundColor: App_Colors.white_background.value,
       body: Center(
         child: SingleChildScrollView(
-          child: Column(
+          child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Column(
                 children: [
-                  // Container(
-                  //   padding: EdgeInsets.only(left: 30),
-                  //   child: Text("Mark Larson"),
-                  //   alignment: Alignment.centerLeft,
-                  // ),
-                  // Container(
-                  //     child: ElevatedButton(
-                  //   onPressed: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (context) => SecondRoute(
-                  //               clients: screenViewModel.clientList.value)),
-                  //     );
-                  //   },
-                  //   style: ElevatedButton.styleFrom(
-                  //       primary: App_Colors.primary_color.value),
-                  //   child: Row(children: const [
-                  //     Text("Start",
-                  //         style:
-                  //             TextStyle(fontSize: 15, fontFamily: 'Poppins')),
-                  //     SizedBox(width: 10),
-                  //     Icon(CustomIcon.start_driver_icon, size: 10)
-                  //   ]),
-                  // )),
-                  // Row(
-                  //   children: [
-                  //     Container(
-                  //       padding: EdgeInsets.only(left: 30),
-                  //       child: Text("check-in: "),
-                  //       alignment: Alignment.centerLeft,
-                  //     ),
-                  //     Text("07:34")
-                  //   ],
-                  // ),
-                  // Divider(thickness: 1),
-                  Row(children: [
-                    Container(
-                      padding: EdgeInsets.only(left: 30, top: 50),
-                      child: Text("Destinations"),
-                      alignment: Alignment.centerLeft,
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 50, top: 50),
-                      child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SecondRoute(
-                                      clients:
-                                          screenViewModel.clientList.value)),
-                            );
-                          },
-                          child: Text("View on map",
-                              style: TextStyle(
-                                color: App_Colors.primary_color.value,
-                                fontFamily: 'Poppins',
-                                fontSize: 12,
-                                decoration: TextDecoration.underline,
-                              ))),
-                      alignment: Alignment.centerLeft,
-                    ),
-                  ]),
+                  SizedBox(height: 60,),
+                  Container(
+                    padding: EdgeInsets.only(left: 25),
+                    child: Row(children: [Text("Mark Larson  ", style: TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w500
+                    ),),
+                      DotIndicator(color: App_Colors.primary_color.value, size: 8,)],),
+                    alignment: Alignment.centerLeft,
+                  ),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 25, top: 5),
+                        child: Text("To check-in", style: TextStyle(fontSize: 14,
+                        color: App_Colors.primary_color.value),),
+                        alignment: Alignment.centerLeft,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(right: 25, top: 5),
+                        child: Text("Welcome message", style: TextStyle(fontSize: 14,
+                            color: App_Colors.primary_color.value),),
+                        alignment: Alignment.centerLeft,
+                      )
+                    ],
+                  ),
+                  Divider(thickness: 1),
+                  Divider(thickness: 1),
                 ],
               ),
               Observer(
-                  builder: (_) => Column(
-                        children: [
-                          Container(
-                              padding: const EdgeInsets.only(top: 10),
-                              height: MediaQuery.of(context).size.height,
-                              child: ListView(
-                                  padding: const EdgeInsets.all(8),
+                  builder: (_) => Column(children: [
+                          SizedBox(height: 10,),
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                            Container(padding: EdgeInsets.only(left: 25),
+                              child: Text("Deliveries", style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 16
+                            ),),),
+                            GestureDetector(child: Container(padding: EdgeInsets.only(right: 25),
+                              child: Column(children: [
+                                Icon(Icons.location_on_outlined, color: App_Colors.primary_color.value,),
+                                Text("Route map", style: TextStyle(color: App_Colors.primary_color.value),)
+                              ])), onTap: goToViewOnMap)
+                          ]),
+                          Container(height: MediaQuery.of(context).size.height,
+                              child: ListView(padding: const EdgeInsets.all(8),
                                   children: screenViewModel.clientList.value
-                                      .map((client) => ClientItem(client))
-                                      .toList())),
-                        ],
+                                      .map((client) => ClientItem(client,
+                                      screenViewModel.clientList.value.indexOf(client)))
+                                      .toList()))]
                       ))
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void goToViewOnMap(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => SecondRoute(
+              clients:
+              screenViewModel.clientList.value)),
     );
   }
 }

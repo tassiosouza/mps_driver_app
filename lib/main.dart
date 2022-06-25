@@ -51,33 +51,33 @@ class MainPageState extends State<MainPage> {
   final AmplifyAPI _apiPlugin = AmplifyAPI();
   final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
   static List<Widget> _pages = <Widget>[
-    MyAppTodos(),
+    const MyAppTodos(),
     Center(
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image(image: AssetImage('assets/images/wip.png')),
-            SizedBox(height: 30),
-            Text("Wait while we are working on this feature",
+            const Image(image: const AssetImage('assets/images/wip.png')),
+            const SizedBox(height: 30),
+            const Text("Wait while we are working on this feature",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
+                style: const TextStyle(fontSize: 20, fontFamily: 'Poppins')),
           ]),
     ),
-    StartRoutePage(),
+    const StartRoutePage(),
     Center(
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image(image: AssetImage('assets/images/wip.png')),
-            SizedBox(height: 30),
-            Text("Wait while we are working on this feature",
+            const Image(image: const AssetImage('assets/images/wip.png')),
+            const SizedBox(height: 30),
+            const Text("Wait while we are working on this feature",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
+                style: const TextStyle(fontSize: 20, fontFamily: 'Poppins')),
           ]),
     ),
-    ProfilePage(),
+    const ProfilePage(),
   ];
 
   @override
@@ -132,11 +132,17 @@ class MainPageState extends State<MainPage> {
     indicatorColor: Colors.green,
     textTheme: const TextTheme(
       // text theme of the header on each step
+      bodyText1: TextStyle(fontFamily: 'Poppins'),
+      bodyText2: TextStyle(fontFamily: 'Poppins'),
       headline6: TextStyle(
           fontWeight: FontWeight.w600, fontSize: 24, fontFamily: 'Poppins'),
     ),
     // theme of the form fields for each step
     inputDecorationTheme: InputDecorationTheme(
+      errorStyle: const TextStyle(fontFamily: 'Poppins'),
+      labelStyle: const TextStyle(fontFamily: 'Poppins'),
+      hintStyle: const TextStyle(fontFamily: 'Poppins'),
+      helperStyle: const TextStyle(fontFamily: 'Poppins'),
       contentPadding: const EdgeInsets.all(16),
       floatingLabelBehavior: FloatingLabelBehavior.never,
       fillColor: Colors.grey[200],
@@ -149,6 +155,8 @@ class MainPageState extends State<MainPage> {
     // theme of the primary button for each step
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
+        textStyle: MaterialStateProperty.all<TextStyle>(
+            const TextStyle(fontFamily: 'Poppins')),
         padding:
             MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.all(16)),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -193,7 +201,8 @@ class MainPageState extends State<MainPage> {
                       onPressed: () => state.changeStep(
                         AuthenticatorStep.signUp,
                       ),
-                      child: const Text('Sign Up'),
+                      child: const Text('Sign Up',
+                          style: TextStyle(fontFamily: 'Poppins')),
                     ),
                   ],
                 ),
@@ -206,10 +215,11 @@ class MainPageState extends State<MainPage> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      Padding(
-                          padding: EdgeInsets.only(bottom: 30),
-                          child: const Text(
-                              'Ready to join our team ? Register here :)')),
+                      const Padding(
+                          padding: const EdgeInsets.only(bottom: 30),
+                          child: Text(
+                              'Ready to join our team ? Register here :)',
+                              style: TextStyle(fontFamily: 'Poppins'))),
                       // prebuilt sign up form from amplify_authenticator package
                       SignUpForm.custom(
                         fields: [
@@ -238,7 +248,8 @@ class MainPageState extends State<MainPage> {
                       onPressed: () => state.changeStep(
                         AuthenticatorStep.signIn,
                       ),
-                      child: const Text('Sign In'),
+                      child: const Text('Sign In',
+                          style: TextStyle(fontFamily: 'Poppins')),
                     ),
                   ],
                 ),

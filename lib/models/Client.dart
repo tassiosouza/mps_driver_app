@@ -2,8 +2,11 @@ import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
 import 'package:tuple/tuple.dart';
 import './Coordinates.dart';
+part 'Client.g.dart';
 
-class Client {
+class Client = _Client with _$Client;
+
+abstract class _Client with Store{
   String id = '';
   String name = '';
   String phone = '';
@@ -18,6 +21,10 @@ class Client {
   int eta = 0;
   @observable
   bool check = false;
+  @action
+  setCheck(bool isCheck){
+    check = isCheck;
+  }
 
-  Client();
+  _Client();
 }

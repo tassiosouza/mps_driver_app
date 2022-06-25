@@ -96,17 +96,6 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
   }
 
   @override
-  void checkBag(int index) {
-    final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
-        name: '_StartRouteViewModel.checkBag');
-    try {
-      return super.checkBag(index);
-    } finally {
-      _$_StartRouteViewModelActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void goToLoadingScreen() {
     final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
         name: '_StartRouteViewModel.goToLoadingScreen');

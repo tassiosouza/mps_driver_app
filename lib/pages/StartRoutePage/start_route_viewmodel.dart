@@ -28,11 +28,6 @@ abstract class _StartRouteViewModel with Store{
   }
 
   @action
-  void checkBag(int index){
-    clientList.elementAt(index).check = true;
-  }
-
-  @action
   Future<void> getClientList() async {
     clientList.addAll(await pickRouteFile.pickFiles());
     goToRouteScreen();

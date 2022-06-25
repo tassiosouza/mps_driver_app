@@ -14,6 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 
+import 'AppDialogs.dart';
+
 class ClientItem extends StatelessWidget {
   Client client;
   int clientIndex;
@@ -42,6 +44,11 @@ class ClientItem extends StatelessWidget {
       title: client.name,
       description: client.name,
     );
+  }
+
+  Future<void> deliveryInstructionsDialog(context){
+    return AppDialogs().showDialogJustMsg(context, "Delivery Instructions",
+        client.deliveryInstructions);
   }
 
   Future<void> sendSms(XFile? photo) async {
@@ -138,12 +145,11 @@ class ClientItem extends StatelessWidget {
                   )),
                   Column(
                     children: [
-                      Container(
+                      GestureDetector(child: Container(
                           padding: EdgeInsets.only(right: 15),
-                          child: Icon(
-                            Icons.info,
+                          child: Icon(Icons.info,
                             color: App_Colors.primary_color.value,
-                          )),
+                          )), onTap: () => deliveryInstructionsDialog(context)) ,
                       SizedBox(height: 40)
                     ],
                   )
@@ -156,7 +162,7 @@ class ClientItem extends StatelessWidget {
                     () => smsService.sendSms(client.name, client.eta)),
                     getButtonIcon(CustomIcon.call_driver_icon, client,
                         (){}),
-                    bagIcon(client.check),
+                    Observer(builder: (_) => bagIcon(client.check)),
                     SizedBox(width: 1),
                     ElevatedButton(
                       onPressed: () {
@@ -253,7 +259,7 @@ class ClientItem extends StatelessWidget {
           width: 30,
           height: 28,
           child: ElevatedButton(
-            onPressed: () => screenViewModel.checkBag(clientIndex),
+            onPressed: () => client.setCheck(true),
             style: ButtonStyle(
               shape: MaterialStateProperty.all(CircleBorder()),
               padding: MaterialStateProperty.all(EdgeInsets.all(0)),

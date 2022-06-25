@@ -45,6 +45,11 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         builder: (_) => getStateScreen(screenViewModel.screenState.value));
   }
 
+  Future<void> welcomeDialog(){
+    return AppDialogs().showDialogJustMsg(context, "Welcome Driver",
+        "Make your checkin and then click welcome message to send message to the clients.");
+  }
+
   Widget getStateScreen(RoutePageState screenState) {
     late Widget widget;
     switch (screenState) {
@@ -77,11 +82,6 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     } else {
       return Colors.green;
     }
-  }
-
-  Future<void> welcomeDialog(){
-    return AppDialogs().showDialogJustMsg(context, "Welcome to your route",
-        "Touch in Check-in to make your checking and touch welcome message to send message to clients");
   }
 
   Future<void> welcomeMessageSendConfirm(){
@@ -230,36 +230,35 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                   Divider(thickness: 1),
                 ],
               ),
-              Observer(
-                  builder: (_) => Column(children: [
-                        SizedBox(height: 10,
+              Column(children: [
+                SizedBox(height: 10,
+                ),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(padding: EdgeInsets.only(left: 18),
+                        child: Text("Deliveries",
+                          style: TextStyle(fontWeight: FontWeight.w500,
+                              fontSize: 16),
                         ),
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(padding: EdgeInsets.only(left: 18),
-                                child: Text("Deliveries",
-                                  style: TextStyle(fontWeight: FontWeight.w500,
-                                      fontSize: 16),
+                      ),
+                      GestureDetector(child: Container(
+                              padding: EdgeInsets.only(right: 25),
+                              child: Column(children: [
+                                Icon(Icons.location_on_outlined,
+                                  color: App_Colors.primary_color.value,
                                 ),
-                              ),
-                              GestureDetector(child: Container(
-                                      padding: EdgeInsets.only(right: 25),
-                                      child: Column(children: [
-                                        Icon(Icons.location_on_outlined,
-                                          color: App_Colors.primary_color.value,
-                                        ),
-                                        Text("Route map", style: TextStyle(
-                                          color: App_Colors.primary_color.value),
-                                        )])),
-                                  onTap: goToViewOnMap)
-                            ]),
-                          Container(height: MediaQuery.of(context).size.height/2.1,
-                            child: ListView(padding: const EdgeInsets.all(8),
-                              children: screenViewModel.clientList
-                                .map((client) => ClientItem(client,
-                                  screenViewModel, screenViewModel.clientList
-                                    .indexOf(client))).toList()))
-                      ])),
+                                Text("Route map", style: TextStyle(
+                                  color: App_Colors.primary_color.value),
+                                )])),
+                          onTap: goToViewOnMap)
+                    ]),
+                  Container(height: MediaQuery.of(context).size.height/2.1,
+                    child: Observer(builder: (_) => ListView(padding: const EdgeInsets.all(8),
+                        children: screenViewModel.clientList
+                            .map((client) => ClientItem(client,
+                            screenViewModel, screenViewModel.clientList
+                                .indexOf(client))).toList())))
+                      ]),
             ])
         ),
       ),

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 
+import '../pages/StartRoutePage/start_route_viewmodel.dart';
+
 class AppDialogs {
   Future<void> showDialogJustMsg(
       BuildContext context, String title, String text) async {
@@ -50,7 +52,7 @@ class AppDialogs {
   }
 
   Future<void> showDialogConfirm(
-      BuildContext context, Function confirm, String title, String text) async {
+      BuildContext context, StartRouteViewModel screenViewModel, String title, String text) async {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     showDialog(
@@ -103,7 +105,10 @@ class AppDialogs {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 primary: App_Colors.primary_color.value),
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              screenViewModel.goToBagsScreen();
+                              Navigator.pop(context);
+                            },
                             child: Text("CONFIRM"),
                           ),
                           padding: EdgeInsets.only(bottom: 15),

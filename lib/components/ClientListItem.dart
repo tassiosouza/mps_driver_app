@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:mps_driver_app/Services/TwilioService.dart';
+import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../models/Client.dart';
@@ -15,8 +17,10 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 class ClientItem extends StatelessWidget {
   Client client;
   int clientIndex;
+  StartRouteViewModel screenViewModel;
 
-  ClientItem(this.client, this.clientIndex, {Key? key}) : super(key: key);
+  ClientItem(this.client, this.screenViewModel,
+      this.clientIndex, {Key? key}) : super(key: key);
   late var availableMaps;
 
   final ImagePicker _picker = ImagePicker();
@@ -148,9 +152,11 @@ class ClientItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    getButtonIcon(CustomIcon.sms_driver_icon, client),
-                    getButtonIcon(CustomIcon.call_driver_icon, client),
-                    getButtonIcon(CustomIcon.bag_driver_icon, client),
+                    getButtonIcon(CustomIcon.sms_driver_icon, client,
+                    () => smsService.sendSms(client.name, client.eta)),
+                    getButtonIcon(CustomIcon.call_driver_icon, client,
+                        (){}),
+                    bagIcon(client.check),
                     SizedBox(width: 1),
                     ElevatedButton(
                       onPressed: () {
@@ -239,12 +245,37 @@ class ClientItem extends StatelessWidget {
     );
   }
 
-  getButtonIcon(IconData icon, Client client) {
+  bagIcon(bool check){
+    if(check){
+      return getButtonIcon(Icons.check, client, (){});
+    } else {
+      return SizedBox(
+          width: 30,
+          height: 28,
+          child: ElevatedButton(
+            onPressed: () => screenViewModel.checkBag(clientIndex),
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all(CircleBorder()),
+              padding: MaterialStateProperty.all(EdgeInsets.all(0)),
+              backgroundColor: MaterialStateProperty.all(
+                  App_Colors.white_background.value), // <-- Button color
+              overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(MaterialState.pressed))
+                  return Colors.lightGreen; // <-- Splash color
+              }),
+            ),
+            child: Icon(CustomIcon.bag_driver_icon, size: 14,
+                color: App_Colors.primary_color.value),
+          ));
+    }
+  }
+
+  getButtonIcon(IconData icon, Client client, Function function) {
     return SizedBox(
         width: 30,
         height: 28,
         child: ElevatedButton(
-          onPressed: () => smsService.sendSms(client.name, client.eta),
+          onPressed: () => function,
           style: ButtonStyle(
             shape: MaterialStateProperty.all(CircleBorder()),
             padding: MaterialStateProperty.all(EdgeInsets.all(0)),

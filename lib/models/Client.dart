@@ -1,3 +1,4 @@
+import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
 import 'package:tuple/tuple.dart';
 import './Coordinates.dart';
@@ -15,6 +16,8 @@ class Client {
   Coordinates coordinates = Coordinates(0, 0);
   int indexOnRoute = 0;
   int eta = 0;
+  @observable
+  bool check = false;
 
   Client();
 }

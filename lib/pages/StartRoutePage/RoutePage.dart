@@ -4,13 +4,14 @@ import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePage.dart';
 import 'package:mps_driver_app/Services/TwilioService.dart';
 import 'package:flutter/services.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
+import 'package:intl/intl.dart';
+import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePageState.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../components/AppDialogs.dart';
 import '../../components/ClientListItem.dart';
 import '../../components/Loading.dart';
-import '../../shared/ScreenState.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
 
@@ -37,7 +38,6 @@ class StartRouteComponent extends StatefulWidget {
 
 class _StartRouteComponentState extends State<StartRouteComponent> {
   final screenViewModel = StartRouteViewModel();
-  int activeStep = 0;
   int dotCount = 4;
   @override
   Widget build(BuildContext context) {
@@ -45,19 +45,25 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         builder: (_) => getStateScreen(screenViewModel.screenState.value));
   }
 
-  Widget getStateScreen(ScreenState screenState) {
+  Widget getStateScreen(RoutePageState screenState) {
     late Widget widget;
     switch (screenState) {
-      case ScreenState.init:
+      case RoutePageState.init:
         widget = StartRouteInitPage(screenViewModel);
         break;
-      case ScreenState.loading:
+      case RoutePageState.loading:
         widget = Loading();
         break;
-      case ScreenState.success:
+      case RoutePageState.routePlan:
+        Future.delayed(Duration.zero, () => welcomeDialog());
         widget = routeScreen();
         break;
-      case ScreenState.error:
+      case RoutePageState.bagsChecking:
+      case RoutePageState.inTransit:
+      case RoutePageState.routeDone:
+        widget = routeScreen();
+        break;
+      case RoutePageState.error:
         break;
     }
     return widget;
@@ -73,6 +79,34 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     }
   }
 
+  Future<void> welcomeDialog(){
+    return AppDialogs().showDialogJustMsg(context, "Welcome to your route",
+        "Touch in Check-in to make your checking and touch welcome message to send message to clients");
+  }
+
+  Future<void> welcomeMessageSendConfirm(){
+    return AppDialogs().showDialogConfirm(context, screenViewModel, "Confirm",
+        "Touch in Check-in to make your checking and touch welcome message to send message to clients");
+  }
+
+  Widget toCheckIn(bool checkin){
+    if(checkin){
+      DateTime now = DateTime.now();
+      String time = DateFormat('kk:mm').format(now);
+      return Container(padding: EdgeInsets.only(left: 18, top: 5),
+        child: Text("Initiated at: $time", style: TextStyle(fontSize: 14,
+            color: App_Colors.grey_dark.value),
+        ), alignment: Alignment.centerLeft);
+    } else {
+      return GestureDetector(onTap: () => screenViewModel.setCheckIn(),
+          child: Container(padding: EdgeInsets.only(left: 18, top: 5),
+            child: Text("Check-in", style: TextStyle(fontSize: 14,
+                color: App_Colors.primary_color.value),
+            ), alignment: Alignment.centerLeft
+          ));
+    }
+  }
+
   routeScreen() {
     return Scaffold(
       backgroundColor: App_Colors.white_background.value,
@@ -81,51 +115,29 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Column(
-                children: [
-                  SizedBox(
-                    height: 60,
+              Column(children: [
+                  SizedBox(height: 60,
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 18),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Mark Larson  ",
-                          style: TextStyle(
+                    child: Row(children: [
+                        Text("Mark Larson  ", style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
-                        DotIndicator(
-                          color: App_Colors.primary_color.value,
-                          size: 8,
-                        )
-                      ],
-                    ),
-                    alignment: Alignment.centerLeft,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        DotIndicator(color: App_Colors.primary_color.value,
+                          size: 8,)
+                      ],),
+                    alignment: Alignment.centerLeft),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 18, top: 5),
-                        child: Text(
-                          "To check-in",
-                          style: TextStyle(
-                              fontSize: 14,
+                      Observer(builder: (_) => toCheckIn(screenViewModel.checkin.value)),
+                      GestureDetector(child: Container(padding: EdgeInsets.only(right: 25, top: 5),
+                        child: Text("Welcome message",
+                          style: TextStyle(fontSize: 14,
                               color: App_Colors.primary_color.value),
                         ),
                         alignment: Alignment.centerLeft,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(right: 25, top: 5),
-                        child: Text(
-                          "Welcome message",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: App_Colors.primary_color.value),
-                        ),
-                        alignment: Alignment.centerLeft,
-                      )
+                      ), onTap: welcomeMessageSendConfirm)
                     ],
                   ),
                   SizedBox(height: 15),
@@ -133,16 +145,11 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                   SizedBox(height: 10),
                   Container(
                     padding: EdgeInsets.only(left: 20),
-                    child: Row(children: [
-                      Text("Route Status",
+                    child: Row(children: [ Text("Route Status",
                           textAlign: TextAlign.start,
                           style: TextStyle(fontFamily: "Poppins", fontSize: 16))
                     ]),
                   ),
-                  TextButton(
-                      onPressed: () => AppDialogs()
-                          .showDialogJustMsg(context, "title", "body"),
-                      child: Text("show dialog")),
                   SizedBox(height: 15),
                   Stepper.IconStepper(
                     scrollingDisabled: true,
@@ -174,28 +181,25 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                     activeStepBorderPadding: 2,
 
                     // activeStep property set to activeStep variable defined above.
-                    activeStep: activeStep,
+                    activeStep: screenViewModel.statusRouteBar.value,
 
                     // This ensures step-tapping updates the activeStep.
                     onStepReached: (index) {
                       setState(() {
-                        activeStep = index;
+                        screenViewModel.statusRouteBar.value = index;
                       });
                     },
                   ),
-                  SizedBox(
-                    height: 10,
+                  SizedBox(height: 10
                   ),
-                  Row(
-                    children: [
-                      Expanded(
+                  Row(children: [Expanded(
                           child: Text(
                         "Route Plan",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: "Poppins",
                             fontSize: 12,
-                            color: getStatusColor(0, activeStep)),
+                            color: getStatusColor(0, screenViewModel.statusRouteBar.value)),
                       )),
                       Expanded(
                           child: Text(
@@ -204,7 +208,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                         style: TextStyle(
                             fontFamily: "Poppins",
                             fontSize: 12,
-                            color: getStatusColor(1, activeStep)),
+                            color: getStatusColor(1, screenViewModel.statusRouteBar.value)),
                       )),
                       Expanded(
                           child: Text("In transit",
@@ -212,14 +216,14 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                               style: TextStyle(
                                   fontFamily: "Poppins",
                                   fontSize: 12,
-                                  color: getStatusColor(2, activeStep)))),
+                                  color: getStatusColor(2, screenViewModel.statusRouteBar.value)))),
                       Expanded(
                           child: Text("Route done",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontFamily: "Poppins",
                                   fontSize: 12,
-                                  color: getStatusColor(3, activeStep)))),
+                                  color: getStatusColor(3, screenViewModel.statusRouteBar.value)))),
                     ],
                   ),
                   SizedBox(height: 15),
@@ -228,101 +232,36 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
               ),
               Observer(
                   builder: (_) => Column(children: [
-                        SizedBox(
-                          height: 10,
+                        SizedBox(height: 10,
                         ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                padding: EdgeInsets.only(left: 18),
-                                child: Text(
-                                  "Deliveries",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
+                              Container(padding: EdgeInsets.only(left: 18),
+                                child: Text("Deliveries",
+                                  style: TextStyle(fontWeight: FontWeight.w500,
                                       fontSize: 16),
                                 ),
                               ),
-                              GestureDetector(
-                                  child: Container(
+                              GestureDetector(child: Container(
                                       padding: EdgeInsets.only(right: 25),
                                       child: Column(children: [
-                                        Icon(
-                                          Icons.location_on_outlined,
+                                        Icon(Icons.location_on_outlined,
                                           color: App_Colors.primary_color.value,
                                         ),
-                                        Text(
-                                          "Route map",
-                                          style: TextStyle(
-                                              color: App_Colors
-                                                  .primary_color.value),
-                                        )
-                                      ])),
+                                        Text("Route map", style: TextStyle(
+                                          color: App_Colors.primary_color.value),
+                                        )])),
                                   onTap: goToViewOnMap)
                             ]),
-                        Container(
-                            height: MediaQuery.of(context).size.height,
-                            child: ListView(
-                                padding: const EdgeInsets.all(8),
-                                children: screenViewModel.clientList.value
-                                    .map((client) => ClientItem(
-                                        client,
-                                        screenViewModel.clientList.value
-                                            .indexOf(client)))
-                                    .toList()))
-                      ]))
-            ],
-          ),
+                          Container(height: MediaQuery.of(context).size.height/2.1,
+                            child: ListView(padding: const EdgeInsets.all(8),
+                              children: screenViewModel.clientList
+                                .map((client) => ClientItem(client,
+                                  screenViewModel, screenViewModel.clientList
+                                    .indexOf(client))).toList()))
+                      ])),
+            ])
         ),
-      ),
-    );
-  }
-
-// Returns the header text based on the activeStep.
-  String headerText() {
-    switch (activeStep) {
-      case 1:
-        return 'Preface';
-
-      case 2:
-        return 'Table of Contents';
-
-      case 3:
-        return 'About the Author';
-
-      case 4:
-        return 'Publisher Information';
-
-      case 5:
-        return 'Reviews';
-
-      case 6:
-        return 'Chapters #1';
-
-      default:
-        return 'Introduction';
-    }
-  }
-
-  Widget header() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.orange,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              headerText(),
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -332,7 +271,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              SecondRoute(clients: screenViewModel.clientList.value)),
+              SecondRoute(clients: screenViewModel.clientList)),
     );
   }
 }

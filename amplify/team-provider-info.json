@@ -14,12 +14,6 @@
     "categories": {
       "auth": {
         "mpsdriverapp": {}
-      },
-      "storage": {
-        "mpsdriverapp9490ef53": {
-          "bucketName": "amplify-mpsdriverapp-staging-53425-deployment",
-          "region": "us-west-1"
-        }
       }
     }
   }

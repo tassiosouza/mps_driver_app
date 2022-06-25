@@ -60,6 +60,7 @@ class PickRouteFile {
         client.stateZipCode = fields[i][6];
         client.deliveryInstructions = fields[i][7];
         client.mealInstructions = fields[i][8];
+        client.check = false;
         _clientList.add(client);
       }
     }

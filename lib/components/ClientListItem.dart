@@ -89,138 +89,173 @@ class ClientItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        elevation: 0,
-        margin: EdgeInsets.all(5),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(width: 1.0, color: App_Colors.grey_light.value)),
-        child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      elevation: 0,
+      margin: EdgeInsets.all(5),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(width: 1.0, color: App_Colors.grey_light.value)),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        SizedBox(width: 15),
+        Expanded(
+          child: IntrinsicWidth(
+            child: Column(
+              children: [
+                Row(children: [
+                  Container(
+                    margin: EdgeInsets.all(2),
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40),
+                        border: Border.all(
+                            width: 1, color: App_Colors.grey_light.value)),
+                    child: Icon(Icons.person,
+                        size: 40, color: App_Colors.grey_light.value),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      RichText(
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                              text: client.name,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: App_Colors.black_text.value,
+                                  fontFamily: 'Poppins'))),
+                      Text(client.address,
+                          style: TextStyle(
+                              color: App_Colors.black_text.value,
+                              fontFamily: 'Poppins',
+                              fontSize: 12)),
+                    ],
+                  )),
+                  Column(
+                    children: [
+                      Container(
+                          padding: EdgeInsets.only(right: 15),
+                          child: Icon(
+                            Icons.info,
+                            color: App_Colors.primary_color.value,
+                          )),
+                      SizedBox(height: 40)
+                    ],
+                  )
+                ]),
+                Divider(color: App_Colors.grey_light.value, thickness: 1),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    SizedBox(width: 15),
-                    Expanded(
-                      child: IntrinsicWidth(
-                        child: Column(
-                          children: [
-                            Row(children: [
-                              Container(margin: EdgeInsets.all(2),
-                                padding: EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(40),
-                                    border: Border.all(width: 1,
-                                        color: App_Colors.grey_light.value)),
-                                child: Icon(Icons.person, size: 40,
-                                    color: App_Colors.grey_light.value),
-                              ),
-                              SizedBox(width: 10),
-                              Expanded(child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  RichText(
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(text: client.name,
-                                          style: TextStyle(fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: App_Colors.black_text.value,
-                                              fontFamily: 'Poppins'))),
-                                  Text(client.address,
-                                      style: TextStyle(
-                                          color: App_Colors.black_text.value,
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12)),
-                                ],
-                              )),
-                              Column(children: [Container(padding: EdgeInsets.only(right: 15),
-                                  child: Icon(Icons.info, color: App_Colors.primary_color.value,)),
-                                SizedBox(height: 40)],)
-                            ]),
-                            Divider(
-                                color: App_Colors.grey_light.value,
-                                thickness: 1),
-                            Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                getButtonIcon(CustomIcon.sms_driver_icon, client),
-                                getButtonIcon(CustomIcon.call_driver_icon, client),
-                                getButtonIcon(CustomIcon.bag_driver_icon, client),
-                                SizedBox(width: 1),
-                                ElevatedButton(onPressed: () {
-                                    _launchMapsUrl();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      primary: App_Colors.primary_color.value),
-                                  child: Row(children: const [
-                                    Text("Start", style: TextStyle(fontSize: 15,
-                                            fontFamily: 'Poppins')),
-                                    SizedBox(width: 10),
-                                    Icon(CustomIcon.start_driver_icon, size: 10)
-                                  ]),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    IntrinsicHeight(
-                      child: Row(children: [
-                        VerticalDivider(color: App_Colors.grey_light.value, thickness: 1, width: 0),
-                        Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Card(margin: EdgeInsets.all(0),
-                              elevation: 0, color: App_Colors.primary_color.value,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(topRight: Radius.circular(10))),
-                              child: Container(child: Text("${clientIndex+1}°",
-                                style: TextStyle(color: Colors.white, fontSize: 14,
-                                fontWeight: FontWeight.w500),),
-                              padding: EdgeInsets.only(left: 35, right: 35, top: 8, bottom: 8))),
-                            GestureDetector(onTap: () {
-                                _onImageButtonPressed(ImageSource.camera,
-                                    context: context);
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(
-                                    top: 15, bottom: 15, left: 10, right: 10),
-                                padding: const EdgeInsets.only(
-                                    top: 7, bottom: 7, left: 6, right: 8),
-                                decoration: BoxDecoration(
-                                    color: App_Colors.white_background.value,
-                                    borderRadius: BorderRadius.circular(40),
-                                    border: Border.all(
-                                        width: 1,
-                                        color: App_Colors.grey_dark.value)),
-                                child: Icon(CustomIcon.camera_driver_icon,
-                                    size: 17,
-                                    color: App_Colors.primary_color.value),
-                              ),
-                            ),
-                            Text("Deliver", style: TextStyle(fontWeight: FontWeight.w500,
-                                  fontSize: 12, fontFamily: 'Poppins'),
-                            ),
-                            SizedBox(height: 5),
-                            Text(client.id,
-                              style: TextStyle(color: App_Colors.grey_text.value,
-                                  fontSize: 14, fontFamily: 'Poppins'),
-                            ),
-                            SizedBox(height: 5)],
-                        )
+                    getButtonIcon(CustomIcon.sms_driver_icon, client),
+                    getButtonIcon(CustomIcon.call_driver_icon, client),
+                    getButtonIcon(CustomIcon.bag_driver_icon, client),
+                    SizedBox(width: 1),
+                    ElevatedButton(
+                      onPressed: () {
+                        _launchMapsUrl();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          primary: App_Colors.primary_color.value),
+                      child: Row(children: const [
+                        Text("Start",
+                            style:
+                                TextStyle(fontSize: 13, fontFamily: 'Poppins')),
+                        SizedBox(width: 10),
+                        Icon(CustomIcon.start_driver_icon, size: 9)
                       ]),
-                    )
-                  ]),
-        );
+                    ),
+                    SizedBox(width: 1),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        IntrinsicHeight(
+          child: Row(children: [
+            VerticalDivider(
+                color: App_Colors.grey_light.value, thickness: 1, width: 0),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Card(
+                    margin: EdgeInsets.all(0),
+                    elevation: 0,
+                    color: App_Colors.primary_color.value,
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.only(topRight: Radius.circular(10))),
+                    child: Container(
+                        child: Text(
+                          "${clientIndex + 1}°",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        padding: EdgeInsets.only(
+                            left: 35, right: 35, top: 8, bottom: 8))),
+                GestureDetector(
+                  onTap: () {
+                    _onImageButtonPressed(ImageSource.camera, context: context);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                        top: 15, bottom: 15, left: 10, right: 10),
+                    padding: const EdgeInsets.only(
+                        top: 7, bottom: 7, left: 6, right: 8),
+                    decoration: BoxDecoration(
+                        color: App_Colors.white_background.value,
+                        borderRadius: BorderRadius.circular(40),
+                        border: Border.all(
+                            width: 1, color: App_Colors.grey_dark.value)),
+                    child: Icon(CustomIcon.camera_driver_icon,
+                        size: 17, color: App_Colors.primary_color.value),
+                  ),
+                ),
+                Text(
+                  "Deliver",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  client.id,
+                  style: TextStyle(
+                      color: App_Colors.grey_text.value,
+                      fontSize: 14,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 5)
+              ],
+            )
+          ]),
+        )
+      ]),
+    );
   }
 
   getButtonIcon(IconData icon, Client client) {
-    return GestureDetector(
-      onTap: () => smsService.sendSms(client.name, client.eta),
-      child: Container(
-        padding: EdgeInsets.all(6),
-        decoration: BoxDecoration(
-            color: App_Colors.white_background.value,
-            borderRadius: BorderRadius.circular(40),
-            border: Border.all(width: 1, color: App_Colors.grey_dark.value)),
-        child: Icon(icon, size: 16, color: App_Colors.primary_color.value),
-      ),
-    );
+    return SizedBox(
+        width: 30,
+        height: 28,
+        child: ElevatedButton(
+          onPressed: () => smsService.sendSms(client.name, client.eta),
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all(CircleBorder()),
+            padding: MaterialStateProperty.all(EdgeInsets.all(0)),
+            backgroundColor: MaterialStateProperty.all(
+                App_Colors.white_background.value), // <-- Button color
+            overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
+              if (states.contains(MaterialState.pressed))
+                return Colors.lightGreen; // <-- Splash color
+            }),
+          ),
+          child: Icon(icon, size: 14, color: App_Colors.primary_color.value),
+        ));
   }
 }

@@ -50,6 +50,7 @@ dependencies:
   google_maps_flutter: ^2.1.8
   amplify_storage_s3: ^0.5.1
   csv: ^5.0.1
+  im_stepper: ^1.0.1+1
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,9 @@ dev_dependencies:
 
   #Flutter splash screen
   flutter_native_splash: ^2.2.3
+
+  #stepper
+  im_stepper: ^1.0.1+1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

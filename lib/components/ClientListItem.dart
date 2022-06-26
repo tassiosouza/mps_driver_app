@@ -9,10 +9,12 @@ import 'package:mps_driver_app/Services/TwilioService.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../models/Client.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 
 import 'AppDialogs.dart';
 
@@ -21,8 +23,8 @@ class ClientItem extends StatelessWidget {
   int clientIndex;
   StartRouteViewModel screenViewModel;
 
-  ClientItem(this.client, this.screenViewModel,
-      this.clientIndex, {Key? key}) : super(key: key);
+  ClientItem(this.client, this.screenViewModel, this.clientIndex, {Key? key})
+      : super(key: key);
   late var availableMaps;
 
   final ImagePicker _picker = ImagePicker();
@@ -46,14 +48,14 @@ class ClientItem extends StatelessWidget {
     );
   }
 
-  Future<void> deliveryInstructionsDialog(context){
-    return AppDialogs().showDialogJustMsg(context, "Delivery Instructions",
-        client.deliveryInstructions);
+  Future<void> deliveryInstructionsDialog(context) {
+    return AppDialogs().showDialogJustMsg(
+        context, "Delivery Instructions", client.deliveryInstructions);
   }
 
   Future<void> sendSms(XFile? photo) async {
     String url = await createAndUploadFile(photo!);
-    smsService.sendSmsWithPhoto('fulano', 21, url);
+    smsService.sendSmsWithPhoto(client.phone, url);
   }
 
   void _setImageFileFromFile(XFile? value) {
@@ -95,6 +97,23 @@ class ClientItem extends StatelessWidget {
       sendSms(pickedFile);
       // ignore: empty_catches
     } catch (e) {}
+  }
+
+  void _sendSMS(String message, List<String> recipents) async {
+    String _result = await sendSMS(message: message, recipients: recipents)
+        .catchError((onError) {
+      print(onError);
+    });
+    print(_result);
+  }
+
+  _launchCaller(String phone) async {
+    var url = "tel:+1$phone";
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -145,12 +164,16 @@ class ClientItem extends StatelessWidget {
                   )),
                   Column(
                     children: [
-                      GestureDetector(child: Container(
-                          padding: EdgeInsets.only(right: 15),
-                          child: Icon(Icons.info,
-                            color: App_Colors.primary_color.value,
-                          )), onTap: () => deliveryInstructionsDialog(context)) ,
-                      SizedBox(height: 40)
+                      GestureDetector(
+                          onTap: () => deliveryInstructionsDialog(context),
+                          child: Container(
+                              padding: const EdgeInsets.only(right: 15),
+                              child: const Icon(
+                                Icons.info_outline,
+                                color: Colors.green,
+                                size: 20,
+                              ))),
+                      const SizedBox(height: 40)
                     ],
                   )
                 ]),
@@ -158,18 +181,23 @@ class ClientItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    getButtonIcon(CustomIcon.sms_driver_icon, client,
-                    () => smsService.sendSms(client.name, client.eta)),
-                    getButtonIcon(CustomIcon.call_driver_icon, client,
-                        (){}),
+                    getButtonIcon(CustomIcon.sms_driver_icon, client, false),
+                    getButtonIcon(CustomIcon.call_driver_icon, client, true),
                     Observer(builder: (_) => bagIcon(client.check)),
-                    SizedBox(width: 1),
+                    const SizedBox(width: 1),
                     ElevatedButton(
                       onPressed: () {
                         _launchMapsUrl();
                       },
-                      style: ElevatedButton.styleFrom(
-                          primary: App_Colors.primary_color.value),
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              App_Colors.primary_color.value),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                      side: BorderSide(
+                                          color: Colors.transparent)))),
                       child: Row(children: const [
                         Text("Start",
                             style:
@@ -192,41 +220,32 @@ class ClientItem extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Card(
+                Container(
                     margin: EdgeInsets.all(0),
-                    elevation: 0,
-                    color: App_Colors.primary_color.value,
-                    shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.only(topRight: Radius.circular(10))),
+                    decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(
+                              color: Colors.green,
+                              width: 1,
+                              style: BorderStyle.solid)),
+                    ),
                     child: Container(
                         child: Text(
                           "${clientIndex + 1}°",
                           style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.green,
                               fontSize: 14,
                               fontWeight: FontWeight.w500),
                         ),
                         padding: EdgeInsets.only(
                             left: 35, right: 35, top: 8, bottom: 8))),
-                GestureDetector(
-                  onTap: () {
-                    _onImageButtonPressed(ImageSource.camera, context: context);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                        top: 15, bottom: 15, left: 10, right: 10),
-                    padding: const EdgeInsets.only(
-                        top: 7, bottom: 7, left: 6, right: 8),
-                    decoration: BoxDecoration(
-                        color: App_Colors.white_background.value,
-                        borderRadius: BorderRadius.circular(40),
-                        border: Border.all(
-                            width: 1, color: App_Colors.grey_dark.value)),
-                    child: Icon(CustomIcon.camera_driver_icon,
+                getCameraIcon(
+                    Icon(CustomIcon.camera_driver_icon,
                         size: 17, color: App_Colors.primary_color.value),
-                  ),
-                ),
+                    client,
+                    () => _onImageButtonPressed(ImageSource.camera,
+                        context: context),
+                    context),
                 Text(
                   "Deliver",
                   style: TextStyle(
@@ -251,9 +270,9 @@ class ClientItem extends StatelessWidget {
     );
   }
 
-  bagIcon(bool check){
-    if(check){
-      return getButtonIcon(Icons.check, client, (){});
+  bagIcon(bool check) {
+    if (check) {
+      return getButtonIcon(Icons.check, client, false);
     } else {
       return SizedBox(
           width: 30,
@@ -270,18 +289,20 @@ class ClientItem extends StatelessWidget {
                   return Colors.lightGreen; // <-- Splash color
               }),
             ),
-            child: Icon(CustomIcon.bag_driver_icon, size: 14,
-                color: App_Colors.primary_color.value),
+            child: Icon(CustomIcon.bag_driver_icon,
+                size: 14, color: App_Colors.primary_color.value),
           ));
     }
   }
 
-  getButtonIcon(IconData icon, Client client, Function function) {
+  getButtonIcon(IconData icon, Client client, bool isCall) {
     return SizedBox(
         width: 30,
         height: 28,
         child: ElevatedButton(
-          onPressed: () => function,
+          onPressed: () => isCall
+              ? _launchCaller(client.phone.replaceAll(' ', ''))
+              : _sendSMS("", [client.phone]),
           style: ButtonStyle(
             shape: MaterialStateProperty.all(CircleBorder()),
             padding: MaterialStateProperty.all(EdgeInsets.all(0)),
@@ -294,5 +315,30 @@ class ClientItem extends StatelessWidget {
           ),
           child: Icon(icon, size: 14, color: App_Colors.primary_color.value),
         ));
+  }
+
+  getCameraIcon(
+      Icon icon, Client client, Function function, BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
+        child: SizedBox(
+            width: 38,
+            height: 35,
+            child: ElevatedButton(
+              onPressed: () =>
+                  _onImageButtonPressed(ImageSource.camera, context: context),
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all(CircleBorder()),
+                padding: MaterialStateProperty.all(EdgeInsets.all(0)),
+                backgroundColor: MaterialStateProperty.all(
+                    App_Colors.white_background.value), // <-- Button color
+                overlayColor:
+                    MaterialStateProperty.resolveWith<Color?>((states) {
+                  if (states.contains(MaterialState.pressed))
+                    return Colors.lightGreen; // <-- Splash color
+                }),
+              ),
+              child: icon,
+            )));
   }
 }

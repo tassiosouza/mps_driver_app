@@ -8,7 +8,7 @@ class TwilioSmsService {
       authToken: '4335317aa987c70f6263b960ef453d2f',
       twilioNumber: '6193936481');
 
-  void sendSms(String client_name, int client_eta) {
+  void sendSms(String client_name, String clientPhone, int client_eta) {
     log('calling send sms');
     String _printDuration(Duration duration) {
       String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -26,10 +26,10 @@ class TwilioSmsService {
         """\n\nThank you very much,""" +
         """\n\nTassio""";
     twilioFlutter.sendSMS(
-        toNumber: '+16197634382', messageBody: message, messageMediaUrl: '');
+        toNumber: '+1$clientPhone', messageBody: message, messageMediaUrl: '');
   }
 
-  void sendSmsWithPhoto(String client_name, int client_eta, String url) {
+  void sendSmsWithPhoto(String phone, String url) {
     String message =
         """🍱Your meals from Meal Prep Sunday San Diego have been successfully delivered to your doorstep at 7:23pm
 """ +
@@ -40,6 +40,6 @@ class TwilioSmsService {
             """\n\n✌🏼Thank you for choosing us, and enjoy your meals!"""
                 """\n\n💪🏼MPSSD Team""";
     twilioFlutter.sendSMS(
-        toNumber: '+16197634382', messageBody: message, messageMediaUrl: url);
+        toNumber: '+1$phone', messageBody: message, messageMediaUrl: url);
   }
 }

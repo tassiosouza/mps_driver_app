@@ -53,7 +53,7 @@ class PickRouteFile {
         Client client = Client();
         client.id = fields[i][0];
         client.name = fields[i][1];
-        client.phone = fields[i][2];
+        client.phone = fields[i][2].toString();
         client.address = fields[i][3];
         client.secondAddress = fields[i][4].toString();
         client.city = fields[i][5];
@@ -70,7 +70,7 @@ class PickRouteFile {
     GeocodingApi geocodingApi = GeocodingApi();
     for (var i = 0; i < _clientList.length; i++) {
       Future<Coordinates> coordinates = geocodingApi.getCoordinates(
-              _clientList[i].secondAddress + " " + _clientList[i].address)
+              _clientList[i].address + " " + _clientList[i].stateZipCode)
           as Future<Coordinates>;
 
       await coordinates.then((data) async {
@@ -83,11 +83,11 @@ class PickRouteFile {
           Future<List<Client>> orderedClients =
               routeOptimizationApi.getOrderedClients(_clientList);
 
-          // await orderedClients.then((data) {
-          //   _clientList = data;
-          // }, onError: (e) {
-          //   log(e);
-          // });
+          await orderedClients.then((data) {
+            _clientList = data;
+          }, onError: (e) {
+            log(e);
+          });
         }
       }, onError: (e) {
         log(e);

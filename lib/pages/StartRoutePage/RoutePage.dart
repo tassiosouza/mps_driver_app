@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mps_driver_app/models/Driver.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePage.dart';
 import 'package:mps_driver_app/Services/TwilioService.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePageState.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
+import '../../Services/DriverService.dart';
 import '../../components/AppDialogs.dart';
 import '../../components/ClientListItem.dart';
 import '../../components/Loading.dart';
@@ -39,13 +41,14 @@ class StartRouteComponent extends StatefulWidget {
 class _StartRouteComponentState extends State<StartRouteComponent> {
   final screenViewModel = StartRouteViewModel();
   int dotCount = 4;
+
   @override
   Widget build(BuildContext context) {
     return Observer(
         builder: (_) => getStateScreen(screenViewModel.screenState.value));
   }
 
-  Future<void> welcomeDialog(){
+  Future<void> welcomeDialog() {
     return AppDialogs().showDialogJustMsg(context, "Welcome Driver",
         "Make your checkin and then click welcome message to send message to the clients.");
   }
@@ -84,26 +87,33 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     }
   }
 
-  Future<void> welcomeMessageSendConfirm(){
+  Future<void> welcomeMessageSendConfirm() {
     return AppDialogs().showDialogConfirm(context, screenViewModel, "Confirm",
         "Touch in Check-in to make your checking and touch welcome message to send message to clients");
   }
 
-  Widget toCheckIn(bool checkin){
-    if(checkin){
+  Widget toCheckIn(bool checkin) {
+    if (checkin) {
       DateTime now = DateTime.now();
       String time = DateFormat('kk:mm').format(now);
-      return Container(padding: EdgeInsets.only(left: 18, top: 5),
-        child: Text("Initiated at: $time", style: TextStyle(fontSize: 14,
-            color: App_Colors.grey_dark.value),
-        ), alignment: Alignment.centerLeft);
+      return Container(
+          padding: EdgeInsets.only(left: 18, top: 5),
+          child: Text(
+            "Initiated at: $time",
+            style: TextStyle(fontSize: 14, color: App_Colors.grey_dark.value),
+          ),
+          alignment: Alignment.centerLeft);
     } else {
-      return GestureDetector(onTap: () => screenViewModel.setCheckIn(),
-          child: Container(padding: EdgeInsets.only(left: 18, top: 5),
-            child: Text("Check-in", style: TextStyle(fontSize: 14,
-                color: App_Colors.primary_color.value),
-            ), alignment: Alignment.centerLeft
-          ));
+      return GestureDetector(
+          onTap: () => screenViewModel.setCheckIn(),
+          child: Container(
+              padding: EdgeInsets.only(left: 18, top: 5),
+              child: Text(
+                "Check-in",
+                style: TextStyle(
+                    fontSize: 14, color: App_Colors.primary_color.value),
+              ),
+              alignment: Alignment.centerLeft));
     }
   }
 
@@ -112,32 +122,48 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
       backgroundColor: App_Colors.white_background.value,
       body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(children: [
-                  SizedBox(height: 60,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+              Column(
+                children: [
+                  SizedBox(
+                    height: 60,
                   ),
                   Container(
-                    padding: EdgeInsets.only(left: 18),
-                    child: Row(children: [
-                        Text("Mark Larson  ", style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
-                        ),
-                        DotIndicator(color: App_Colors.primary_color.value,
-                          size: 8,)
-                      ],),
-                    alignment: Alignment.centerLeft),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      padding: EdgeInsets.only(left: 18),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Mark Larson  ",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w500),
+                          ),
+                          DotIndicator(
+                            color: App_Colors.primary_color.value,
+                            size: 8,
+                          )
+                        ],
+                      ),
+                      alignment: Alignment.centerLeft),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Observer(builder: (_) => toCheckIn(screenViewModel.checkin.value)),
-                      GestureDetector(child: Container(padding: EdgeInsets.only(right: 25, top: 5),
-                        child: Text("Welcome message",
-                          style: TextStyle(fontSize: 14,
-                              color: App_Colors.primary_color.value),
-                        ),
-                        alignment: Alignment.centerLeft,
-                      ), onTap: welcomeMessageSendConfirm)
+                      Observer(
+                          builder: (_) =>
+                              toCheckIn(screenViewModel.checkin.value)),
+                      GestureDetector(
+                          child: Container(
+                            padding: EdgeInsets.only(right: 25, top: 5),
+                            child: Text(
+                              "Welcome message",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: App_Colors.primary_color.value),
+                            ),
+                            alignment: Alignment.centerLeft,
+                          ),
+                          onTap: welcomeMessageSendConfirm)
                     ],
                   ),
                   SizedBox(height: 15),
@@ -145,7 +171,8 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                   SizedBox(height: 10),
                   Container(
                     padding: EdgeInsets.only(left: 20),
-                    child: Row(children: [ Text("Route Status",
+                    child: Row(children: [
+                      Text("Route Status",
                           textAlign: TextAlign.start,
                           style: TextStyle(fontFamily: "Poppins", fontSize: 16))
                     ]),
@@ -190,16 +217,18 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                       });
                     },
                   ),
-                  SizedBox(height: 10
-                  ),
-                  Row(children: [Expanded(
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
                           child: Text(
                         "Route Plan",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: "Poppins",
                             fontSize: 12,
-                            color: getStatusColor(0, screenViewModel.statusRouteBar.value)),
+                            color: getStatusColor(
+                                0, screenViewModel.statusRouteBar.value)),
                       )),
                       Expanded(
                           child: Text(
@@ -208,7 +237,8 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                         style: TextStyle(
                             fontFamily: "Poppins",
                             fontSize: 12,
-                            color: getStatusColor(1, screenViewModel.statusRouteBar.value)),
+                            color: getStatusColor(
+                                1, screenViewModel.statusRouteBar.value)),
                       )),
                       Expanded(
                           child: Text("In transit",
@@ -216,14 +246,16 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                               style: TextStyle(
                                   fontFamily: "Poppins",
                                   fontSize: 12,
-                                  color: getStatusColor(2, screenViewModel.statusRouteBar.value)))),
+                                  color: getStatusColor(2,
+                                      screenViewModel.statusRouteBar.value)))),
                       Expanded(
                           child: Text("Route done",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontFamily: "Poppins",
                                   fontSize: 12,
-                                  color: getStatusColor(3, screenViewModel.statusRouteBar.value)))),
+                                  color: getStatusColor(3,
+                                      screenViewModel.statusRouteBar.value)))),
                     ],
                   ),
                   SizedBox(height: 15),
@@ -231,36 +263,49 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                 ],
               ),
               Column(children: [
-                SizedBox(height: 10,
+                SizedBox(
+                  height: 10,
                 ),
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(padding: EdgeInsets.only(left: 18),
-                        child: Text("Deliveries",
-                          style: TextStyle(fontWeight: FontWeight.w500,
-                              fontSize: 16),
+                      Container(
+                        padding: EdgeInsets.only(left: 18),
+                        child: Text(
+                          "Deliveries",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 16),
                         ),
                       ),
-                      GestureDetector(child: Container(
+                      GestureDetector(
+                          child: Container(
                               padding: EdgeInsets.only(right: 25),
                               child: Column(children: [
-                                Icon(Icons.location_on_outlined,
+                                Icon(
+                                  Icons.location_on_outlined,
                                   color: App_Colors.primary_color.value,
                                 ),
-                                Text("Route map", style: TextStyle(
-                                  color: App_Colors.primary_color.value),
-                                )])),
+                                Text(
+                                  "Route map",
+                                  style: TextStyle(
+                                      color: App_Colors.primary_color.value),
+                                )
+                              ])),
                           onTap: goToViewOnMap)
                     ]),
-                  Container(height: MediaQuery.of(context).size.height/2.1,
-                    child: Observer(builder: (_) => ListView(padding: const EdgeInsets.all(8),
-                        children: screenViewModel.clientList
-                            .map((client) => ClientItem(client,
-                            screenViewModel, screenViewModel.clientList
-                                .indexOf(client))).toList())))
-                      ]),
-            ])
-        ),
+                Container(
+                    height: MediaQuery.of(context).size.height / 2.1,
+                    child: Observer(
+                        builder: (_) => ListView(
+                            padding: const EdgeInsets.all(8),
+                            children: screenViewModel.clientList
+                                .map((client) => ClientItem(
+                                    client,
+                                    screenViewModel,
+                                    screenViewModel.clientList.indexOf(client)))
+                                .toList())))
+              ]),
+            ])),
       ),
     );
   }

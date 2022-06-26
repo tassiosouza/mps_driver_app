@@ -6,6 +6,7 @@ import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../Services/DriverService.dart';
 import '../../models/Driver.dart';
 import '../../theme/app_colors.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage();
@@ -145,6 +146,7 @@ class _ProfilePageState extends State<ProfilePageState> {
                     ),
                     SizedBox(height: 25),
                     GestureDetector(
+                      onTap: () => logout(),
                       child: Container(
                           padding: EdgeInsets.only(left: 25, bottom: 25),
                           child: Row(children: [
@@ -153,10 +155,14 @@ class _ProfilePageState extends State<ProfilePageState> {
                                     color: App_Colors.alert_color.value,
                                     fontSize: 14)),
                           ])),
-                      onTap: () {},
                     ),
                   ]))
             : Loading());
+  }
+
+  logout() {
+    Amplify.Auth.signOut();
+    DriverService.logout();
   }
 
   getInfoColumn(String value, String label) {

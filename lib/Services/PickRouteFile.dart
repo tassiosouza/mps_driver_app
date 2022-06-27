@@ -3,32 +3,21 @@ import 'dart:async';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mps_driver_app/Services/route_optimization_api';
-
-import 'geocoding_api';
+import 'package:mps_driver_app/Services/RouteOptimizationService.dart';
+import 'package:mps_driver_app/Services/GoogleGeolocationService.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:mps_driver_app/Services/TwilioSmsService.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
-import 'package:mps_driver_app/theme/app_colors.dart';
-import 'dart:developer';
-import '../../Services/geocoding_api';
-import '../../Services/route_optimization_api';
-import '../../components/client_item.dart';
 import '../../models/Client.dart';
 
 class PickRouteFile {
-
   final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   String? _fileName;
   String _filePath = "";
   List<Client> _clientList = [];
   List<PlatformFile>? _paths;
   String? _extension;
-
 
   Future<List<Client>> pickFiles() async {
     try {
@@ -53,47 +42,52 @@ class PickRouteFile {
 
     // Read the file
     final input = file.openRead();
-    final fields = await input.transform(utf8.decoder).transform(new CsvToListConverter()).toList();
+    final fields = await input
+        .transform(utf8.decoder)
+        .transform(new CsvToListConverter())
+        .toList();
     print(fields);
 
-    getClientsList(List<List<dynamic>> fields){
-      for(var i = 1; i < fields.length; i++){
+    getClientsList(List<List<dynamic>> fields) {
+      for (var i = 1; i < fields.length; i++) {
         Client client = Client();
         client.id = fields[i][0];
-          client.name = fields[i][1];
-          client.phone = fields[i][2];
-          client.address = fields[i][3];
-          client.secondAddress = fields[i][4].toString();
-          client.city = fields[i][5];
-          client.stateZipCode = fields[i][6];
-          client.deliveryInstructions = fields[i][7];
-          client.mealInstructions = fields[i][8];
-          _clientList.add(client);
+        client.name = fields[i][1];
+        client.phone = fields[i][2].toString();
+        client.address = fields[i][3];
+        client.secondAddress = fields[i][4].toString();
+        client.city = fields[i][5];
+        client.stateZipCode = fields[i][6];
+        client.deliveryInstructions = fields[i][7];
+        client.mealInstructions = fields[i][8];
+        client.check = false;
+        _clientList.add(client);
       }
     }
+
     getClientsList(fields);
 
-    GeocodingApi geocodingApi = new GeocodingApi();
+    GeocodingApi geocodingApi = GeocodingApi();
     for (var i = 0; i < _clientList.length; i++) {
-      Future<Coordinates> coordinates =
-      geocodingApi.getCoordinates(_clientList[i].secondAddress +" "+ _clientList[i].address) as Future<Coordinates>;
+      Future<Coordinates> coordinates = geocodingApi.getCoordinates(
+              _clientList[i].address + " " + _clientList[i].stateZipCode)
+          as Future<Coordinates>;
 
       await coordinates.then((data) async {
         _clientList[i].coordinates = data;
         if (i == _clientList.length - 1) {
           //call optimize api using coordinates
 
-          RouteOptimizationApi routeOptimizationApi =
-          new RouteOptimizationApi();
+          RouteOptimizationApi routeOptimizationApi = RouteOptimizationApi();
 
           Future<List<Client>> orderedClients =
-          routeOptimizationApi.getOrderedClients(_clientList);
+              routeOptimizationApi.getOrderedClients(_clientList);
 
-          // await orderedClients.then((data) {
-          //   _clientList = data;
-          // }, onError: (e) {
-          //   log(e);
-          // });
+          await orderedClients.then((data) {
+            _clientList = data;
+          }, onError: (e) {
+            log(e);
+          });
         }
       }, onError: (e) {
         log(e);
@@ -115,5 +109,4 @@ class PickRouteFile {
       ),
     );
   }
-
 }

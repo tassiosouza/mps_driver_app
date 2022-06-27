@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:mps_driver_app/Services/DriverService.dart';
+import '../../models/Driver.dart';
 import '../../models/Todo.dart';
 import 'dart:developer';
 
@@ -39,7 +41,7 @@ class _TodosPageState extends State<TodosPage> {
       // kick off app initialization
       _initializeApp();
     });
-    
+
     // to be filled in a later step
     super.initState();
   }
@@ -58,7 +60,12 @@ class _TodosPageState extends State<TodosPage> {
     // each time a snapshot is received, the following will happen:
     // _isLoading is set to false if it is not already false
     // _todos is set to the value in the latest snapshot
-    _subscription = Amplify.DataStore.observeQuery(Todo.classType)
+    String driverId = 'unknow-driver';
+    await Amplify.Auth.getCurrentUser()
+        .then((value) => driverId = value.userId);
+
+    _subscription = Amplify.DataStore.observeQuery(Todo.classType,
+            where: Todo.OWNER.eq(driverId))
         .listen((QuerySnapshot<Todo> snapshot) {
       setState(() {
         _todos = snapshot.items;
@@ -142,9 +149,9 @@ class TodoItem extends StatelessWidget {
         },
         onLongPress: () {
           //_deleteTodo(context);
-                    
+
           Amplify.Auth.signOut();
-          
+          DriverService.logout();
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -188,10 +195,14 @@ class _AddTodoFormState extends State<AddTodoForm> {
 
     // create a new Todo from the form values
     // `isComplete` is also required, but should start false in a new Todo
+    String driverId = 'unknow-driver';
+    await Amplify.Auth.getCurrentUser()
+        .then((value) => driverId = value.userId);
     Todo newTodo = Todo(
         name: name,
         description: description.isNotEmpty ? description : null,
-        isComplete: false);
+        isComplete: false,
+        owner: driverId);
 
     try {
       // to write data to DataStore, we simply pass an instance of a model to

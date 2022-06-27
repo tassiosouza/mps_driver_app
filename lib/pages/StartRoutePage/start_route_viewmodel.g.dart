@@ -13,20 +13,87 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
       Atom(name: '_StartRouteViewModel.screenState', context: context);
 
   @override
-  Observable<ScreenState> get screenState {
+  Observable<RoutePageState> get screenState {
     _$screenStateAtom.reportRead();
     return super.screenState;
   }
 
   @override
-  set screenState(Observable<ScreenState> value) {
+  set screenState(Observable<RoutePageState> value) {
     _$screenStateAtom.reportWrite(value, super.screenState, () {
       super.screenState = value;
     });
   }
 
+  late final _$clientListAtom =
+      Atom(name: '_StartRouteViewModel.clientList', context: context);
+
+  @override
+  ObservableList<Client> get clientList {
+    _$clientListAtom.reportRead();
+    return super.clientList;
+  }
+
+  @override
+  set clientList(ObservableList<Client> value) {
+    _$clientListAtom.reportWrite(value, super.clientList, () {
+      super.clientList = value;
+    });
+  }
+
+  late final _$checkinAtom =
+      Atom(name: '_StartRouteViewModel.checkin', context: context);
+
+  @override
+  Observable<bool> get checkin {
+    _$checkinAtom.reportRead();
+    return super.checkin;
+  }
+
+  @override
+  set checkin(Observable<bool> value) {
+    _$checkinAtom.reportWrite(value, super.checkin, () {
+      super.checkin = value;
+    });
+  }
+
+  late final _$statusRouteBarAtom =
+      Atom(name: '_StartRouteViewModel.statusRouteBar', context: context);
+
+  @override
+  Observable<int> get statusRouteBar {
+    _$statusRouteBarAtom.reportRead();
+    return super.statusRouteBar;
+  }
+
+  @override
+  set statusRouteBar(Observable<int> value) {
+    _$statusRouteBarAtom.reportWrite(value, super.statusRouteBar, () {
+      super.statusRouteBar = value;
+    });
+  }
+
+  late final _$getClientListAsyncAction =
+      AsyncAction('_StartRouteViewModel.getClientList', context: context);
+
+  @override
+  Future<void> getClientList() {
+    return _$getClientListAsyncAction.run(() => super.getClientList());
+  }
+
   late final _$_StartRouteViewModelActionController =
       ActionController(name: '_StartRouteViewModel', context: context);
+
+  @override
+  void setCheckIn() {
+    final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
+        name: '_StartRouteViewModel.setCheckIn');
+    try {
+      return super.setCheckIn();
+    } finally {
+      _$_StartRouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void goToLoadingScreen() {
@@ -51,6 +118,39 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
   }
 
   @override
+  void goToBagsScreen() {
+    final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
+        name: '_StartRouteViewModel.goToBagsScreen');
+    try {
+      return super.goToBagsScreen();
+    } finally {
+      _$_StartRouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void goToInTransitScreen() {
+    final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
+        name: '_StartRouteViewModel.goToInTransitScreen');
+    try {
+      return super.goToInTransitScreen();
+    } finally {
+      _$_StartRouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void goToRouteDoneScreen() {
+    final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
+        name: '_StartRouteViewModel.goToRouteDoneScreen');
+    try {
+      return super.goToRouteDoneScreen();
+    } finally {
+      _$_StartRouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void goToInitScreen() {
     final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
         name: '_StartRouteViewModel.goToInitScreen');
@@ -64,7 +164,10 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
   @override
   String toString() {
     return '''
-screenState: ${screenState}
+screenState: ${screenState},
+clientList: ${clientList},
+checkin: ${checkin},
+statusRouteBar: ${statusRouteBar}
     ''';
   }
 }

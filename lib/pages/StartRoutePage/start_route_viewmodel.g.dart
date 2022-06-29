@@ -57,6 +57,22 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
     });
   }
 
+  late final _$sentWelcomeMessageAtom =
+      Atom(name: '_StartRouteViewModel.sentWelcomeMessage', context: context);
+
+  @override
+  Observable<bool> get sentWelcomeMessage {
+    _$sentWelcomeMessageAtom.reportRead();
+    return super.sentWelcomeMessage;
+  }
+
+  @override
+  set sentWelcomeMessage(Observable<bool> value) {
+    _$sentWelcomeMessageAtom.reportWrite(value, super.sentWelcomeMessage, () {
+      super.sentWelcomeMessage = value;
+    });
+  }
+
   late final _$statusRouteBarAtom =
       Atom(name: '_StartRouteViewModel.statusRouteBar', context: context);
 
@@ -129,6 +145,28 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
   }
 
   @override
+  void verifyBags() {
+    final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
+        name: '_StartRouteViewModel.verifyBags');
+    try {
+      return super.verifyBags();
+    } finally {
+      _$_StartRouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void verifyPhotosSent() {
+    final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
+        name: '_StartRouteViewModel.verifyPhotosSent');
+    try {
+      return super.verifyPhotosSent();
+    } finally {
+      _$_StartRouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void goToInTransitScreen() {
     final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
         name: '_StartRouteViewModel.goToInTransitScreen');
@@ -167,6 +205,7 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
 screenState: ${screenState},
 clientList: ${clientList},
 checkin: ${checkin},
+sentWelcomeMessage: ${sentWelcomeMessage},
 statusRouteBar: ${statusRouteBar}
     ''';
   }

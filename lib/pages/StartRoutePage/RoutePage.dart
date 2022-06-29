@@ -52,6 +52,14 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     return AppDialogs().showDialogJustMsg(context, "Welcome Driver",
         "Make your checkin and then click welcome message to send message to the clients.");
   }
+  Future<void> inTransitDialog() {
+    return AppDialogs().showDialogJustMsg(context, "In Transit",
+        "You checked your bags and you can delivery now.");
+  }
+  Future<void> finishRouteDialog() {
+    return AppDialogs().showDialogJustMsg(context, "Route Done",
+        "You finish your route.");
+  }
 
   Widget getStateScreen(RoutePageState screenState) {
     late Widget widget;
@@ -66,9 +74,15 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         Future.delayed(Duration.zero, () => welcomeDialog());
         widget = routeScreen();
         break;
-      case RoutePageState.bagsChecking:
-      case RoutePageState.inTransit:
       case RoutePageState.routeDone:
+        Future.delayed(Duration.zero, () => finishRouteDialog());
+        widget = StartRouteInitPage(screenViewModel);
+        break;
+      case RoutePageState.bagsChecking:
+        widget = routeScreen();
+        break;
+      case RoutePageState.inTransit:
+        Future.delayed(Duration.zero, () => inTransitDialog());
         widget = routeScreen();
         break;
       case RoutePageState.error:
@@ -87,8 +101,9 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     }
   }
 
-  Future<void> welcomeMessageSendConfirm() {
-    return AppDialogs().showDialogConfirm(context, screenViewModel, "Confirm",
+  Future<void> welcomeMessageSendConfirmDialog() {
+    return AppDialogs().showConfirmDialog(context,
+            () => screenViewModel.goToBagsScreen(), "Confirm",
         "Touch in Check-in to make your checking and touch welcome message to send message to clients");
   }
 
@@ -114,6 +129,30 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                     fontSize: 14, color: App_Colors.primary_color.value),
               ),
               alignment: Alignment.centerLeft));
+    }
+  }
+
+  Widget getWelcomeMessage(bool sentWelcomeMessage){
+    if(sentWelcomeMessage){
+      return Container(
+        padding: EdgeInsets.only(right: 25, top: 5),
+        child: Text("message sent",
+          style: TextStyle(fontSize: 14,
+            color: App_Colors.grey_text.value),
+        ),
+        alignment: Alignment.centerLeft,
+      );
+    } else {
+      return GestureDetector(
+          child: Container(
+            padding: EdgeInsets.only(right: 25, top: 5),
+            child: Text("Welcome message",
+              style: TextStyle(fontSize: 14,
+                  color: App_Colors.primary_color.value),
+            ),
+            alignment: Alignment.centerLeft,
+          ),
+          onTap: welcomeMessageSendConfirmDialog);
     }
   }
 
@@ -152,18 +191,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                       Observer(
                           builder: (_) =>
                               toCheckIn(screenViewModel.checkin.value)),
-                      GestureDetector(
-                          child: Container(
-                            padding: EdgeInsets.only(right: 25, top: 5),
-                            child: Text(
-                              "Welcome message",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: App_Colors.primary_color.value),
-                            ),
-                            alignment: Alignment.centerLeft,
-                          ),
-                          onTap: welcomeMessageSendConfirm)
+                      getWelcomeMessage(screenViewModel.sentWelcomeMessage.value)
                     ],
                   ),
                   SizedBox(height: 15),
@@ -300,8 +328,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                             padding: const EdgeInsets.all(8),
                             children: screenViewModel.clientList
                                 .map((client) => ClientItem(
-                                    client,
-                                    screenViewModel,
+                                    client, screenViewModel,
                                     screenViewModel.clientList.indexOf(client)))
                                 .toList())))
               ]),
@@ -311,11 +338,9 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   }
 
   void goToViewOnMap() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              SecondRoute(clients: screenViewModel.clientList)),
+    Navigator.push(context,
+      MaterialPageRoute(builder: (context) =>
+        SecondRoute(clients: screenViewModel.clientList)),
     );
   }
 }

@@ -12,15 +12,30 @@ class DriverService {
   }
   DriverService._internal();
 
-  static login() async {
-    await retrieveDriverFromAmplify();
-  }
-
   static Future<Driver?> getCurrentDriver() async {
     if (_driver == null) {
       await retrieveDriverFromAmplify();
     }
     return _driver;
+  }
+
+  static Future<bool> setDriverName(String name) async {
+    Driver updatedDriver = _driver!.copyWith(
+      name: name,
+    );
+    bool result = false;
+
+    await Amplify.DataStore.save(updatedDriver)
+        .then((driver) => {
+              _driver = updatedDriver,
+              result = true,
+            })
+        .catchError((Object error) {
+      log('An error occurred trying to update driver name');
+      // ignore: invalid_return_type_for_catch_error
+      return result = false;
+    });
+    return result;
   }
 
   static Future<Driver?> retrieveDriverFromAmplify() async {
@@ -62,7 +77,7 @@ class DriverService {
       _driver = driversQueryResult[0];
       return _driver;
     } catch (e) {
-      print("Could not query DataStore: " + e.toString());
+      print("Could not query DataStore: $e");
     }
     return null;
   }
@@ -70,11 +85,11 @@ class DriverService {
   static Future<void> createNewAmplifyDriver(
       String driverId, String name, String email, String phone) async {
     final item = Driver(
-      firstName: name,
+      name: name,
       email: email,
       owner: driverId,
       phone: phone,
-      carCapacity: '22',
+      carCapacity: 22,
     );
     await Amplify.DataStore.save(item);
   }

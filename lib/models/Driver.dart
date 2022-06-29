@@ -22,245 +22,262 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
-
 /** This is an auto generated class representing the Driver type in your schema. */
 @immutable
 class Driver extends Model {
   static const classType = const _DriverModelType();
   final String id;
-  final String? _firstName;
+  final String? _name;
   final String? _email;
   final String? _phone;
-  final String? _lastName;
-  final String? _carCapacity;
+  final int? _carCapacity;
   final String? _owner;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
   @override
   getInstanceType() => classType;
-  
+
   @override
   String getId() {
     return id;
   }
-  
-  String get firstName {
+
+  String get name {
     try {
-      return _firstName!;
-    } catch(e) {
+      return _name!;
+    } catch (e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
+          AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion: AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString());
     }
   }
-  
+
   String get email {
     try {
       return _email!;
-    } catch(e) {
+    } catch (e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
+          AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion: AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString());
     }
   }
-  
+
   String? get phone {
     return _phone;
   }
-  
-  String? get lastName {
-    return _lastName;
-  }
-  
-  String? get carCapacity {
+
+  int? get carCapacity {
     return _carCapacity;
   }
-  
+
   String get owner {
     try {
       return _owner!;
-    } catch(e) {
+    } catch (e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
+          AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion: AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString());
     }
   }
-  
+
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
-  
+
   TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-  
-  const Driver._internal({required this.id, required firstName, required email, phone, lastName, carCapacity, required owner, createdAt, updatedAt}): _firstName = firstName, _email = email, _phone = phone, _lastName = lastName, _carCapacity = carCapacity, _owner = owner, _createdAt = createdAt, _updatedAt = updatedAt;
-  
-  factory Driver({String? id, required String firstName, required String email, String? phone, String? lastName, String? carCapacity, required String owner}) {
+
+  const Driver._internal(
+      {required this.id,
+      required name,
+      required email,
+      phone,
+      carCapacity,
+      required owner,
+      createdAt,
+      updatedAt})
+      : _name = name,
+        _email = email,
+        _phone = phone,
+        _carCapacity = carCapacity,
+        _owner = owner,
+        _createdAt = createdAt,
+        _updatedAt = updatedAt;
+
+  factory Driver(
+      {String? id,
+      required String name,
+      required String email,
+      String? phone,
+      int? carCapacity,
+      required String owner}) {
     return Driver._internal(
-      id: id == null ? UUID.getUUID() : id,
-      firstName: firstName,
-      email: email,
-      phone: phone,
-      lastName: lastName,
-      carCapacity: carCapacity,
-      owner: owner);
+        id: id == null ? UUID.getUUID() : id,
+        name: name,
+        email: email,
+        phone: phone,
+        carCapacity: carCapacity,
+        owner: owner);
   }
-  
+
   bool equals(Object other) {
     return this == other;
   }
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Driver &&
-      id == other.id &&
-      _firstName == other._firstName &&
-      _email == other._email &&
-      _phone == other._phone &&
-      _lastName == other._lastName &&
-      _carCapacity == other._carCapacity &&
-      _owner == other._owner;
+        id == other.id &&
+        _name == other._name &&
+        _email == other._email &&
+        _phone == other._phone &&
+        _carCapacity == other._carCapacity &&
+        _owner == other._owner;
   }
-  
+
   @override
   int get hashCode => toString().hashCode;
-  
+
   @override
   String toString() {
     var buffer = new StringBuffer();
-    
+
     buffer.write("Driver {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("firstName=" + "$_firstName" + ", ");
+    buffer.write("name=" + "$_name" + ", ");
     buffer.write("email=" + "$_email" + ", ");
     buffer.write("phone=" + "$_phone" + ", ");
-    buffer.write("lastName=" + "$_lastName" + ", ");
-    buffer.write("carCapacity=" + "$_carCapacity" + ", ");
+    buffer.write("carCapacity=" +
+        (_carCapacity != null ? _carCapacity!.toString() : "null") +
+        ", ");
     buffer.write("owner=" + "$_owner" + ", ");
-    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("createdAt=" +
+        (_createdAt != null ? _createdAt!.format() : "null") +
+        ", ");
+    buffer.write(
+        "updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-    
+
     return buffer.toString();
   }
-  
-  Driver copyWith({String? id, String? firstName, String? email, String? phone, String? lastName, String? carCapacity, String? owner}) {
+
+  Driver copyWith(
+      {String? id,
+      String? name,
+      String? email,
+      String? phone,
+      int? carCapacity,
+      String? owner}) {
     return Driver._internal(
-      id: id ?? this.id,
-      firstName: firstName ?? this.firstName,
-      email: email ?? this.email,
-      phone: phone ?? this.phone,
-      lastName: lastName ?? this.lastName,
-      carCapacity: carCapacity ?? this.carCapacity,
-      owner: owner ?? this.owner);
+        id: id ?? this.id,
+        name: name ?? this.name,
+        email: email ?? this.email,
+        phone: phone ?? this.phone,
+        carCapacity: carCapacity ?? this.carCapacity,
+        owner: owner ?? this.owner);
   }
-  
-  Driver.fromJson(Map<String, dynamic> json)  
-    : id = json['id'],
-      _firstName = json['firstName'],
-      _email = json['email'],
-      _phone = json['phone'],
-      _lastName = json['lastName'],
-      _carCapacity = json['carCapacity'],
-      _owner = json['owner'],
-      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
-  
+
+  Driver.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        _name = json['name'],
+        _email = json['email'],
+        _phone = json['phone'],
+        _carCapacity = (json['carCapacity'] as num?)?.toInt(),
+        _owner = json['owner'],
+        _createdAt = json['createdAt'] != null
+            ? TemporalDateTime.fromString(json['createdAt'])
+            : null,
+        _updatedAt = json['updatedAt'] != null
+            ? TemporalDateTime.fromString(json['updatedAt'])
+            : null;
+
   Map<String, dynamic> toJson() => {
-    'id': id, 'firstName': _firstName, 'email': _email, 'phone': _phone, 'lastName': _lastName, 'carCapacity': _carCapacity, 'owner': _owner, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
-  };
+        'id': id,
+        'name': _name,
+        'email': _email,
+        'phone': _phone,
+        'carCapacity': _carCapacity,
+        'owner': _owner,
+        'createdAt': _createdAt?.format(),
+        'updatedAt': _updatedAt?.format()
+      };
 
   static final QueryField ID = QueryField(fieldName: "driver.id");
-  static final QueryField FIRSTNAME = QueryField(fieldName: "firstName");
+  static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField EMAIL = QueryField(fieldName: "email");
   static final QueryField PHONE = QueryField(fieldName: "phone");
-  static final QueryField LASTNAME = QueryField(fieldName: "lastName");
   static final QueryField CARCAPACITY = QueryField(fieldName: "carCapacity");
   static final QueryField OWNER = QueryField(fieldName: "owner");
-  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+  static var schema =
+      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Driver";
     modelSchemaDefinition.pluralName = "Drivers";
-    
+
     modelSchemaDefinition.authRules = [
-      AuthRule(
-        authStrategy: AuthStrategy.PUBLIC,
-        operations: [
-          ModelOperation.CREATE,
-          ModelOperation.UPDATE,
-          ModelOperation.DELETE,
-          ModelOperation.READ
-        ])
+      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
+        ModelOperation.CREATE,
+        ModelOperation.UPDATE,
+        ModelOperation.DELETE,
+        ModelOperation.READ
+      ])
     ];
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.FIRSTNAME,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: Driver.NAME,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.EMAIL,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: Driver.EMAIL,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.PHONE,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: Driver.PHONE,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.LASTNAME,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: Driver.CARCAPACITY,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.int)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.CARCAPACITY,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.OWNER,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: Driver.OWNER,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'createdAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        fieldName: 'createdAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'updatedAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
+        fieldName: 'updatedAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
   });
 }
 
 class _DriverModelType extends ModelType<Driver> {
   const _DriverModelType();
-  
+
   @override
   Driver fromJson(Map<String, dynamic> jsonData) {
     return Driver.fromJson(jsonData);

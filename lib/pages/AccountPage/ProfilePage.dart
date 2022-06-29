@@ -77,7 +77,7 @@ class _ProfilePageState extends State<ProfilePageState> {
                                   ),
                                   SizedBox(height: 15),
                                   Text(
-                                    "${_currentDriver?.firstName}",
+                                    "${_currentDriver?.name}",
                                     style: TextStyle(
                                         fontSize: 18, color: Colors.white),
                                   ),
@@ -116,13 +116,14 @@ class _ProfilePageState extends State<ProfilePageState> {
                               )
                             ])),
                     SizedBox(height: 15),
-                    getInfoRow("Full Name", _currentDriver!.firstName),
+                    getInfoRow("Full Name", _currentDriver!.name),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
                     getInfoRow("Email", _currentDriver!.email),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
                     getInfoRow("Phone number", _currentDriver?.phone),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
-                    getInfoRow("Car Capacity", _currentDriver?.carCapacity),
+                    getInfoRow(
+                        "Car Capacity", _currentDriver?.carCapacity.toString()),
                     SizedBox(height: 20),
                     Container(
                         color: App_Colors.grey_background.value,
@@ -181,6 +182,7 @@ class _ProfilePageState extends State<ProfilePageState> {
   }
 
   getInfoRow(String label, String? value) {
+    TextEditingController myController = new TextEditingController();
     return Container(
       padding: EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 3),
       child: Row(
@@ -190,8 +192,46 @@ class _ProfilePageState extends State<ProfilePageState> {
             label,
             style: TextStyle(fontSize: 14),
           ),
-          Text(value ?? '',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500))
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              child: FocusScope(
+                onFocusChange: (value) {
+                  if (!value) {
+                    log(myController.text.toString());
+                  }
+                },
+                child: TextFormField(
+                  controller: myController,
+                  onFieldSubmitted: (String value) async {
+                    if (value.isNotEmpty && label == 'Full Name') {
+                      bool result = await DriverService.setDriverName(value);
+                      if (result) {
+                        const snackBar = SnackBar(
+                          content: Text('User information saved!'),
+                        );
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    }
+                  },
+                  textAlignVertical: TextAlignVertical.center,
+                  textAlign: TextAlign.right,
+                  decoration: InputDecoration(
+                      isCollapsed: true,
+                      fillColor: Colors.transparent,
+                      floatingLabelAlignment: FloatingLabelAlignment.start,
+                      contentPadding: const EdgeInsets.all(0),
+                      border: InputBorder.none,
+                      label: Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(value.toString()),
+                      ),
+                      alignLabelWithHint: true),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

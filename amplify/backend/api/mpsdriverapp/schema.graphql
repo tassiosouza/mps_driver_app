@@ -1,10 +1,9 @@
 type Driver @model @auth(rules: [{allow: public}]) {
   id: ID!
-  firstName: String!
+  name: String!
   email: String!
   phone: String
-  lastName: String
-  carCapacity: String
+  carCapacity: Int
   owner: String!
 }
 

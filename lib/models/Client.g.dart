@@ -24,6 +24,22 @@ mixin _$Client on _Client, Store {
     });
   }
 
+  late final _$sentPhotoAtom =
+      Atom(name: '_Client.sentPhoto', context: context);
+
+  @override
+  bool get sentPhoto {
+    _$sentPhotoAtom.reportRead();
+    return super.sentPhoto;
+  }
+
+  @override
+  set sentPhoto(bool value) {
+    _$sentPhotoAtom.reportWrite(value, super.sentPhoto, () {
+      super.sentPhoto = value;
+    });
+  }
+
   late final _$_ClientActionController =
       ActionController(name: '_Client', context: context);
 
@@ -39,9 +55,21 @@ mixin _$Client on _Client, Store {
   }
 
   @override
+  dynamic setSentPhoto(bool sent) {
+    final _$actionInfo =
+        _$_ClientActionController.startAction(name: '_Client.setSentPhoto');
+    try {
+      return super.setSentPhoto(sent);
+    } finally {
+      _$_ClientActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-check: ${check}
+check: ${check},
+sentPhoto: ${sentPhoto}
     ''';
   }
 }

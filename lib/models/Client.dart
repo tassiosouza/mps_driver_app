@@ -25,6 +25,12 @@ abstract class _Client with Store{
   setCheck(bool isCheck){
     check = isCheck;
   }
+  @observable
+  bool sentPhoto = false;
+  @action
+  setSentPhoto(bool sent){
+    check = sent;
+  }
 
   _Client();
 }

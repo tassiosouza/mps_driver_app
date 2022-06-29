@@ -16,6 +16,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 
+import '../pages/StartRoutePage/StartRoutePageState.dart';
 import 'AppDialogs.dart';
 
 class ClientItem extends StatelessWidget {
@@ -55,7 +56,11 @@ class ClientItem extends StatelessWidget {
 
   Future<void> sendSms(XFile? photo) async {
     String url = await createAndUploadFile(photo!);
-    smsService.sendSmsWithPhoto(client.phone, url);
+    if(url.isEmpty){
+      throw Exception('Photo exception');
+    } else {
+      smsService.sendSmsWithPhoto(client.phone, url);
+    }
   }
 
   void _setImageFileFromFile(XFile? value) {
@@ -113,6 +118,28 @@ class ClientItem extends StatelessWidget {
       await launch(url);
     } else {
       throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> checkBagConfirmDialog(BuildContext context) {
+    return AppDialogs().showConfirmDialog(context, () => client.setCheck(true),
+        "Meal Instructions", client.mealInstructions);
+  }
+  Future<void> wrongCheckBagClickDialog(BuildContext context) {
+    return AppDialogs().showDialogJustMsg(context,
+        "Attention", "You need to send welcome message before check bags.");
+  }
+  Future<void> wrongTakePhotoClickDialog(BuildContext context) {
+    return AppDialogs().showDialogJustMsg(context,
+        "Attention", "You need to be in transit to take photo.");
+  }
+
+  takePhoto(context, Client client){
+    try{
+      _onImageButtonPressed(ImageSource.camera, context: context);
+      client.setSentPhoto(true);
+    } catch(e){
+      client.setSentPhoto(false);
     }
   }
 
@@ -183,7 +210,7 @@ class ClientItem extends StatelessWidget {
                   children: [
                     getButtonIcon(CustomIcon.sms_driver_icon, client, false),
                     getButtonIcon(CustomIcon.call_driver_icon, client, true),
-                    Observer(builder: (_) => bagIcon(client.check)),
+                    Observer(builder: (_) => bagIcon(client.check, context)),
                     const SizedBox(width: 1),
                     ElevatedButton(
                       onPressed: () {
@@ -239,13 +266,7 @@ class ClientItem extends StatelessWidget {
                         ),
                         padding: EdgeInsets.only(
                             left: 35, right: 35, top: 8, bottom: 8))),
-                getCameraIcon(
-                    Icon(CustomIcon.camera_driver_icon,
-                        size: 17, color: App_Colors.primary_color.value),
-                    client,
-                    () => _onImageButtonPressed(ImageSource.camera,
-                        context: context),
-                    context),
+                getCameraIcon(client, context),
                 Text(
                   "Deliver",
                   style: TextStyle(
@@ -270,15 +291,23 @@ class ClientItem extends StatelessWidget {
     );
   }
 
-  bagIcon(bool check) {
+  bagIcon(bool check, BuildContext context) {
+    Widget widget;
     if (check) {
-      return getButtonIcon(Icons.check, client, false);
+      widget = getButtonIcon(Icons.check, client, false);
+      screenViewModel.verifyBags();
     } else {
-      return SizedBox(
+      widget = SizedBox(
           width: 30,
           height: 28,
           child: ElevatedButton(
-            onPressed: () => client.setCheck(true),
+            onPressed: () {
+              if(screenViewModel.screenState.value == RoutePageState.bagsChecking){
+                checkBagConfirmDialog(context);
+              } else {
+                wrongCheckBagClickDialog(context);
+              }
+            },
             style: ButtonStyle(
               shape: MaterialStateProperty.all(CircleBorder()),
               padding: MaterialStateProperty.all(EdgeInsets.all(0)),
@@ -293,6 +322,7 @@ class ClientItem extends StatelessWidget {
                 size: 14, color: App_Colors.primary_color.value),
           ));
     }
+    return widget;
   }
 
   getButtonIcon(IconData icon, Client client, bool isCall) {
@@ -317,16 +347,28 @@ class ClientItem extends StatelessWidget {
         ));
   }
 
-  getCameraIcon(
-      Icon icon, Client client, Function function, BuildContext context) {
+  getCameraIcon(Client client, BuildContext context) {
+    Icon icon;
+    if(client.sentPhoto){
+      icon = Icon(Icons.check,
+          size: 17, color: App_Colors.primary_color.value);
+    } else {
+      icon = Icon(CustomIcon.camera_driver_icon,
+          size: 17, color: App_Colors.primary_color.value);
+    }
     return Container(
         margin: const EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
         child: SizedBox(
             width: 38,
             height: 35,
             child: ElevatedButton(
-              onPressed: () =>
-                  _onImageButtonPressed(ImageSource.camera, context: context),
+              onPressed: () {
+                if(screenViewModel.screenState.value == RoutePageState.inTransit){
+                  takePhoto(context, client);
+                } else {
+                  wrongTakePhotoClickDialog(context);
+                }
+              },
               style: ButtonStyle(
                 shape: MaterialStateProperty.all(CircleBorder()),
                 padding: MaterialStateProperty.all(EdgeInsets.all(0)),

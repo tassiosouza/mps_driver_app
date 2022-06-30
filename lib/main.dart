@@ -3,6 +3,8 @@ import 'dart:core';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mps_driver_app/AppModule.dart';
 import 'package:mps_driver_app/Services/DriverService.dart';
 import 'package:mps_driver_app/components/Loading.dart';
 import 'package:mps_driver_app/pages/AccountPage/ProfilePage.dart';
@@ -23,7 +25,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  runApp(MyApp());
+  runApp(ModularApp(module: AppModule(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

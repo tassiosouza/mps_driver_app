@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/Driver.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePage.dart';
 import 'package:mps_driver_app/Services/TwilioService.dart';
@@ -39,7 +40,7 @@ class StartRouteComponent extends StatefulWidget {
 }
 
 class _StartRouteComponentState extends State<StartRouteComponent> {
-  final screenViewModel = StartRouteViewModel();
+  StartRouteViewModel screenViewModel = Modular.get<StartRouteViewModel>();
   int dotCount = 4;
 
   @override
@@ -65,7 +66,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     late Widget widget;
     switch (screenState) {
       case RoutePageState.init:
-        widget = StartRouteInitPage(screenViewModel);
+        widget = StartRouteInitPage();
         break;
       case RoutePageState.loading:
         widget = Loading();
@@ -76,7 +77,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         break;
       case RoutePageState.routeDone:
         Future.delayed(Duration.zero, () => finishRouteDialog());
-        widget = StartRouteInitPage(screenViewModel);
+        widget = StartRouteInitPage();
         break;
       case RoutePageState.bagsChecking:
         widget = routeScreen();
@@ -327,8 +328,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                         builder: (_) => ListView(
                             padding: const EdgeInsets.all(8),
                             children: screenViewModel.clientList
-                                .map((client) => ClientItem(
-                                    client, screenViewModel,
+                                .map((client) => ClientItem(client,
                                     screenViewModel.clientList.indexOf(client)))
                                 .toList())))
               ]),

@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 
 import '../../theme/app_colors.dart';
 
 class StartRouteInitPage extends StatefulWidget {
-  StartRouteViewModel startRouteViewModel;
-  StartRouteInitPage(this.startRouteViewModel);
+  StartRouteViewModel startRouteViewModel = Modular.get<StartRouteViewModel>();
   _StartRouteInitPage createState() => _StartRouteInitPage();
 }
 

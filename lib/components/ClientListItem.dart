@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:mps_driver_app/Services/TwilioService.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
@@ -22,9 +23,9 @@ import 'AppDialogs.dart';
 class ClientItem extends StatelessWidget {
   Client client;
   int clientIndex;
-  StartRouteViewModel screenViewModel;
+  StartRouteViewModel screenViewModel = Modular.get<StartRouteViewModel>();
 
-  ClientItem(this.client, this.screenViewModel, this.clientIndex, {Key? key})
+  ClientItem(this.client, this.clientIndex, {Key? key})
       : super(key: key);
   late var availableMaps;
 
@@ -133,6 +134,10 @@ class ClientItem extends StatelessWidget {
     return AppDialogs().showDialogJustMsg(context,
         "Attention", "You need to be in transit to take photo.");
   }
+  Future<void> wrongStartRouteClickDialog(BuildContext context) {
+    return AppDialogs().showDialogJustMsg(context,
+        "Attention", "You need to be in transit to start route.");
+  }
 
   takePhoto(context, Client client){
     try{
@@ -140,6 +145,14 @@ class ClientItem extends StatelessWidget {
       client.setSentPhoto(true);
     } catch(e){
       client.setSentPhoto(false);
+    }
+  }
+
+  Color getStartButtonColor(){
+    if(screenViewModel.screenState.value == RoutePageState.inTransit){
+      return App_Colors.primary_color.value;
+    } else {
+      return App_Colors.grey_light.value;
     }
   }
 
@@ -214,11 +227,15 @@ class ClientItem extends StatelessWidget {
                     const SizedBox(width: 1),
                     ElevatedButton(
                       onPressed: () {
-                        _launchMapsUrl();
+                        if(screenViewModel.screenState.value == RoutePageState.inTransit){
+                          _launchMapsUrl();
+                        } else {
+                          wrongStartRouteClickDialog(context);
+                        }
                       },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
-                              App_Colors.primary_color.value),
+                              getStartButtonColor()),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(

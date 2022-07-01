@@ -16,6 +16,14 @@ abstract class _StartRouteViewModel with Store {
   var screenState = Observable(RoutePageState.init);
 
   @observable
+  var firstOpen = Observable(true);
+
+  @action
+  void setFirstOpen(){
+    firstOpen.value = false;
+  }
+
+  @observable
   var clientList = ObservableList<Client>();
 
   @observable

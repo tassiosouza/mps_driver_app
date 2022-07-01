@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 import 'dart:developer';
+import 'package:intl/intl.dart';
 
 class TwilioSmsService {
   TwilioFlutter twilioFlutter = TwilioFlutter(
@@ -30,8 +31,10 @@ class TwilioSmsService {
   }
 
   void sendSmsWithPhoto(String phone, String url) {
+    DateTime now = DateTime.now();
+    String time = DateFormat.jm().format(now);
     String message =
-        """🍱Your meals from Meal Prep Sunday San Diego have been successfully delivered to your doorstep at 7:23pm
+        """🍱Your meals from Meal Prep Sunday San Diego have been successfully delivered to your doorstep at $time
 """ +
             """\n\n🏋🏽‍♀'Difficult roads often will lead to beautiful destinations'""" +
             """\n\nIn case you won’t be home and it is needed further information to get into your building or gated community, please reply this text with the instructions.""" +

@@ -14,7 +14,7 @@ import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../Services/DriverService.dart';
 import '../../components/AppDialogs.dart';
 import '../../components/ClientListItem.dart';
-import '../../components/Loading.dart';
+import '../../components/StateRouteLoading.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
 
@@ -42,6 +42,22 @@ class StartRouteComponent extends StatefulWidget {
 class _StartRouteComponentState extends State<StartRouteComponent> {
   StartRouteViewModel screenViewModel = Modular.get<StartRouteViewModel>();
   int dotCount = 4;
+  Driver? _currentDriver;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadDriverInformation();
+    });
+    super.initState();
+  }
+
+  void loadDriverInformation() async {
+    Driver? driver = await DriverService.getCurrentDriver();
+    setState(() {
+      _currentDriver = driver;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +66,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   }
 
   Future<void> welcomeDialog() {
+    screenViewModel.setFirstOpen();
     return AppDialogs().showDialogJustMsg(context, "Welcome Driver",
         "Make your checkin and then click welcome message to send message to the clients.");
   }
@@ -69,10 +86,12 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         widget = StartRouteInitPage();
         break;
       case RoutePageState.loading:
-        widget = Loading();
+        widget = StateRouteLoading();
         break;
       case RoutePageState.routePlan:
-        Future.delayed(Duration.zero, () => welcomeDialog());
+        if(screenViewModel.firstOpen.value){
+          Future.delayed(Duration.zero, () => welcomeDialog());
+        }
         widget = routeScreen();
         break;
       case RoutePageState.routeDone:
@@ -174,11 +193,10 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                       padding: EdgeInsets.only(left: 18),
                       child: Row(
                         children: [
-                          Text(
-                            "Mark Larson  ",
+                          _currentDriver != null ? Text("${_currentDriver?.name}  ",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w500),
-                          ),
+                          ) : Text(""),
                           DotIndicator(
                             color: App_Colors.primary_color.value,
                             size: 8,

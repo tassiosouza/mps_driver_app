@@ -6,7 +6,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/AppModule.dart';
 import 'package:mps_driver_app/Services/DriverService.dart';
-import 'package:mps_driver_app/components/Loading.dart';
+import 'package:mps_driver_app/components/StateRouteLoading.dart';
 import 'package:mps_driver_app/pages/AccountPage/ProfilePage.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/RoutePage.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:mps_driver_app/components/Loading.dart';
+import 'package:mps_driver_app/components/StateRouteLoading.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../Services/DriverService.dart';
 import '../../models/Driver.dart';
@@ -158,7 +158,7 @@ class _ProfilePageState extends State<ProfilePageState> {
                           ])),
                     ),
                   ]))
-            : Loading());
+            : Center(child: CircularProgressIndicator()));
   }
 
   logout() {

@@ -25,6 +25,22 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
     });
   }
 
+  late final _$firstOpenAtom =
+      Atom(name: '_StartRouteViewModel.firstOpen', context: context);
+
+  @override
+  Observable<bool> get firstOpen {
+    _$firstOpenAtom.reportRead();
+    return super.firstOpen;
+  }
+
+  @override
+  set firstOpen(Observable<bool> value) {
+    _$firstOpenAtom.reportWrite(value, super.firstOpen, () {
+      super.firstOpen = value;
+    });
+  }
+
   late final _$clientListAtom =
       Atom(name: '_StartRouteViewModel.clientList', context: context);
 
@@ -99,6 +115,17 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
 
   late final _$_StartRouteViewModelActionController =
       ActionController(name: '_StartRouteViewModel', context: context);
+
+  @override
+  void setFirstOpen() {
+    final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
+        name: '_StartRouteViewModel.setFirstOpen');
+    try {
+      return super.setFirstOpen();
+    } finally {
+      _$_StartRouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setCheckIn() {
@@ -203,6 +230,7 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
   String toString() {
     return '''
 screenState: ${screenState},
+firstOpen: ${firstOpen},
 clientList: ${clientList},
 checkin: ${checkin},
 sentWelcomeMessage: ${sentWelcomeMessage},

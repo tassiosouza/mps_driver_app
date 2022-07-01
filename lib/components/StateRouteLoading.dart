@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../theme/app_colors.dart';
 
-class Loading extends StatelessWidget {
+class StateRouteLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.center,

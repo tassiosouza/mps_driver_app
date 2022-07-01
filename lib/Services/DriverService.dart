@@ -38,6 +38,44 @@ class DriverService {
     return result;
   }
 
+  static Future<bool> setDriverPhone(String phone) async {
+    Driver updatedDriver = _driver!.copyWith(
+      phone: phone,
+    );
+    bool result = false;
+
+    await Amplify.DataStore.save(updatedDriver)
+        .then((driver) => {
+              _driver = updatedDriver,
+              result = true,
+            })
+        .catchError((Object error) {
+      log('An error occurred trying to update driver phone');
+      // ignore: invalid_return_type_for_catch_error
+      return result = false;
+    });
+    return result;
+  }
+
+  static Future<bool> setDriverCapacity(int carCapacity) async {
+    Driver updatedDriver = _driver!.copyWith(
+      carCapacity: carCapacity,
+    );
+    bool result = false;
+
+    await Amplify.DataStore.save(updatedDriver)
+        .then((driver) => {
+              _driver = updatedDriver,
+              result = true,
+            })
+        .catchError((Object error) {
+      log('An error occurred trying to update driver car capacity');
+      // ignore: invalid_return_type_for_catch_error
+      return result = false;
+    });
+    return result;
+  }
+
   static Future<Driver?> retrieveDriverFromAmplify() async {
     String? amplifyDriverId;
     String amplifyDriverName = '';

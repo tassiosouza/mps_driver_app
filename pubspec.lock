@@ -507,9 +507,9 @@ packages:
   im_stepper:
     dependency: "direct main"
     description:
-      name: im_stepper
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "custom/im_stepper-1.0.1+1"
+      relative: true
+    source: path
     version: "1.0.1+1"
   image:
     dependency: transitive
@@ -827,9 +827,9 @@ packages:
   twilio_flutter:
     dependency: "direct main"
     description:
-      name: twilio_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "custom/twilio_flutter-0.0.9"
+      relative: true
+    source: path
     version: "0.0.9"
   typed_data:
     dependency: transitive

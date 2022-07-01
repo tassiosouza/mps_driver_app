@@ -123,7 +123,7 @@ class _ProfilePageState extends State<ProfilePageState> {
                     getInfoRow("Phone number", _currentDriver?.phone),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
                     getInfoRow(
-                        "Car Capacity", _currentDriver?.carCapacity.toString()),
+                        "Car capacity", _currentDriver?.carCapacity.toString()),
                     SizedBox(height: 20),
                     Container(
                         color: App_Colors.grey_background.value,
@@ -204,8 +204,21 @@ class _ProfilePageState extends State<ProfilePageState> {
                 child: TextFormField(
                   controller: myController,
                   onFieldSubmitted: (String value) async {
-                    if (value.isNotEmpty && label == 'Full Name') {
-                      bool result = await DriverService.setDriverName(value);
+                    if (value.isNotEmpty) {
+                      bool result = false;
+                      switch (label) {
+                        case 'Full Name':
+                          result = await DriverService.setDriverName(value);
+                          break;
+                        case 'Phone number':
+                          result = await DriverService.setDriverPhone(value);
+                          break;
+                        case 'Car capacity':
+                          result = await DriverService.setDriverCapacity(
+                              int.parse(value));
+                          break;
+                      }
+
                       if (result) {
                         const snackBar = SnackBar(
                           content: Text('User information saved!'),

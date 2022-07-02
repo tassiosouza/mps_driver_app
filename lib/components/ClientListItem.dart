@@ -60,6 +60,7 @@ class ClientItem extends StatelessWidget {
     if(url.isEmpty){
       throw Exception('Photo exception');
     } else {
+      client.setSentPhoto(true);
       smsService.sendSmsWithPhoto(client.phone, url);
     }
   }
@@ -84,7 +85,7 @@ class ClientItem extends StatelessWidget {
           });
       print('Successfully uploaded image: ${result.key}');
       GetUrlResult urlResult = await Amplify.Storage.getUrl(key: result.key);
-      return urlResult.url;
+      return urlResult.url.replaceAll(' ', '');
     } on StorageException catch (e) {
       print('Error uploading image: $e');
       return '';
@@ -137,15 +138,6 @@ class ClientItem extends StatelessWidget {
   Future<void> wrongStartRouteClickDialog(BuildContext context) {
     return AppDialogs().showDialogJustMsg(context,
         "Attention", "You need to be in transit to start route.");
-  }
-
-  takePhoto(context, Client client){
-    try{
-      _onImageButtonPressed(ImageSource.camera, context: context);
-      client.setSentPhoto(true);
-    } catch(e){
-      client.setSentPhoto(false);
-    }
   }
 
   Color getStartButtonColor(){
@@ -283,13 +275,10 @@ class ClientItem extends StatelessWidget {
                         ),
                         padding: EdgeInsets.only(
                             left: 35, right: 35, top: 8, bottom: 8))),
-                getCameraIcon(client, context),
-                Text(
-                  "Deliver",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      fontFamily: 'Poppins'),
+                Observer(builder: (_) => getCameraIcon(client, context)),
+                Text("Deliver",
+                  style: TextStyle(fontWeight: FontWeight.w500,
+                      fontSize: 12, fontFamily: 'Poppins'),
                 ),
                 SizedBox(height: 5),
                 Text(
@@ -365,6 +354,9 @@ class ClientItem extends StatelessWidget {
   }
 
   getCameraIcon(Client client, BuildContext context) {
+    if (client.sentPhoto) {
+      screenViewModel.verifyPhotosSent();
+    }
     Icon icon;
     if(client.sentPhoto){
       icon = Icon(Icons.check,
@@ -381,7 +373,7 @@ class ClientItem extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 if(screenViewModel.screenState.value == RoutePageState.inTransit){
-                  takePhoto(context, client);
+                  _onImageButtonPressed(ImageSource.camera, context: context);
                 } else {
                   wrongTakePhotoClickDialog(context);
                 }

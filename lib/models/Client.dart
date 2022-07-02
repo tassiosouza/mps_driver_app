@@ -29,7 +29,7 @@ abstract class _Client with Store{
   bool sentPhoto = false;
   @action
   setSentPhoto(bool sent){
-    check = sent;
+    sentPhoto = sent;
   }
 
   _Client();

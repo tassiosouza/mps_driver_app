@@ -58,10 +58,10 @@ abstract class _StartRouteViewModel with Store {
 
   @action
   void goToBagsScreen() {
-    // TwilioSmsService smsService = new TwilioSmsService();
-    // for (var client in clientList) {
-    //   smsService.sendSms(client.name, client.phone, client.eta);
-    // }
+    TwilioSmsService smsService = new TwilioSmsService();
+    for (var client in clientList) {
+      smsService.sendSms(client.name, client.phone, client.eta);
+    }
     sentWelcomeMessage.value = true;
     screenState.value = RoutePageState.bagsChecking;
     statusRouteBar.value = 1;
@@ -101,6 +101,7 @@ abstract class _StartRouteViewModel with Store {
 
   @action
   void goToRouteDoneScreen() {
+    clientList.clear();
     screenState.value = RoutePageState.routeDone;
     statusRouteBar.value = 3;
   }

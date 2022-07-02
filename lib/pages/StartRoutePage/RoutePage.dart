@@ -70,13 +70,15 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     return AppDialogs().showDialogJustMsg(context, "Welcome Driver",
         "Make your checkin and then click welcome message to send message to the clients.");
   }
+
   Future<void> inTransitDialog() {
     return AppDialogs().showDialogJustMsg(context, "In Transit",
         "You checked your bags and you can delivery now.");
   }
+
   Future<void> finishRouteDialog() {
-    return AppDialogs().showDialogJustMsg(context, "Route Done",
-        "You finish your route.");
+    return AppDialogs()
+        .showDialogJustMsg(context, "Route Done", "You finish your route.");
   }
 
   Widget getStateScreen(RoutePageState screenState) {
@@ -89,7 +91,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         widget = StateRouteLoading();
         break;
       case RoutePageState.routePlan:
-        if(screenViewModel.firstOpen.value){
+        if (screenViewModel.firstOpen.value) {
           Future.delayed(Duration.zero, () => welcomeDialog());
         }
         widget = routeScreen();
@@ -122,8 +124,10 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   }
 
   Future<void> welcomeMessageSendConfirmDialog() {
-    return AppDialogs().showConfirmDialog(context,
-            () => screenViewModel.goToBagsScreen(), "Confirm",
+    return AppDialogs().showConfirmDialog(
+        context,
+        () => {screenViewModel.goToBagsScreen(_currentDriver!)},
+        "Confirm",
         "Touch in Check-in to make your checking and touch welcome message to send message to clients");
   }
 
@@ -152,13 +156,13 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     }
   }
 
-  Widget getWelcomeMessage(bool sentWelcomeMessage){
-    if(sentWelcomeMessage){
+  Widget getWelcomeMessage(bool sentWelcomeMessage) {
+    if (sentWelcomeMessage) {
       return Container(
         padding: EdgeInsets.only(right: 25, top: 5),
-        child: Text("message sent",
-          style: TextStyle(fontSize: 14,
-            color: App_Colors.grey_text.value),
+        child: Text(
+          "message sent",
+          style: TextStyle(fontSize: 14, color: App_Colors.grey_text.value),
         ),
         alignment: Alignment.centerLeft,
       );
@@ -166,9 +170,10 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
       return GestureDetector(
           child: Container(
             padding: EdgeInsets.only(right: 25, top: 5),
-            child: Text("Welcome message",
-              style: TextStyle(fontSize: 14,
-                  color: App_Colors.primary_color.value),
+            child: Text(
+              "Welcome message",
+              style: TextStyle(
+                  fontSize: 14, color: App_Colors.primary_color.value),
             ),
             alignment: Alignment.centerLeft,
           ),
@@ -193,10 +198,14 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                       padding: EdgeInsets.only(left: 18),
                       child: Row(
                         children: [
-                          _currentDriver != null ? Text("${_currentDriver?.name}  ",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w500),
-                          ) : Text(""),
+                          _currentDriver != null
+                              ? Text(
+                                  "${_currentDriver?.name}  ",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500),
+                                )
+                              : Text(""),
                           DotIndicator(
                             color: App_Colors.primary_color.value,
                             size: 8,
@@ -210,7 +219,8 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                       Observer(
                           builder: (_) =>
                               toCheckIn(screenViewModel.checkin.value)),
-                      getWelcomeMessage(screenViewModel.sentWelcomeMessage.value)
+                      getWelcomeMessage(
+                          screenViewModel.sentWelcomeMessage.value)
                     ],
                   ),
                   SizedBox(height: 15),
@@ -346,8 +356,10 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                         builder: (_) => ListView(
                             padding: const EdgeInsets.all(8),
                             children: screenViewModel.clientList
-                                .map((client) => ClientItem(client,
-                                    screenViewModel.clientList.indexOf(client)))
+                                .map((client) => ClientItem(
+                                    client,
+                                    screenViewModel.clientList.indexOf(client),
+                                    _currentDriver!))
                                 .toList())))
               ]),
             ])),
@@ -356,9 +368,11 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   }
 
   void goToViewOnMap() {
-    Navigator.push(context,
-      MaterialPageRoute(builder: (context) =>
-        SecondRoute(clients: screenViewModel.clientList)),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              SecondRoute(clients: screenViewModel.clientList)),
     );
   }
 }

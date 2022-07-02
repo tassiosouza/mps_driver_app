@@ -5,6 +5,8 @@ import 'package:mps_driver_app/Services/TwilioService.dart';
 import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePageState.dart';
 import '../../models/Client.dart';
 import 'package:mobx/mobx.dart';
+
+import '../../models/Driver.dart';
 part 'start_route_viewmodel.g.dart';
 
 class StartRouteViewModel = _StartRouteViewModel with _$StartRouteViewModel;
@@ -19,7 +21,7 @@ abstract class _StartRouteViewModel with Store {
   var firstOpen = Observable(true);
 
   @action
-  void setFirstOpen(){
+  void setFirstOpen() {
     firstOpen.value = false;
   }
 
@@ -57,8 +59,8 @@ abstract class _StartRouteViewModel with Store {
   }
 
   @action
-  void goToBagsScreen() {
-    TwilioSmsService smsService = new TwilioSmsService();
+  void goToBagsScreen(Driver currentDriver) {
+    TwilioSmsService smsService = TwilioSmsService(currentDriver);
     for (var client in clientList) {
       smsService.sendSms(client.name, client.phone, client.eta);
     }
@@ -71,11 +73,11 @@ abstract class _StartRouteViewModel with Store {
   void verifyBags() {
     bool checkBagsFinish = true;
     clientList.forEach((element) {
-      if(element.check == false){
+      if (element.check == false) {
         checkBagsFinish = false;
       }
     });
-    if(checkBagsFinish == true){
+    if (checkBagsFinish == true) {
       goToInTransitScreen();
     }
   }
@@ -84,11 +86,11 @@ abstract class _StartRouteViewModel with Store {
   void verifyPhotosSent() {
     bool routeFinish = true;
     clientList.forEach((element) {
-      if(element.sentPhoto == false){
+      if (element.sentPhoto == false) {
         routeFinish = false;
       }
     });
-    if(routeFinish == true){
+    if (routeFinish == true) {
       goToRouteDoneScreen();
     }
   }

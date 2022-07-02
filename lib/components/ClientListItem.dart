@@ -17,21 +17,25 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 
+import '../models/Driver.dart';
 import '../pages/StartRoutePage/StartRoutePageState.dart';
 import 'AppDialogs.dart';
 
 class ClientItem extends StatelessWidget {
   Client client;
   int clientIndex;
+  Driver currentDriver;
+  TwilioSmsService? smsService = null;
   StartRouteViewModel screenViewModel = Modular.get<StartRouteViewModel>();
 
-  ClientItem(this.client, this.clientIndex, {Key? key})
-      : super(key: key);
+  ClientItem(this.client, this.clientIndex, this.currentDriver, {Key? key})
+      : super(key: key) {
+    smsService = TwilioSmsService(currentDriver);
+  }
   late var availableMaps;
 
   final ImagePicker _picker = ImagePicker();
 
-  TwilioSmsService smsService = new TwilioSmsService();
   XFile? _imageFile;
 
   String _printDuration(Duration duration) {
@@ -57,11 +61,11 @@ class ClientItem extends StatelessWidget {
 
   Future<void> sendSms(XFile? photo) async {
     String url = await createAndUploadFile(photo!);
-    if(url.isEmpty){
+    if (url.isEmpty) {
       throw Exception('Photo exception');
     } else {
       client.setSentPhoto(true);
-      smsService.sendSmsWithPhoto(client.phone, url);
+      smsService?.sendSmsWithPhoto(client.phone, url);
     }
   }
 
@@ -127,21 +131,24 @@ class ClientItem extends StatelessWidget {
     return AppDialogs().showConfirmDialog(context, () => client.setCheck(true),
         "Meal Instructions", client.mealInstructions);
   }
+
   Future<void> wrongCheckBagClickDialog(BuildContext context) {
-    return AppDialogs().showDialogJustMsg(context,
-        "Attention", "You need to send welcome message before check bags.");
-  }
-  Future<void> wrongTakePhotoClickDialog(BuildContext context) {
-    return AppDialogs().showDialogJustMsg(context,
-        "Attention", "You need to be in transit to take photo.");
-  }
-  Future<void> wrongStartRouteClickDialog(BuildContext context) {
-    return AppDialogs().showDialogJustMsg(context,
-        "Attention", "You need to be in transit to start route.");
+    return AppDialogs().showDialogJustMsg(context, "Attention",
+        "You need to send welcome message before check bags.");
   }
 
-  Color getStartButtonColor(){
-    if(screenViewModel.screenState.value == RoutePageState.inTransit){
+  Future<void> wrongTakePhotoClickDialog(BuildContext context) {
+    return AppDialogs().showDialogJustMsg(
+        context, "Attention", "You need to be in transit to take photo.");
+  }
+
+  Future<void> wrongStartRouteClickDialog(BuildContext context) {
+    return AppDialogs().showDialogJustMsg(
+        context, "Attention", "You need to be in transit to start route.");
+  }
+
+  Color getStartButtonColor() {
+    if (screenViewModel.screenState.value == RoutePageState.inTransit) {
       return App_Colors.primary_color.value;
     } else {
       return App_Colors.grey_light.value;
@@ -219,15 +226,16 @@ class ClientItem extends StatelessWidget {
                     const SizedBox(width: 1),
                     ElevatedButton(
                       onPressed: () {
-                        if(screenViewModel.screenState.value == RoutePageState.inTransit){
+                        if (screenViewModel.screenState.value ==
+                            RoutePageState.inTransit) {
                           _launchMapsUrl();
                         } else {
                           wrongStartRouteClickDialog(context);
                         }
                       },
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              getStartButtonColor()),
+                          backgroundColor:
+                              MaterialStateProperty.all(getStartButtonColor()),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
@@ -276,9 +284,12 @@ class ClientItem extends StatelessWidget {
                         padding: EdgeInsets.only(
                             left: 35, right: 35, top: 8, bottom: 8))),
                 Observer(builder: (_) => getCameraIcon(client, context)),
-                Text("Deliver",
-                  style: TextStyle(fontWeight: FontWeight.w500,
-                      fontSize: 12, fontFamily: 'Poppins'),
+                Text(
+                  "Deliver",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      fontFamily: 'Poppins'),
                 ),
                 SizedBox(height: 5),
                 Text(
@@ -308,7 +319,8 @@ class ClientItem extends StatelessWidget {
           height: 28,
           child: ElevatedButton(
             onPressed: () {
-              if(screenViewModel.screenState.value == RoutePageState.bagsChecking){
+              if (screenViewModel.screenState.value ==
+                  RoutePageState.bagsChecking) {
                 checkBagConfirmDialog(context);
               } else {
                 wrongCheckBagClickDialog(context);
@@ -358,9 +370,8 @@ class ClientItem extends StatelessWidget {
       screenViewModel.verifyPhotosSent();
     }
     Icon icon;
-    if(client.sentPhoto){
-      icon = Icon(Icons.check,
-          size: 17, color: App_Colors.primary_color.value);
+    if (client.sentPhoto) {
+      icon = Icon(Icons.check, size: 17, color: App_Colors.primary_color.value);
     } else {
       icon = Icon(CustomIcon.camera_driver_icon,
           size: 17, color: App_Colors.primary_color.value);
@@ -372,7 +383,8 @@ class ClientItem extends StatelessWidget {
             height: 35,
             child: ElevatedButton(
               onPressed: () {
-                if(screenViewModel.screenState.value == RoutePageState.inTransit){
+                if (screenViewModel.screenState.value ==
+                    RoutePageState.inTransit) {
                   _onImageButtonPressed(ImageSource.camera, context: context);
                 } else {
                   wrongTakePhotoClickDialog(context);

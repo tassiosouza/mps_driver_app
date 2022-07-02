@@ -1,13 +1,28 @@
 import 'package:flutter/cupertino.dart';
+import 'package:mps_driver_app/models/Driver.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 import 'dart:developer';
 import 'package:intl/intl.dart';
 
 class TwilioSmsService {
+  final Driver _currentDriver;
+  TwilioSmsService(this._currentDriver);
+
   TwilioFlutter twilioFlutter = TwilioFlutter(
       accountSid: 'ACfcf134f0de9f85c19790e91e29cb6d63',
       authToken: '4335317aa987c70f6263b960ef453d2f',
       twilioNumber: '6193936481');
+
+  String getFirstName(String name) {
+    var result = '';
+    if (name.contains(' ')) {
+      var blankIndex = name.indexOf(' ');
+      result = name.substring(0, blankIndex);
+    } else {
+      result = name;
+    }
+    return result;
+  }
 
   void sendSms(String client_name, String clientPhone, int client_eta) {
     log('calling send sms');
@@ -18,15 +33,15 @@ class TwilioSmsService {
           .replaceAll('00h', '');
     }
 
-    int spaceIndex = client_name.indexOf(' ');
-    String firstName = client_name.substring(0, spaceIndex);
-    String eta = _printDuration(Duration(seconds: client_eta));
-    String message = """Hello, $firstName""" +
-        """\nI am Tassio and I will be your driver today. I will be delivering your meals from Meal Prep Sunday San Diego. I want to inform you that your meals will be leaving our facilities soon and you can expect to receive them in $eta.""" +
-        """\n\nIn case you won’t be home and it is needed further information to get into your building or gated community, please reply this text with the instructions.""" +
+    String firstName = getFirstName(client_name);
+    String eta = _printDuration(
+        Duration(seconds: client_eta + 2700)); //Plus 45min to bags checking
+    String message = """Hello, $firstName"""
+            """\nI am ${getFirstName(_currentDriver!.name)} and I will be your driver today. I will be delivering your meals from Meal Prep Sunday San Diego. I want to inform you that your meals will be leaving our facilities soon and you can expect to receive them in $eta."""
+            """\n\nIn case you won’t be home and it is needed further information to get into your building or gated community, please send a message to me at ${_currentDriver!.phone} with the instructions. In case you need to talk to the customer service, please reply this message""" +
         """\n\nThank you very much,""" +
-        """\n\nTassio""";
-    twilioFlutter.sendSMS(
+        """\n\n${getFirstName(_currentDriver!.name)}""";
+    twilioFlutter?.sendSMS(
         toNumber: '+1$clientPhone', messageBody: message, messageMediaUrl: '');
   }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'dart:developer';
 import 'dart:typed_data';
@@ -23,7 +24,9 @@ class _ExampleState extends State<SecondRoute> {
   int _markerIdCounter = 1;
   MarkerId? selectedMarker;
   LatLng? markerPosition;
+  late List copyClientList;
   static const LatLng center = LatLng(-33.86711, 151.1947171);
+  Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(33.1522247, -117.2310085),
@@ -39,7 +42,7 @@ class _ExampleState extends State<SecondRoute> {
 
     final Uint8List customMarker = await getBytesFromAsset(
         path: 'assets/images/marker' + index.toString() + '.png',
-        width: 30 // size of custom image as marker
+        width: 40 // size of custom image as marker
         );
 
     final Marker marker = Marker(
@@ -53,6 +56,31 @@ class _ExampleState extends State<SecondRoute> {
     setState(() {
       markers[markerId] = marker;
     });
+  }
+
+  void _addPolylines() {
+    const PolylineId polylineId = const PolylineId('1');
+
+    final Polyline polyline = Polyline(
+      polylineId: polylineId,
+      consumeTapEvents: true,
+      color: Colors.grey,
+      width: 1,
+      points: _createPoints(copyClientList),
+    );
+
+    setState(() {
+      polylines[polylineId] = polyline;
+    });
+  }
+
+  List<LatLng> _createPoints(List clients) {
+    final List<LatLng> points = <LatLng>[];
+    for (Client client in clients) {
+      points.add(
+          LatLng(client.coordinates.latitude, client.coordinates.longitude));
+    }
+    return points;
   }
 
   Future<Uint8List> getBytesFromAsset(
@@ -94,25 +122,26 @@ class _ExampleState extends State<SecondRoute> {
     _getThingsOnStartup().then((value) {
       print('Async done');
     });
-    Client client = new Client();
+    copyClientList = List<Client>.from(widget.clients);
+    Client client = Client();
     client.name = 'Meal Prep Sunday';
     client.coordinates.latitude = 33.1522247;
     client.coordinates.longitude = -117.2310085;
-    widget.clients.insert(0, client);
+    copyClientList.insert(0, client);
     var index = 1;
-    widget.clients.forEach((client) => {
+    copyClientList.forEach((client) => {
           _add(
               LatLng(client.coordinates.latitude, client.coordinates.longitude),
               index),
           index += 1,
         });
+    _addPolylines();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.clients[0].name);
     return Scaffold(
       body: GoogleMap(
         mapType: MapType.normal,
@@ -121,7 +150,18 @@ class _ExampleState extends State<SecondRoute> {
           _controller.complete(controller);
         },
         markers: Set<Marker>.of(markers.values),
+        polylines: Set<Polyline>.of(polylines.values),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pop(context),
+        tooltip: 'Add Todo',
+        child: const Icon(
+          Icons.arrow_back,
+          color: Colors.black,
+        ),
+        backgroundColor: Colors.white,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
     );
   }
 

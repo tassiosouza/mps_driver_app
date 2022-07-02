@@ -161,11 +161,11 @@ mixin _$StartRouteViewModel on _StartRouteViewModel, Store {
   }
 
   @override
-  void goToBagsScreen() {
+  void goToBagsScreen(Driver currentDriver) {
     final _$actionInfo = _$_StartRouteViewModelActionController.startAction(
         name: '_StartRouteViewModel.goToBagsScreen');
     try {
-      return super.goToBagsScreen();
+      return super.goToBagsScreen(currentDriver);
     } finally {
       _$_StartRouteViewModelActionController.endAction(_$actionInfo);
     }

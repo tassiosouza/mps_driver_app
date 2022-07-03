@@ -51,15 +51,15 @@ class PickRouteFile {
     getClientsList(List<List<dynamic>> fields) {
       for (var i = 1; i < fields.length; i++) {
         Client client = Client();
-        client.id = fields[i][0];
-        client.name = fields[i][1];
+        client.id = fields[i][0].toString();
+        client.name = fields[i][1].toString();
         client.phone = fields[i][2].toString();
-        client.address = fields[i][3];
+        client.address = fields[i][3].toString();
         client.secondAddress = fields[i][4].toString();
-        client.city = fields[i][5];
-        client.stateZipCode = fields[i][6];
-        client.deliveryInstructions = fields[i][7];
-        client.mealInstructions = fields[i][8];
+        client.city = fields[i][5].toString();
+        client.stateZipCode = fields[i][6].toString();
+        client.deliveryInstructions = fields[i][7].toString();
+        client.mealInstructions = fields[i][8].toString();
         client.check = false;
         _clientList.add(client);
       }

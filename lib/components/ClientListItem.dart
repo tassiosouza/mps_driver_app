@@ -20,6 +20,7 @@ import 'package:flutter_sms/flutter_sms.dart';
 import '../models/Driver.dart';
 import '../pages/StartRoutePage/StartRoutePageState.dart';
 import 'AppDialogs.dart';
+import 'InstructionsDialog.dart';
 
 class ClientItem extends StatelessWidget {
   Client client;
@@ -52,11 +53,6 @@ class ClientItem extends StatelessWidget {
       title: client.name,
       description: client.name,
     );
-  }
-
-  Future<void> deliveryInstructionsDialog(context) {
-    return AppDialogs().showDialogJustMsg(
-        context, "Delivery Instructions", client.deliveryInstructions);
   }
 
   Future<void> sendSms(XFile? photo) async {
@@ -204,7 +200,7 @@ class ClientItem extends StatelessWidget {
                   Column(
                     children: [
                       GestureDetector(
-                          onTap: () => deliveryInstructionsDialog(context),
+                          onTap: () => InstructionsDialog().call(context, client),
                           child: Container(
                               padding: const EdgeInsets.only(right: 15),
                               child: const Icon(

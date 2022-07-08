@@ -1,8 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:mps_driver_app/modules/route/presentation/components/StateRouteLoading.dart';
-import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';

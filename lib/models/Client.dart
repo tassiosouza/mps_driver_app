@@ -1,6 +1,5 @@
 import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
-import 'package:tuple/tuple.dart';
 import './Coordinates.dart';
 part 'Client.g.dart';
 

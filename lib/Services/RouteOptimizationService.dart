@@ -1,10 +1,7 @@
 import 'package:http/http.dart' as http;
-import 'package:tuple/tuple.dart';
-import 'package:flutter/services.dart';
 import 'dart:convert';
 import '../../models/Client.dart';
 import '../../utils/getjson.dart';
-import 'dart:developer';
 
 class RouteOptimizationApi {
   static String baseUrl =

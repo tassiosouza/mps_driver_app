@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/route/presentation/route/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
-
 import '../../../../theme/app_colors.dart';
 
 class StartRouteInitPage extends StatefulWidget {

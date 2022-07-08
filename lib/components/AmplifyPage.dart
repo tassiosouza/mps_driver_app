@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:mps_driver_app/Services/DriverService.dart';
-import '../models/Driver.dart';
 import '../models/Todo.dart';
-import 'dart:developer';
 
 class MyAppTodos extends StatelessWidget {
   const MyAppTodos();

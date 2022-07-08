@@ -2,11 +2,8 @@ import 'dart:core';
 
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/main/AppModule.dart';
-import 'package:mps_driver_app/Services/DriverService.dart';
-import 'package:mps_driver_app/modules/route/presentation/components/StateRouteLoading.dart';
 import 'package:mps_driver_app/modules/profile/presentation/ProfilePage.dart';
 import 'package:mps_driver_app/modules/route/presentation/route/RoutePage.dart';
 import 'package:mps_driver_app/theme/CustomTheme.dart';
@@ -14,12 +11,9 @@ import 'package:mps_driver_app/theme/app_colors.dart';
 import 'utils/amplifyconfiguration.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
-import 'utils/amplifyconfiguration.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import '../../models/ModelProvider.dart';
-import 'components/AmplifyPage.dart';
-import 'dart:developer';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 

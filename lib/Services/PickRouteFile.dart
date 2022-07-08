@@ -16,6 +16,7 @@ class PickRouteFile {
   String? _fileName;
   String _filePath = "";
   List<Client> _clientList = [];
+  List<Client> _clientListResult = [];
   List<PlatformFile>? _paths;
   String? _extension;
 
@@ -96,8 +97,9 @@ class PickRouteFile {
 
     _fileName = _paths != null ? _paths!.map((e) => e.name).toString() : '...';
     _clientList = _clientList;
-
-    return _clientList;
+    _clientListResult = _clientList;
+    _clientList = [];
+    return _clientListResult;
   }
 
   void _logException(String message) {

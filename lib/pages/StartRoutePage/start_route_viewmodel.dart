@@ -45,6 +45,7 @@ abstract class _StartRouteViewModel with Store {
   @action
   Future<void> getClientList() async {
     clientList.addAll(await pickRouteFile.pickFiles());
+    resetViewModel();
     goToRouteScreen();
   }
 
@@ -56,6 +57,14 @@ abstract class _StartRouteViewModel with Store {
   @action
   void goToRouteScreen() {
     screenState.value = RoutePageState.routePlan;
+  }
+
+  @action
+  void resetViewModel(){
+    firstOpen.value = true;
+    checkin.value = false;
+    sentWelcomeMessage.value = false;
+    statusRouteBar.value = 0;
   }
 
   @action

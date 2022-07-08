@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:mps_driver_app/Services/PickRouteFile.dart';
 import 'package:mps_driver_app/Services/TwilioService.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePageState.dart';
-import '../../models/Client.dart';
+import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
+import '../../../../models/Client.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../models/Driver.dart';
+import '../../../../models/Driver.dart';
 part 'start_route_viewmodel.g.dart';
 
 class StartRouteViewModel = _StartRouteViewModel with _$StartRouteViewModel;

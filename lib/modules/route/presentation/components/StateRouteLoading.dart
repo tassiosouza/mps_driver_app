@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import '../theme/app_colors.dart';
+import '../../../../theme/app_colors.dart';
 
 class StateRouteLoading extends StatelessWidget {
   @override

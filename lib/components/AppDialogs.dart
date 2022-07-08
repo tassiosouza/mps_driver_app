@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 
-import '../pages/StartRoutePage/start_route_viewmodel.dart';
+import '../modules/route/presentation/route/start_route_viewmodel.dart';
 
 class AppDialogs {
   Future<void> showDialogJustMsg(

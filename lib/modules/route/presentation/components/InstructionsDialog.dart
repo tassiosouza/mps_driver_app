@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mps_driver_app/models/Client.dart';
-import '../theme/app_colors.dart';
+import '../../../../theme/app_colors.dart';
 
 class InstructionsDialog {
   Client client = Client();

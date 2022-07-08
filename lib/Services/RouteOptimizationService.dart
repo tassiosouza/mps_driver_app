@@ -3,7 +3,7 @@ import 'package:tuple/tuple.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import '../../models/Client.dart';
-import '../../shared/utils.dart';
+import '../../utils/getjson.dart';
 import 'dart:developer';
 
 class RouteOptimizationApi {
@@ -13,7 +13,7 @@ class RouteOptimizationApi {
   RouteOptimizationApi() {}
 
   Future<List<Client>> getOrderedClients(List<Client> clients) async {
-    List<Map<String, Object>> object = Utils.getJsonBody(clients);
+    List<Map<String, Object>> object = GetJsonBody.getJsonBody(clients);
 
     String body = jsonEncode(<String, List<Map<String, Object>>>{
       "vehicles": [

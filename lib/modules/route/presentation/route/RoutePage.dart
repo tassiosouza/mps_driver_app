@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/Driver.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePage.dart';
+import 'package:mps_driver_app/modules/route/presentation/init/StartRoutePage.dart';
 import 'package:mps_driver_app/Services/TwilioService.dart';
 import 'package:flutter/services.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
 import 'package:intl/intl.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePageState.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
+import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
+import 'package:mps_driver_app/modules/route/presentation/route/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
-import '../../Services/DriverService.dart';
-import '../../components/AppDialogs.dart';
-import '../../components/ClientListItem.dart';
-import '../../components/StateRouteLoading.dart';
+import '../../../../Services/DriverService.dart';
+import '../../../../components/AppDialogs.dart';
+import '../components/ClientListItem.dart';
+import '../components/StateRouteLoading.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
 
-import 'MapsPage.dart';
+import '../map/MapsPage.dart';
 
 class StartRoutePage extends StatelessWidget {
   const StartRoutePage();

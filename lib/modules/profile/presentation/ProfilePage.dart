@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
@@ -93,7 +92,7 @@ class _ProfilePageState extends State<ProfilePageState> {
                           getInfoColumn('198', "Trips"),
                           getInfoColumn('2', "Month"),
                           getInfoColumn('327', "Deliveries"),
-                          getInfoColumn("4.8", "Rating"),
+                          getInfoColumn("4.8", "Rating")
                         ]),
                     SizedBox(height: 22),
                     Container(

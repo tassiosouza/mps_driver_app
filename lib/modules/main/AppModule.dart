@@ -1,12 +1,15 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mps_driver_app/modules/route/presentation/route/start_route_viewmodel.dart';
+import 'package:mps_driver_app/modules/route/RouteBinds.dart';
 
 class AppModule extends Module {
+  @override
+  List<Bind> get binds => [];
 
   @override
-  List<Bind> get binds {
-    return [
-      Bind.singleton((i) => StartRouteViewModel())
-    ];
-  }
+  List<Module> get imports => [
+    RouteBinds()
+  ];
+
+  @override
+  List<ModularRoute> get routes => [];
 }

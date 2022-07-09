@@ -2,12 +2,18 @@ import 'dart:core';
 
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/main/AppModule.dart';
+import 'package:mps_driver_app/modules/prepnews/PrepNewsModule.dart';
+import 'package:mps_driver_app/modules/profile/ProfileModule.dart';
 import 'package:mps_driver_app/modules/profile/presentation/ProfilePage.dart';
+import 'package:mps_driver_app/modules/rating/RatingModule.dart';
+import 'package:mps_driver_app/modules/route/RouteModule.dart';
 import 'package:mps_driver_app/modules/route/presentation/route/RoutePage.dart';
 import 'package:mps_driver_app/theme/CustomTheme.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
+import 'modules/history/HistoryModule.dart';
 import 'utils/amplifyconfiguration.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
@@ -20,17 +26,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  runApp(ModularApp(module: AppModule(), child: MyApp()));
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MPS Driver',
-      home: MainPage(),
-    );
-  }
+  runApp(ModularApp(module: AppModule(), child: MainPage()));
 }
 
 class MainPage extends StatefulWidget {
@@ -47,46 +43,6 @@ class MainPageState extends State<MainPage> {
   final AmplifyStorageS3 _storagePlugin = AmplifyStorageS3();
   final AmplifyAPI _apiPlugin = AmplifyAPI();
   final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
-  static List<Widget> _pages = <Widget>[
-    Center(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Image(image: const AssetImage('assets/images/wip.png')),
-            const SizedBox(height: 30),
-            const Text("Wait while we are working on this feature",
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 20, fontFamily: 'Poppins')),
-          ]),
-    ),
-    Center(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Image(image: const AssetImage('assets/images/wip.png')),
-            const SizedBox(height: 30),
-            const Text("Wait while we are working on this feature",
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 20, fontFamily: 'Poppins')),
-          ]),
-    ),
-    const StartRoutePage(),
-    Center(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Image(image: const AssetImage('assets/images/wip.png')),
-            const SizedBox(height: 30),
-            const Text("Wait while we are working on this feature",
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 20, fontFamily: 'Poppins')),
-          ]),
-    ),
-    const ProfilePage(),
-  ];
 
   @override
   void initState() {
@@ -130,6 +86,13 @@ class MainPageState extends State<MainPage> {
   }
 
   final customTheme = CustomTheme();
+  final _pages = <Widget>[
+    PrepNewsModule(),
+    HistoryModule(),
+    RouteModule(),
+    RatingModule(),
+    ProfileModule()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +223,6 @@ class MainPageState extends State<MainPage> {
             unselectedItemColor: App_Colors.grey_dark.value,
           ),
         ),
-      ),
-    );
+      ));
   }
 }

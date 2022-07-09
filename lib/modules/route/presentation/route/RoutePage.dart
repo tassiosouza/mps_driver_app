@@ -10,6 +10,7 @@ import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../../../Services/DriverService.dart';
 import '../../../../components/AppDialogs.dart';
 import '../components/ClientListItem.dart';
+import '../components/ClientsListView.dart';
 import '../components/StateRouteLoading.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
@@ -17,7 +18,6 @@ import 'package:im_stepper/stepper.dart' as Stepper;
 import '../map/MapsPage.dart';
 
 class StartRoutePage extends StatelessWidget {
-  const StartRoutePage();
 
   @override
   Widget build(BuildContext context) {
@@ -349,14 +349,12 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                 Container(
                     height: MediaQuery.of(context).size.height / 2.1,
                     child: Observer(
-                        builder: (_) => ListView(
-                            padding: const EdgeInsets.all(8),
-                            children: screenViewModel.clientList
-                                .map((client) => ClientItem(
-                                    client,
-                                    screenViewModel.clientList.indexOf(client),
-                                    _currentDriver!))
-                                .toList())))
+                        builder: (_) {
+                          if(_currentDriver != null){
+                            return ClientsListView(_currentDriver!);
+                          }
+                          return Center();
+                          }))
               ]),
             ])),
       ),

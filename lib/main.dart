@@ -1,8 +1,10 @@
 import 'dart:core';
 
 import 'package:amplify_authenticator/amplify_authenticator.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/AppModule.dart';
 import 'package:mps_driver_app/Services/DriverService.dart';
@@ -21,11 +23,24 @@ import 'pages/PrepNewsPage/AmplifyPage.dart';
 import 'dart:developer';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:telephony/telephony.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(ModularApp(module: AppModule(), child: MyApp()));
+}
+
+const platform = MethodChannel('com.mps.driver/sms');
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background messages: ${message.messageId}");
+  final Telephony telephony = Telephony.instance;
+  telephony.sendSms(
+      to: message.notification!.title.toString(),
+      message: message.notification!.body.toString());
 }
 
 class MyApp extends StatelessWidget {
@@ -44,6 +59,7 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
+  late final FirebaseMessaging _firebaseMessaging;
   int _selectedIndex = 0;
 
   // amplify plugins
@@ -53,18 +69,7 @@ class MainPageState extends State<MainPage> {
   final AmplifyAPI _apiPlugin = AmplifyAPI();
   final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
   static List<Widget> _pages = <Widget>[
-    Center(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Image(image: const AssetImage('assets/images/wip.png')),
-            const SizedBox(height: 30),
-            const Text("Wait while we are working on this feature",
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 20, fontFamily: 'Poppins')),
-          ]),
-    ),
+    TodosPage(),
     Center(
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -107,8 +112,13 @@ class MainPageState extends State<MainPage> {
   Future<void> _initializeApp() async {
     // configure Amplify
     await _configureAmplify();
-    // configure driver login
-    // await DriverService.login();
+
+    // configure Firebase
+    Firebase.initializeApp().whenComplete(() => {
+          _firebaseMessaging = FirebaseMessaging.instance,
+          _firebaseMessaging.getToken().then((token) => print("token:  $token"))
+        });
+
     // remove splash screen
     FlutterNativeSplash.remove();
   }

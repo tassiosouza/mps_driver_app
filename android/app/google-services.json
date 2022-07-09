@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "890682751770",
+    "project_id": "driver-app-351617",
+    "storage_bucket": "driver-app-351617.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890682751770:android:eceeeca77d3d62726b8aa3",
+        "android_client_info": {
+          "package_name": "com.mps.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "890682751770-los717g80sj4bjl81glsj6m75h2gh5kq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-jQJpnnvqBrLsxbI4QgNPOZFdBal6K1Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "890682751770-los717g80sj4bjl81glsj6m75h2gh5kq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

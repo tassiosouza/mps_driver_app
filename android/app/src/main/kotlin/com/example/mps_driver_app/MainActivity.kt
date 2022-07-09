@@ -1,4 +1,4 @@
-package com.example.mps_driver_app
+package com.mps.driver
 
 import io.flutter.embedding.android.FlutterActivity
 

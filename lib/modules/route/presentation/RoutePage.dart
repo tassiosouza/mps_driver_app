@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/Driver.dart';
-import 'package:mps_driver_app/modules/route/presentation/init/StartRoutePage.dart';
+import 'package:mps_driver_app/modules/route/presentation/InitRoutePage.dart';
 import 'package:intl/intl.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
-import 'package:mps_driver_app/modules/route/presentation/route/start_route_viewmodel.dart';
+import 'package:mps_driver_app/modules/route/presentation/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
-import '../../../../Services/DriverService.dart';
-import '../../../../components/AppDialogs.dart';
-import '../components/ClientListItem.dart';
-import '../components/ClientsListView.dart';
-import '../components/StateRouteLoading.dart';
+import '../../../Services/DriverService.dart';
+import '../../../components/AppDialogs.dart';
+import 'components/ClientListItem.dart';
+import 'components/ClientsListView.dart';
+import 'components/StateRouteLoading.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
 
-import '../map/MapsPage.dart';
+import 'MapsPage.dart';
 
 class StartRoutePage extends StatelessWidget {
 
@@ -81,7 +81,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     late Widget widget;
     switch (screenState) {
       case RoutePageState.init:
-        widget = StartRouteInitPage();
+        widget = InitRoutePage();
         break;
       case RoutePageState.loading:
         widget = StateRouteLoading();
@@ -94,7 +94,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         break;
       case RoutePageState.routeDone:
         Future.delayed(Duration.zero, () => finishRouteDialog());
-        widget = StartRouteInitPage();
+        widget = InitRoutePage();
         break;
       case RoutePageState.bagsChecking:
         widget = routeScreen();

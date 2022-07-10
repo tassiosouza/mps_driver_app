@@ -1,5 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mps_driver_app/modules/route/RouteBinds.dart';
+import '../route/RouteModule.dart';
 
 class AppModule extends Module {
   @override

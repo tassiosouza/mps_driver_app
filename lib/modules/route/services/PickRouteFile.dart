@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
-import '../../models/Client.dart';
+import '../../../../models/Client.dart';
 
 class PickRouteFile {
   final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();

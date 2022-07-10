@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../models/Driver.dart';
-import '../route/start_route_viewmodel.dart';
+import '../start_route_viewmodel.dart';
 import 'ClientListItem.dart';
 
 class ClientsListView extends StatefulWidget{

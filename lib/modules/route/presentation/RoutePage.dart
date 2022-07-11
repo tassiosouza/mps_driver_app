@@ -2,26 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/Driver.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePage.dart';
-import 'package:mps_driver_app/Services/TwilioService.dart';
-import 'package:flutter/services.dart';
-import 'package:mps_driver_app/models/Coordinates.dart';
+import 'package:mps_driver_app/modules/route/presentation/InitRoutePage.dart';
 import 'package:intl/intl.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/StartRoutePageState.dart';
-import 'package:mps_driver_app/pages/StartRoutePage/start_route_viewmodel.dart';
-import 'package:mps_driver_app/theme/CustomIcon.dart';
+import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
+import 'package:mps_driver_app/modules/route/presentation/start_route_viewmodel.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
-import '../../Services/DriverService.dart';
-import '../../components/AppDialogs.dart';
-import '../../components/ClientListItem.dart';
-import '../../components/StateRouteLoading.dart';
+import '../../../Services/DriverService.dart';
+import '../../../components/AppDialogs.dart';
+import 'components/ClientListItem.dart';
+import 'components/ClientsListView.dart';
+import 'components/StateRouteLoading.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
 
 import 'MapsPage.dart';
 
 class StartRoutePage extends StatelessWidget {
-  const StartRoutePage();
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +81,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     late Widget widget;
     switch (screenState) {
       case RoutePageState.init:
-        widget = StartRouteInitPage();
+        widget = InitRoutePage();
         break;
       case RoutePageState.loading:
         widget = StateRouteLoading();
@@ -98,7 +94,7 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         break;
       case RoutePageState.routeDone:
         Future.delayed(Duration.zero, () => finishRouteDialog());
-        widget = StartRouteInitPage();
+        widget = InitRoutePage();
         break;
       case RoutePageState.bagsChecking:
         widget = routeScreen();
@@ -353,14 +349,12 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                 Container(
                     height: MediaQuery.of(context).size.height / 2.1,
                     child: Observer(
-                        builder: (_) => ListView(
-                            padding: const EdgeInsets.all(8),
-                            children: screenViewModel.clientList
-                                .map((client) => ClientItem(
-                                    client,
-                                    screenViewModel.clientList.indexOf(client),
-                                    _currentDriver!))
-                                .toList())))
+                        builder: (_) {
+                          if(_currentDriver != null){
+                            return ClientsListView(_currentDriver!);
+                          }
+                          return Center();
+                          }))
               ]),
             ])),
       ),

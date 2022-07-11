@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:mps_driver_app/Services/DriverService.dart';
-import '../../models/Driver.dart';
-import '../../models/Todo.dart';
-import 'dart:developer';
+import '../models/Todo.dart';
 
 class MyAppTodos extends StatelessWidget {
   const MyAppTodos();
@@ -29,7 +27,7 @@ class _TodosPageState extends State<TodosPage> {
   // subscription of Todo QuerySnapshots - to be initialized at runtime
   late StreamSubscription<QuerySnapshot<Todo>> _subscription;
 
-  // loading ui state - initially set to a loading state
+  // loading presentation state - initially set to a loading state
   bool _isLoading = true;
 
   // list of Todos - initially empty

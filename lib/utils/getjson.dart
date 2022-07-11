@@ -1,7 +1,7 @@
 import '../models/Client.dart';
 import 'dart:convert';
 
-class Utils {
+class GetJsonBody {
   static List<Map<String, Object>> getJsonBody(List<Client> clients) {
     List<Map<String, Object>> destinationsMap = [];
     for (var i = 0; i < clients.length; i++) {

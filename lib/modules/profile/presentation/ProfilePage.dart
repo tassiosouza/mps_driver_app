@@ -1,11 +1,8 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:mps_driver_app/components/StateRouteLoading.dart';
-import 'package:mps_driver_app/theme/CustomIcon.dart';
-import '../../Services/DriverService.dart';
-import '../../models/Driver.dart';
-import '../../theme/app_colors.dart';
+import '../../../Services/DriverService.dart';
+import '../../../models/Driver.dart';
+import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -95,7 +92,7 @@ class _ProfilePageState extends State<ProfilePageState> {
                           getInfoColumn('198', "Trips"),
                           getInfoColumn('2', "Month"),
                           getInfoColumn('327', "Deliveries"),
-                          getInfoColumn("4.8", "Rating"),
+                          getInfoColumn("4.8", "Rating")
                         ]),
                     SizedBox(height: 22),
                     Container(

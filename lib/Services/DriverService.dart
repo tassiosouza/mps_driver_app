@@ -1,6 +1,5 @@
 import '../models/Driver.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'dart:developer';
 
 class DriverService {

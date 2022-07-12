@@ -49,11 +49,12 @@ class MainWidgetState extends State<MainWidget> {
             return null;
         }
       },
-      child: MaterialApp(
+      child: MaterialApp.router(
         theme: customTheme.customLightTheme,
         themeMode: ThemeMode.system,
         builder: Authenticator.builder(),
-        home: MainPage(),
+        routerDelegate: Modular.routerDelegate,
+        routeInformationParser: Modular.routeInformationParser,
       ));
   }
 }

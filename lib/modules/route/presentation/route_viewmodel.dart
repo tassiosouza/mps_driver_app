@@ -5,15 +5,15 @@ import '../../../models/Client.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../models/Driver.dart';
-part 'start_route_viewmodel.g.dart';
+part 'route_viewmodel.g.dart';
 
-class StartRouteViewModel = _StartRouteViewModel with _$StartRouteViewModel;
+class RouteViewModel = _RouteViewModel with _$RouteViewModel;
 
-abstract class _StartRouteViewModel with Store {
+abstract class _RouteViewModel with Store {
   PickRouteFile pickRouteFile = PickRouteFile();
 
   @observable
-  var screenState = Observable(RoutePageState.init);
+  var screenState = Observable(RoutePageState.routePlan);
 
   @observable
   var firstOpen = Observable(true);
@@ -27,29 +27,12 @@ abstract class _StartRouteViewModel with Store {
   var clientList = ObservableList<Client>();
 
   @observable
-  var checkin = Observable(false);
-
-  @observable
-  var sentWelcomeMessage = Observable(false);
-
-  @observable
   var statusRouteBar = Observable(0);
-
-  @action
-  void setCheckIn() {
-    checkin.value = true;
-  }
 
   @action
   Future<void> getClientList() async {
     clientList.addAll(await pickRouteFile.pickFiles());
-    resetViewModel();
     goToRouteScreen();
-  }
-
-  @action
-  void goToLoadingScreen() {
-    screenState.value = RoutePageState.loading;
   }
 
   @action
@@ -58,26 +41,13 @@ abstract class _StartRouteViewModel with Store {
   }
 
   @action
-  void resetViewModel(){
-    firstOpen.value = true;
-    checkin.value = false;
-    sentWelcomeMessage.value = false;
-    statusRouteBar.value = 0;
-  }
-
-  @action
-  void goToBagsScreen(Driver currentDriver) {
-    TwilioSmsService smsService = TwilioSmsService(currentDriver);
-    for (var client in clientList) {
-      smsService.sendSms(client.name, client.phone, client.eta);
-    }
-    sentWelcomeMessage.value = true;
+  void goToBagsScreen() {
     screenState.value = RoutePageState.bagsChecking;
     statusRouteBar.value = 1;
   }
 
   @action
-  void verifyBags() {
+  void verifyBags(Driver currentDriver) {
     bool checkBagsFinish = true;
     clientList.forEach((element) {
       if (element.check == false) {
@@ -85,7 +55,7 @@ abstract class _StartRouteViewModel with Store {
       }
     });
     if (checkBagsFinish == true) {
-      goToInTransitScreen();
+      screenState.value = RoutePageState.welcomeMessage;
     }
   }
 
@@ -103,7 +73,11 @@ abstract class _StartRouteViewModel with Store {
   }
 
   @action
-  void goToInTransitScreen() {
+  void goToInTransitScreen(Driver currentDriver) {
+    TwilioSmsService smsService = TwilioSmsService(currentDriver);
+    for (var client in clientList) {
+      smsService.sendSms(client.name, client.phone, client.eta);
+    }
     screenState.value = RoutePageState.inTransit;
     statusRouteBar.value = 2;
   }
@@ -111,13 +85,8 @@ abstract class _StartRouteViewModel with Store {
   @action
   void goToRouteDoneScreen() {
     clientList.clear();
+    firstOpen.value = true;
     screenState.value = RoutePageState.routeDone;
     statusRouteBar.value = 3;
-  }
-
-  @action
-  void goToInitScreen() {
-    screenState.value = RoutePageState.init;
-    statusRouteBar.value = 0;
   }
 }

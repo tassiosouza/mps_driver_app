@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../models/Driver.dart';
-import '../start_route_viewmodel.dart';
+import '../route_viewmodel.dart';
 import 'ClientListItem.dart';
 
 class ClientsListView extends StatefulWidget{
   final Driver _currentDriver;
   ClientsListView(this._currentDriver);
-  final screenViewModel = Modular.get<StartRouteViewModel>();
+  final screenViewModel = Modular.get<RouteViewModel>();
   @override
   State<StatefulWidget> createState() => ClientListState();
 }

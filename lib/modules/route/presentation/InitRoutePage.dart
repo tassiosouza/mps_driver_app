@@ -1,23 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mps_driver_app/modules/route/presentation/start_route_viewmodel.dart';
+import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../../theme/app_colors.dart';
 
 class InitRoutePage extends StatefulWidget {
-  StartRouteViewModel startRouteViewModel = Modular.get<StartRouteViewModel>();
+  RouteViewModel routeViewModel = Modular.get<RouteViewModel>();
   _InitRoutePage createState() => _InitRoutePage();
 }
 
 class _InitRoutePage extends State<InitRoutePage> {
   void getClientList() {
-    widget.startRouteViewModel.goToLoadingScreen();
-    widget.startRouteViewModel.getClientList();
+    Modular.to.navigate('/loading');
+    widget.routeViewModel.getClientList();
   }
 
   @override
   Widget build(BuildContext context) {
+    
+    if(widget.routeViewModel.clientList.isNotEmpty){
+      Modular.to.navigate('/inroute');
+    }
+    
     return Center(
       child: Column(
         children: [

@@ -5,38 +5,23 @@ import 'package:mps_driver_app/models/Driver.dart';
 import 'package:mps_driver_app/modules/route/presentation/InitRoutePage.dart';
 import 'package:intl/intl.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
-import 'package:mps_driver_app/modules/route/presentation/start_route_viewmodel.dart';
+import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../../Services/DriverService.dart';
 import '../../../components/AppDialogs.dart';
-import 'components/ClientListItem.dart';
 import 'components/ClientsListView.dart';
-import 'components/StateRouteLoading.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
 
 import 'MapsPage.dart';
 
-class StartRoutePage extends StatelessWidget {
-
+class RoutePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Start Route',
-      home: StartRouteComponent(),
-    );
-  }
+  State<StatefulWidget> createState() => StateRoutePage();
 }
 
-class StartRouteComponent extends StatefulWidget {
-  const StartRouteComponent();
-  @override
-  _StartRouteComponentState createState() => _StartRouteComponentState();
-}
-
-class _StartRouteComponentState extends State<StartRouteComponent> {
-  StartRouteViewModel screenViewModel = Modular.get<StartRouteViewModel>();
+class StateRoutePage extends State<RoutePage> {
+  RouteViewModel screenViewModel = Modular.get<RouteViewModel>();
   int dotCount = 4;
   Driver? _currentDriver;
 
@@ -64,7 +49,14 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   Future<void> welcomeDialog() {
     screenViewModel.setFirstOpen();
     return AppDialogs().showDialogJustMsg(context, "Welcome Driver",
-        "Make your checkin and then click welcome message to send message to the clients.");
+        "Make your checkin and start to check bags.");
+  }
+
+  Future<void> welcomeMessageSendConfirmDialog() {
+    return AppDialogs().showConfirmDialog(
+        context, () => {screenViewModel.goToInTransitScreen(_currentDriver!)},
+        "Confirm",
+        "Touch in Check-in to make your checking and touch welcome message to send message to clients");
   }
 
   Future<void> inTransitDialog() {
@@ -80,12 +72,6 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
   Widget getStateScreen(RoutePageState screenState) {
     late Widget widget;
     switch (screenState) {
-      case RoutePageState.init:
-        widget = InitRoutePage();
-        break;
-      case RoutePageState.loading:
-        widget = StateRouteLoading();
-        break;
       case RoutePageState.routePlan:
         if (screenViewModel.firstOpen.value) {
           Future.delayed(Duration.zero, () => welcomeDialog());
@@ -100,10 +86,10 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
         widget = routeScreen();
         break;
       case RoutePageState.inTransit:
-        Future.delayed(Duration.zero, () => inTransitDialog());
         widget = routeScreen();
         break;
-      case RoutePageState.error:
+      case RoutePageState.welcomeMessage:
+        widget = routeScreen();
         break;
     }
     return widget;
@@ -119,14 +105,6 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
     }
   }
 
-  Future<void> welcomeMessageSendConfirmDialog() {
-    return AppDialogs().showConfirmDialog(
-        context,
-        () => {screenViewModel.goToBagsScreen(_currentDriver!)},
-        "Confirm",
-        "Touch in Check-in to make your checking and touch welcome message to send message to clients");
-  }
-
   Widget toCheckIn(bool checkin) {
     if (checkin) {
       DateTime now = DateTime.now();
@@ -140,7 +118,9 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
           alignment: Alignment.centerLeft);
     } else {
       return GestureDetector(
-          onTap: () => screenViewModel.setCheckIn(),
+          onTap: (){
+            screenViewModel.goToBagsScreen();
+          },
           child: Container(
               padding: EdgeInsets.only(left: 18, top: 5),
               child: Text(
@@ -214,9 +194,8 @@ class _StartRouteComponentState extends State<StartRouteComponent> {
                     children: [
                       Observer(
                           builder: (_) =>
-                              toCheckIn(screenViewModel.checkin.value)),
-                      getWelcomeMessage(
-                          screenViewModel.sentWelcomeMessage.value)
+                              toCheckIn(true)),
+                      getWelcomeMessage(true)
                     ],
                   ),
                   SizedBox(height: 15),

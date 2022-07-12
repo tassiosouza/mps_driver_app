@@ -5,7 +5,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:mps_driver_app/modules/route/services/TwilioService.dart';
-import 'package:mps_driver_app/modules/route/presentation/start_route_viewmodel.dart';
+import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,7 +24,7 @@ class ClientItem extends StatelessWidget {
   int clientIndex;
   Driver currentDriver;
   TwilioSmsService? smsService = null;
-  StartRouteViewModel screenViewModel = Modular.get<StartRouteViewModel>();
+  RouteViewModel screenViewModel = Modular.get<RouteViewModel>();
 
   ClientItem(this.client, this.clientIndex, this.currentDriver, {Key? key})
       : super(key: key) {
@@ -305,7 +305,7 @@ class ClientItem extends StatelessWidget {
     Widget widget;
     if (check) {
       widget = getButtonIcon(Icons.check, client, false);
-      screenViewModel.verifyBags();
+      screenViewModel.verifyBags(currentDriver);
     } else {
       widget = SizedBox(
           width: 30,

@@ -1,9 +1,7 @@
 enum RoutePageState {
-  init,
-  loading,
   routePlan,
   bagsChecking,
+  welcomeMessage,
   inTransit,
-  routeDone,
-  error
+  routeDone
 }

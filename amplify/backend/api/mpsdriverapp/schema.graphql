@@ -1,7 +1,17 @@
+type Driver @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  email: String!
+  phone: String
+  carCapacity: Int
+  owner: String!
+}
+
 type Todo @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
   description: String
   isComplete: Boolean!
+  owner: String!
 }
  

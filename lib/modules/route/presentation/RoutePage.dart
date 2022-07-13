@@ -105,14 +105,17 @@ class StateRoutePage extends State<RoutePage> {
     }
   }
 
-  Widget toCheckIn(bool checkin) {
-    if (checkin) {
-      DateTime now = DateTime.now();
-      String time = DateFormat('kk:mm').format(now);
+  Widget toCheckIn(bool madeCheckIn) {
+    if (madeCheckIn) {
+      if(screenViewModel.checkingTime.value == ''){
+        DateTime now = DateTime.now();
+        String time = DateFormat('kk:mm').format(now);
+        screenViewModel.setCheckingTime(time);
+      }
       return Container(
           padding: EdgeInsets.only(left: 18, top: 5),
           child: Text(
-            "Initiated at: $time",
+            "Initiated at: ${screenViewModel.checkingTime.value}",
             style: TextStyle(fontSize: 14, color: App_Colors.grey_dark.value),
           ),
           alignment: Alignment.centerLeft);
@@ -193,8 +196,8 @@ class StateRoutePage extends State<RoutePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Observer(
-                          builder: (_) =>
-                              toCheckIn(true)),
+                        builder: (_) =>
+                          toCheckIn(screenViewModel.screenState.value != RoutePageState.routePlan)),
                       getWelcomeMessage(true)
                     ],
                   ),

@@ -5,7 +5,7 @@ class MainViewModel = _MainViewModel with _$MainViewModel;
 
 abstract class _MainViewModel with Store {
   @observable
-  var currentIndex = Observable(0);
+  var currentIndex = Observable(2);
 
   @action
   setCurrentIndex(int index){

@@ -96,17 +96,6 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   }
 
   @override
-  void goToRouteScreen() {
-    final _$actionInfo = _$_RouteViewModelActionController.startAction(
-        name: '_RouteViewModel.goToRouteScreen');
-    try {
-      return super.goToRouteScreen();
-    } finally {
-      _$_RouteViewModelActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void goToBagsScreen() {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
         name: '_RouteViewModel.goToBagsScreen');

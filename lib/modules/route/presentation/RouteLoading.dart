@@ -9,15 +9,9 @@ class RouteLoading extends StatefulWidget {
   State<StatefulWidget> createState() => StateRouteLoading();
 }
   
-  class StateRouteLoading extends State<RouteLoading>{
-
-  final viewModel = Modular.get<RouteViewModel>();
-
+class StateRouteLoading extends State<RouteLoading>{
   @override
   Widget build(BuildContext context) {
-    if(viewModel.clientList.isNotEmpty){
-      Modular.to.navigate('/inroute');
-    }
     return Stack(alignment: Alignment.center,
             children:[
               Image.asset('assets/images/loading_backgroun.png',

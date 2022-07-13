@@ -34,15 +34,6 @@ class ClientItem extends StatelessWidget {
 
   final ImagePicker _picker = ImagePicker();
 
-  XFile? _imageFile;
-
-  String _printDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    return "${twoDigits(duration.inHours)}h${twoDigitMinutes}m"
-        .replaceAll('00h', '');
-  }
-
   void _launchMapsUrl() async {
     availableMaps = await MapLauncher.installedMaps;
     await availableMaps.first.showMarker(
@@ -61,13 +52,6 @@ class ClientItem extends StatelessWidget {
       smsService?.sendSmsWithPhoto(client.phone, url);
     }
   }
-
-  void _setImageFileFromFile(XFile? value) {
-    _imageFile = value;
-  }
-
-  dynamic _pickImageError;
-  String? _retrieveDataError;
 
   Future<String> createAndUploadFile(XFile pickedFile) async {
     // Upload image with the current time as the key

@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mps_driver_app/modules/route/presentation/RouteLoading.dart';
 import 'package:mps_driver_app/modules/route/services/PickRouteFile.dart';
 import 'package:mps_driver_app/modules/route/services/TwilioService.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
@@ -18,6 +21,14 @@ abstract class _RouteViewModel with Store {
   @observable
   var firstOpen = Observable(true);
 
+  @observable
+  var checkingTime = Observable('');
+
+  @action
+  void setCheckingTime(String time){
+    checkingTime.value = time;
+  }
+
   @action
   void setFirstOpen() {
     firstOpen.value = false;
@@ -32,12 +43,6 @@ abstract class _RouteViewModel with Store {
   @action
   Future<void> getClientList() async {
     clientList.addAll(await pickRouteFile.pickFiles());
-    goToRouteScreen();
-  }
-
-  @action
-  void goToRouteScreen() {
-    screenState.value = RoutePageState.routePlan;
   }
 
   @action

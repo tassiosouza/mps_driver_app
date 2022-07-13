@@ -11,18 +11,18 @@ class InitRoutePage extends StatefulWidget {
 }
 
 class _InitRoutePage extends State<InitRoutePage> {
-  void getClientList() {
-    Modular.to.navigate('/loading');
-    widget.routeViewModel.getClientList();
+  Future<void> getClientList() async {
+    Modular.to.pushNamed('./loading');
+    await widget.routeViewModel.getClientList();
+    Modular.to.navigate('./inroute');
   }
 
   @override
   Widget build(BuildContext context) {
-    
     if(widget.routeViewModel.clientList.isNotEmpty){
-      Modular.to.navigate('/inroute');
+      Modular.to.navigate('./inroute');
+      return Center();
     }
-    
     return Center(
       child: Column(
         children: [

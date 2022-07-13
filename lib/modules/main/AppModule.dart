@@ -22,11 +22,11 @@ class AppModule extends Module {
   List<ModularRoute> get routes => [
     ChildRoute('/', child: (context, args) => MainPage(),
     children: [
-      ModuleRoute('/prepnews', module: PrepNewsModule()),
-      ModuleRoute('/history', module: HistoryModule()),
-      ModuleRoute('/route', module: RouteModule()),
-      ModuleRoute('/prepnews', module: RatingModule()),
-      ModuleRoute('/prepnews', module: ProfileModule()),
+      ModuleRoute('/prepnews/', module: PrepNewsModule()),
+      ModuleRoute('/history/', module: HistoryModule()),
+      ModuleRoute('/route/', module: RouteModule()),
+      ModuleRoute('/rating/', module: RatingModule()),
+      ModuleRoute('/profile/', module: ProfileModule()),
     ])
   ];
 }

@@ -14,12 +14,13 @@ class _InitRoutePage extends State<InitRoutePage> {
   Future<void> getClientList() async {
     Modular.to.pushNamed('./loading');
     await widget.routeViewModel.getClientList();
+    widget.routeViewModel.getOrderList();
     Modular.to.navigate('./inroute');
   }
 
   @override
   Widget build(BuildContext context) {
-    if(widget.routeViewModel.clientList.isNotEmpty){
+    if (widget.routeViewModel.clientList.isNotEmpty) {
       Modular.to.navigate('./inroute');
       return Center();
     } else {

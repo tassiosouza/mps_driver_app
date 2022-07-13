@@ -8,7 +8,7 @@ import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../../Services/DriverService.dart';
 import '../../../components/AppDialogs.dart';
-import 'components/ClientsListView.dart';
+import 'components/OrdersListView.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
 
@@ -56,7 +56,8 @@ class StateRoutePage extends State<RoutePage> {
 
   Future<void> sendingWelcomeMessageDialog() {
     return AppDialogs().showConfirmDialog(
-        context, () => {screenViewModel.goToInTransitScreen(_currentDriver!)},
+        context,
+        () => {screenViewModel.goToInTransitScreen(_currentDriver!)},
         "Confirm",
         "Welcome messages will be sent to customers and you can start delivering!");
   }
@@ -81,19 +82,19 @@ class StateRoutePage extends State<RoutePage> {
     }
   }
 
-  Widget expandedStatusBar(String text, int fixedNumber, int varNumber){
+  Widget expandedStatusBar(String text, int fixedNumber, int varNumber) {
     return Expanded(
-        child: Text(text, textAlign: TextAlign.center,
+        child: Text(text,
+            textAlign: TextAlign.center,
             style: TextStyle(
-                fontFamily: "Poppins", fontSize: 12,
-                color: getStatusColor(
-                    fixedNumber, varNumber))
-        ));
+                fontFamily: "Poppins",
+                fontSize: 12,
+                color: getStatusColor(fixedNumber, varNumber))));
   }
 
   Widget toCheckIn(bool madeCheckIn) {
     if (madeCheckIn) {
-      if(screenViewModel.checkingTime.value == ''){
+      if (screenViewModel.checkingTime.value == '') {
         DateTime now = DateTime.now();
         String time = DateFormat('kk:mm').format(now);
         screenViewModel.setCheckingTime(time);
@@ -107,7 +108,7 @@ class StateRoutePage extends State<RoutePage> {
           alignment: Alignment.centerLeft);
     } else {
       return GestureDetector(
-          onTap: (){
+          onTap: () {
             screenViewModel.goToBagsChecking();
           },
           child: Container(
@@ -137,7 +138,8 @@ class StateRoutePage extends State<RoutePage> {
             alignment: Alignment.centerLeft,
           ),
           onTap: clickWrongWelcomeMessageDialog);
-    } else if(screenViewModel.screenState.value == RoutePageState.welcomeMessage){
+    } else if (screenViewModel.screenState.value ==
+        RoutePageState.welcomeMessage) {
       return GestureDetector(
           child: Container(
             padding: EdgeInsets.only(right: 25, top: 5),
@@ -165,31 +167,29 @@ class StateRoutePage extends State<RoutePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              SecondRoute(clients: screenViewModel.clientList)),
+          builder: (context) => SecondRoute(orders: screenViewModel.orderList)),
     );
   }
 
-  Widget routeDone(){
-    return Container(padding: EdgeInsets.only(left: 50, right: 50,
-        top: 160, bottom: 160),
+  Widget routeDone() {
+    return Container(
+        padding: EdgeInsets.only(left: 50, right: 50, top: 160, bottom: 160),
         child: ElevatedButton(
-          onPressed: (){
+          onPressed: () {
             screenViewModel.clearClientList();
             Modular.to.navigate('./');
           },
-          style: ElevatedButton.styleFrom(
-              primary: App_Colors.primary_color.value),
+          style:
+              ElevatedButton.styleFrom(primary: App_Colors.primary_color.value),
           child: Text("Finish route",
-              style: TextStyle(
-                  fontSize: 20, fontFamily: 'Poppins')),
+              style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
         ));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (_){
-      switch(screenViewModel.screenState.value){
+    return Observer(builder: (_) {
+      switch (screenViewModel.screenState.value) {
         case RoutePageState.firstOpen:
           Future.delayed(Duration.zero, welcomeDialog);
           screenViewModel.goToRoutePlan();
@@ -209,154 +209,160 @@ class StateRoutePage extends State<RoutePage> {
       return Scaffold(
         backgroundColor: App_Colors.white_background.value,
         body: Center(
-          child: SingleChildScrollView(
-              child: Observer(builder: (_){
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(
+          child: SingleChildScrollView(child: Observer(builder: (_) {
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 60,
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(left: 18),
+                          child: Row(
+                            children: [
+                              _currentDriver != null
+                                  ? Text(
+                                      "${_currentDriver?.name}  ",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500),
+                                    )
+                                  : Text(""),
+                              DotIndicator(
+                                color: App_Colors.primary_color.value,
+                                size: 8,
+                              )
+                            ],
+                          ),
+                          alignment: Alignment.centerLeft),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            height: 60,
-                          ),
-                          Container(
-                              padding: EdgeInsets.only(left: 18),
-                              child: Row(
-                                children: [
-                                  _currentDriver != null
-                                      ? Text(
-                                    "${_currentDriver?.name}  ",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
-                                  )
-                                      : Text(""),
-                                  DotIndicator(
-                                    color: App_Colors.primary_color.value,
-                                    size: 8,
-                                  )
-                                ],
-                              ),
-                              alignment: Alignment.centerLeft),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Observer(
-                                  builder: (_) =>
-                                      toCheckIn(screenViewModel.screenState.value != RoutePageState.routePlan)),
-                              getWelcomeMessage()
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          Divider(thickness: 1),
-                          SizedBox(height: 10),
-                          Container(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Row(children: [
-                              Text("Route Status",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(fontFamily: "Poppins", fontSize: 16))
-                            ]),
-                          ),
-                          SizedBox(height: 15),
-                          Stepper.IconStepper(
-                            scrollingDisabled: true,
-                            enableNextPreviousButtons: false,
-                            icons: [
-                              Icon(
-                                Icons.supervised_user_circle,
-                                color: Colors.green,
-                              ),
-                              Icon(
-                                Icons.supervised_user_circle,
-                                color: Colors.green,
-                              ),
-                              Icon(
-                                Icons.supervised_user_circle,
-                                color: Colors.green,
-                              ),
-                              Icon(
-                                Icons.supervised_user_circle,
-                                color: Colors.green,
-                              ),
-                            ],
-
-                            activeStepBorderColor: Colors.green,
-                            activeStepBorderWidth: 1,
-                            stepRadius: 3,
-                            lineColor: Colors.green,
-                            lineLength: 85,
-                            activeStepBorderPadding: 2,
-
-                            // activeStep property set to activeStep variable defined above.
-                            activeStep: screenViewModel.statusRouteBar.value,
-
-                            // This ensures step-tapping updates the activeStep.
-                            onStepReached: (index) {
-                              setState(() {
-                                screenViewModel.statusRouteBar.value = index;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              expandedStatusBar("Route plan", 0, screenViewModel.statusRouteBar.value),
-                              expandedStatusBar("Bags checking", 1, screenViewModel.statusRouteBar.value),
-                              expandedStatusBar("In transit", 2, screenViewModel.statusRouteBar.value),
-                              expandedStatusBar("Route done", 3, screenViewModel.statusRouteBar.value)
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          Divider(thickness: 1),
+                          Observer(
+                              builder: (_) => toCheckIn(
+                                  screenViewModel.screenState.value !=
+                                      RoutePageState.routePlan)),
+                          getWelcomeMessage()
                         ],
                       ),
-                      Column(children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(left: 18),
-                                child: Text(
-                                  "Deliveries",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500, fontSize: 16),
-                                ),
-                              ),
-                              GestureDetector(
-                                  child: Container(
-                                      padding: EdgeInsets.only(right: 25),
-                                      child: Column(children: [
-                                        Icon(
-                                          Icons.location_on_outlined,
-                                          color: App_Colors.primary_color.value,
-                                        ),
-                                        Text(
-                                          "Route map",
-                                          style: TextStyle(
-                                              color: App_Colors.primary_color.value),
-                                        )
-                                      ])),
-                                  onTap: goToViewOnMap)
-                            ]),
-                        Container(
-                            height: MediaQuery.of(context).size.height / 2.1,
-                            child: Observer(
-                                builder: (_) {
-                                  if(screenViewModel.screenState.value == RoutePageState.routeDone){
-                                    return routeDone();
-                                  }
-                                  if(_currentDriver != null){
-                                    return ClientsListView(_currentDriver!);
-                                  }
-                                  return Center();
-                                }))
-                      ]),
-                    ]);
-              })),
+                      SizedBox(height: 15),
+                      Divider(thickness: 1),
+                      SizedBox(height: 10),
+                      Container(
+                        padding: EdgeInsets.only(left: 20),
+                        child: Row(children: [
+                          Text("Route Status",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontFamily: "Poppins", fontSize: 16))
+                        ]),
+                      ),
+                      SizedBox(height: 15),
+                      Stepper.IconStepper(
+                        scrollingDisabled: true,
+                        enableNextPreviousButtons: false,
+                        icons: [
+                          Icon(
+                            Icons.supervised_user_circle,
+                            color: Colors.green,
+                          ),
+                          Icon(
+                            Icons.supervised_user_circle,
+                            color: Colors.green,
+                          ),
+                          Icon(
+                            Icons.supervised_user_circle,
+                            color: Colors.green,
+                          ),
+                          Icon(
+                            Icons.supervised_user_circle,
+                            color: Colors.green,
+                          ),
+                        ],
+
+                        activeStepBorderColor: Colors.green,
+                        activeStepBorderWidth: 1,
+                        stepRadius: 3,
+                        lineColor: Colors.green,
+                        lineLength: 85,
+                        activeStepBorderPadding: 2,
+
+                        // activeStep property set to activeStep variable defined above.
+                        activeStep: screenViewModel.statusRouteBar.value,
+
+                        // This ensures step-tapping updates the activeStep.
+                        onStepReached: (index) {
+                          setState(() {
+                            screenViewModel.statusRouteBar.value = index;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          expandedStatusBar("Route plan", 0,
+                              screenViewModel.statusRouteBar.value),
+                          expandedStatusBar("Bags checking", 1,
+                              screenViewModel.statusRouteBar.value),
+                          expandedStatusBar("In transit", 2,
+                              screenViewModel.statusRouteBar.value),
+                          expandedStatusBar("Route done", 3,
+                              screenViewModel.statusRouteBar.value)
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Divider(thickness: 1),
+                    ],
+                  ),
+                  Column(children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(left: 18),
+                            child: Text(
+                              "Deliveries",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 16),
+                            ),
+                          ),
+                          GestureDetector(
+                              child: Container(
+                                  padding: EdgeInsets.only(right: 25),
+                                  child: Column(children: [
+                                    Icon(
+                                      Icons.location_on_outlined,
+                                      color: App_Colors.primary_color.value,
+                                    ),
+                                    Text(
+                                      "Route map",
+                                      style: TextStyle(
+                                          color:
+                                              App_Colors.primary_color.value),
+                                    )
+                                  ])),
+                              onTap: goToViewOnMap)
+                        ]),
+                    Container(
+                        height: MediaQuery.of(context).size.height / 2.1,
+                        child: Observer(builder: (_) {
+                          if (screenViewModel.screenState.value ==
+                              RoutePageState.routeDone) {
+                            return routeDone();
+                          }
+                          if (_currentDriver != null) {
+                            return OrdersListView(_currentDriver!);
+                          }
+                          return Center();
+                        }))
+                  ]),
+                ]);
+          })),
         ),
       );
     });

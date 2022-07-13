@@ -5,7 +5,7 @@ part 'Client.g.dart';
 
 class Client = _Client with _$Client;
 
-abstract class _Client with Store{
+abstract class _Client with Store {
   String id = '';
   String name = '';
   String phone = '';
@@ -15,19 +15,20 @@ abstract class _Client with Store{
   String stateZipCode = '';
   String deliveryInstructions = '';
   String mealInstructions = '';
-  Coordinates coordinates = Coordinates(0, 0);
+  Coordinates coordinates = Coordinates(latitude: 0, longitude: 0);
   int indexOnRoute = 0;
   int eta = 0;
   @observable
   bool check = false;
   @action
-  setCheck(bool isCheck){
+  setCheck(bool isCheck) {
     check = isCheck;
   }
+
   @observable
   bool sentPhoto = false;
   @action
-  setSentPhoto(bool sent){
+  setSentPhoto(bool sent) {
     sentPhoto = sent;
   }
 

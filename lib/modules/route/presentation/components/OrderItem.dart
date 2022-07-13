@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:mps_driver_app/models/OrderStatus.dart';
 import 'package:mps_driver_app/modules/route/services/TwilioService.dart';
 import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
@@ -15,18 +16,19 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import '../../../../models/Driver.dart';
+import '../../../../models/Order.dart';
 import '../../utils/RoutePageState.dart';
 import '../../../../components/AppDialogs.dart';
 import 'InstructionsDialog.dart';
 
-class ClientItem extends StatelessWidget {
-  Client client;
-  int clientIndex;
+class OrderItem extends StatelessWidget {
+  Order order;
+  int orderIndex;
   Driver currentDriver;
   TwilioSmsService? smsService = null;
   RouteViewModel screenViewModel = Modular.get<RouteViewModel>();
 
-  ClientItem(this.client, this.clientIndex, this.currentDriver, {Key? key})
+  OrderItem(this.order, this.orderIndex, this.currentDriver, {Key? key})
       : super(key: key) {
     smsService = TwilioSmsService(currentDriver);
   }
@@ -37,9 +39,10 @@ class ClientItem extends StatelessWidget {
   void _launchMapsUrl() async {
     availableMaps = await MapLauncher.installedMaps;
     await availableMaps.first.showMarker(
-      coords: Coords(client.coordinates.latitude, client.coordinates.longitude),
-      title: client.name,
-      description: client.name,
+      coords: Coords(order.customer!.coordinates!.latitude,
+          order.customer!.coordinates!.longitude),
+      title: order.customer!.name,
+      description: order.customer!.name,
     );
   }
 
@@ -48,8 +51,8 @@ class ClientItem extends StatelessWidget {
     if (url.isEmpty) {
       throw Exception('Photo exception');
     } else {
-      client.setSentPhoto(true);
-      smsService?.sendSmsWithPhoto(client.phone, url);
+      updateOrderStatusTo(OrderStatus.DELIVERED);
+      smsService?.sendSmsWithPhoto(order.customer!.phone, url);
     }
   }
 
@@ -104,14 +107,28 @@ class ClientItem extends StatelessWidget {
     }
   }
 
+  Future<void> updateOrderStatusTo(OrderStatus status) async {
+    Order updatedOrder = order.copyWith(status: status);
+    try {
+      // to update data in DataStore, we again pass an instance of a model to
+      // Amplify.DataStore.save()
+      await Amplify.DataStore.save(updatedOrder);
+    } catch (e) {
+      print('An error occurred while saving Todo: $e');
+    }
+  }
+
   Future<void> checkBagConfirmDialog(BuildContext context) {
-    return AppDialogs().showConfirmDialog(context, () => client.setCheck(true),
-        "Meal Instructions", client.mealInstructions);
+    return AppDialogs().showConfirmDialog(
+        context,
+        () => updateOrderStatusTo(OrderStatus.CHECKED),
+        "Meal Instructions",
+        order.mealsInstruction);
   }
 
   Future<void> wrongCheckBagClickDialog(BuildContext context) {
-    return AppDialogs().showDialogJustMsg(context, "Attention",
-        "Make checkin first.");
+    return AppDialogs()
+        .showDialogJustMsg(context, "Attention", "Make checkin first.");
   }
 
   Future<void> wrongTakePhotoClickDialog(BuildContext context) {
@@ -134,7 +151,8 @@ class ClientItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(elevation: 0,
+    return Card(
+      elevation: 0,
       margin: EdgeInsets.all(5),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -164,13 +182,13 @@ class ClientItem extends StatelessWidget {
                       RichText(
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                              text: client.name,
+                              text: order.customer!.name,
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: App_Colors.black_text.value,
                                   fontFamily: 'Poppins'))),
-                      Text(client.address,
+                      Text(order.customer!.address,
                           style: TextStyle(
                               color: App_Colors.black_text.value,
                               fontFamily: 'Poppins',
@@ -180,7 +198,8 @@ class ClientItem extends StatelessWidget {
                   Column(
                     children: [
                       GestureDetector(
-                          onTap: () => InstructionsDialog().call(context, client),
+                          onTap: () =>
+                              InstructionsDialog().call(context, order),
                           child: Container(
                               padding: const EdgeInsets.only(right: 15),
                               child: const Icon(
@@ -196,9 +215,9 @@ class ClientItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    getButtonIcon(CustomIcon.sms_driver_icon, client, false),
-                    getButtonIcon(CustomIcon.call_driver_icon, client, true),
-                    Observer(builder: (_) => bagIcon(client.check, context)),
+                    getButtonIcon(CustomIcon.sms_driver_icon, order, false),
+                    getButtonIcon(CustomIcon.call_driver_icon, order, true),
+                    Observer(builder: (_) => bagIcon(order.status, context)),
                     const SizedBox(width: 1),
                     ElevatedButton(
                       onPressed: () {
@@ -250,7 +269,7 @@ class ClientItem extends StatelessWidget {
                     ),
                     child: Container(
                         child: Text(
-                          "${clientIndex + 1}°",
+                          "${orderIndex + 1}°",
                           style: TextStyle(
                               color: Colors.green,
                               fontSize: 14,
@@ -258,7 +277,7 @@ class ClientItem extends StatelessWidget {
                         ),
                         padding: EdgeInsets.only(
                             left: 35, right: 35, top: 8, bottom: 8))),
-                Observer(builder: (_) => getCameraIcon(client, context)),
+                Observer(builder: (_) => getCameraIcon(order, context)),
                 Text(
                   "Deliver",
                   style: TextStyle(
@@ -268,7 +287,7 @@ class ClientItem extends StatelessWidget {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  client.id,
+                  order.number,
                   style: TextStyle(
                       color: App_Colors.grey_text.value,
                       fontSize: 14,
@@ -283,11 +302,11 @@ class ClientItem extends StatelessWidget {
     );
   }
 
-  bagIcon(bool check, BuildContext context) {
+  bagIcon(OrderStatus? status, BuildContext context) {
     Widget widget;
-    if (check) {
-      widget = getButtonIcon(Icons.check, client, false);
-      if(screenViewModel.screenState.value == RoutePageState.bagsChecking){
+    if (order.status == OrderStatus.CHECKED) {
+      widget = getButtonIcon(Icons.check, order, false);
+      if (screenViewModel.screenState.value == RoutePageState.bagsChecking) {
         screenViewModel.verifyBags(currentDriver);
       }
     } else {
@@ -320,14 +339,14 @@ class ClientItem extends StatelessWidget {
     return widget;
   }
 
-  getButtonIcon(IconData icon, Client client, bool isCall) {
+  getButtonIcon(IconData icon, Order order, bool isCall) {
     return SizedBox(
         width: 30,
         height: 28,
         child: ElevatedButton(
           onPressed: () => isCall
-              ? _launchCaller(client.phone.replaceAll(' ', ''))
-              : _sendSMS("", [client.phone]),
+              ? _launchCaller(order.customer!.phone.replaceAll(' ', ''))
+              : _sendSMS("", [order.customer!.phone]),
           style: ButtonStyle(
             shape: MaterialStateProperty.all(CircleBorder()),
             padding: MaterialStateProperty.all(EdgeInsets.all(0)),
@@ -342,12 +361,12 @@ class ClientItem extends StatelessWidget {
         ));
   }
 
-  getCameraIcon(Client client, BuildContext context) {
-    if (client.sentPhoto) {
+  getCameraIcon(Order order, BuildContext context) {
+    if (order.status == OrderStatus.DELIVERED) {
       screenViewModel.verifyPhotosSent();
     }
     Icon icon;
-    if (client.sentPhoto) {
+    if (order.status == OrderStatus.DELIVERED) {
       icon = Icon(Icons.check, size: 17, color: App_Colors.primary_color.value);
     } else {
       icon = Icon(CustomIcon.camera_driver_icon,

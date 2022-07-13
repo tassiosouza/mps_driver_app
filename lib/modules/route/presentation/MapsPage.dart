@@ -6,10 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mps_driver_app/models/Client.dart';
+import 'package:mps_driver_app/models/Coordinates.dart';
+
+import '../../../models/Customer.dart';
+import '../../../models/Order.dart';
 
 class SecondRoute extends StatefulWidget {
-  final List<Client> clients;
-  const SecondRoute({Key? key, required this.clients}) : super(key: key);
+  final List<Order> orders;
+  const SecondRoute({Key? key, required this.orders}) : super(key: key);
 
   _ExampleState createState() => _ExampleState();
 }
@@ -21,7 +25,7 @@ class _ExampleState extends State<SecondRoute> {
   int _markerIdCounter = 1;
   MarkerId? selectedMarker;
   LatLng? markerPosition;
-  late List copyClientList;
+  late List copyOrderList;
   static const LatLng center = LatLng(-33.86711, 151.1947171);
   Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
 
@@ -63,7 +67,7 @@ class _ExampleState extends State<SecondRoute> {
       consumeTapEvents: true,
       color: Colors.grey,
       width: 1,
-      points: _createPoints(copyClientList),
+      points: _createPoints(copyOrderList),
     );
 
     setState(() {
@@ -119,16 +123,21 @@ class _ExampleState extends State<SecondRoute> {
     _getThingsOnStartup().then((value) {
       print('Async done');
     });
-    copyClientList = List<Client>.from(widget.clients);
-    Client client = Client();
-    client.name = 'Meal Prep Sunday';
-    client.coordinates.latitude = 33.1522247;
-    client.coordinates.longitude = -117.2310085;
-    copyClientList.insert(0, client);
+    copyOrderList = List<Order>.from(widget.orders);
+    Customer customer = Customer(
+        name: "Meal Prep Sunday",
+        address: '',
+        phone: '',
+        coordinates:
+            Coordinates(latitude: 33.1522247, longitude: -117.2310085));
+    Order order =
+        Order(number: '#00001', routeID: "routeId", customer: customer);
+    copyOrderList.insert(0, order);
     var index = 1;
-    copyClientList.forEach((client) => {
+    copyOrderList.forEach((order) => {
           _add(
-              LatLng(client.coordinates.latitude, client.coordinates.longitude),
+              LatLng(order.customer.coordinates.latitude,
+                  order.customer.coordinates.longitude),
               index),
           index += 1,
         });

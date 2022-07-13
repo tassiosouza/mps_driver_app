@@ -22,7 +22,7 @@ class GeocodingApi {
         var data = jsonDecode(response.body);
         var lat = data["results"][0]["geometry"]["location"]["lat"];
         var long = data["results"][0]["geometry"]["location"]["lng"];
-        return new Coordinates(lat, long);
+        return Coordinates(latitude: lat, longitude: long);
       } catch (e) {
         // ignore: use_build_context_synchronously
         throw Exception('Could not locate: $address');
@@ -31,6 +31,5 @@ class GeocodingApi {
       // ignore: use_build_context_synchronously
       throw Exception('Could not locate: $address');
     }
-    return Coordinates(0, 0);
   }
 }

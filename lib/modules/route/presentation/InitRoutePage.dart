@@ -22,6 +22,10 @@ class _InitRoutePage extends State<InitRoutePage> {
     if(widget.routeViewModel.clientList.isNotEmpty){
       Modular.to.navigate('./inroute');
       return Center();
+    } else {
+      Future.delayed(Duration(seconds: 2),
+      () => widget.routeViewModel.backToFirstOpenState());
+
     }
     return Center(
       child: Column(

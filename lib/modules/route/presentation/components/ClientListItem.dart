@@ -111,7 +111,7 @@ class ClientItem extends StatelessWidget {
 
   Future<void> wrongCheckBagClickDialog(BuildContext context) {
     return AppDialogs().showDialogJustMsg(context, "Attention",
-        "You need to send welcome message before check bags.");
+        "Make checkin first.");
   }
 
   Future<void> wrongTakePhotoClickDialog(BuildContext context) {
@@ -134,8 +134,7 @@ class ClientItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
+    return Card(elevation: 0,
       margin: EdgeInsets.all(5),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -289,7 +288,9 @@ class ClientItem extends StatelessWidget {
     Widget widget;
     if (check) {
       widget = getButtonIcon(Icons.check, client, false);
-      screenViewModel.verifyBags(currentDriver);
+      if(screenViewModel.screenState.value == RoutePageState.bagsChecking){
+        screenViewModel.verifyBags(currentDriver);
+      }
     } else {
       widget = SizedBox(
           width: 30,

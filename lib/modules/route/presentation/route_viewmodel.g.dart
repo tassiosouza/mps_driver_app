@@ -25,19 +25,19 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     });
   }
 
-  late final _$firstOpenAtom =
-      Atom(name: '_RouteViewModel.firstOpen', context: context);
+  late final _$checkingTimeAtom =
+      Atom(name: '_RouteViewModel.checkingTime', context: context);
 
   @override
-  Observable<bool> get firstOpen {
-    _$firstOpenAtom.reportRead();
-    return super.firstOpen;
+  Observable<String> get checkingTime {
+    _$checkingTimeAtom.reportRead();
+    return super.checkingTime;
   }
 
   @override
-  set firstOpen(Observable<bool> value) {
-    _$firstOpenAtom.reportWrite(value, super.firstOpen, () {
-      super.firstOpen = value;
+  set checkingTime(Observable<String> value) {
+    _$checkingTimeAtom.reportWrite(value, super.checkingTime, () {
+      super.checkingTime = value;
     });
   }
 
@@ -85,44 +85,44 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
       ActionController(name: '_RouteViewModel', context: context);
 
   @override
-  void setFirstOpen() {
+  void backToFirstOpenState() {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
-        name: '_RouteViewModel.setFirstOpen');
+        name: '_RouteViewModel.backToFirstOpenState');
     try {
-      return super.setFirstOpen();
+      return super.backToFirstOpenState();
     } finally {
       _$_RouteViewModelActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void goToBagsScreen() {
+  void goToRoutePlan() {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
-        name: '_RouteViewModel.goToBagsScreen');
+        name: '_RouteViewModel.goToRoutePlan');
     try {
-      return super.goToBagsScreen();
+      return super.goToRoutePlan();
     } finally {
       _$_RouteViewModelActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void verifyBags(Driver currentDriver) {
+  void goToBagsChecking() {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
-        name: '_RouteViewModel.verifyBags');
+        name: '_RouteViewModel.goToBagsChecking');
     try {
-      return super.verifyBags(currentDriver);
+      return super.goToBagsChecking();
     } finally {
       _$_RouteViewModelActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void verifyPhotosSent() {
+  void goToWelcomeMessageState() {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
-        name: '_RouteViewModel.verifyPhotosSent');
+        name: '_RouteViewModel.goToWelcomeMessageState');
     try {
-      return super.verifyPhotosSent();
+      return super.goToWelcomeMessageState();
     } finally {
       _$_RouteViewModelActionController.endAction(_$actionInfo);
     }
@@ -151,10 +151,54 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   }
 
   @override
+  void clearClientList() {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.clearClientList');
+    try {
+      return super.clearClientList();
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCheckingTime(String time) {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.setCheckingTime');
+    try {
+      return super.setCheckingTime(time);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void verifyBags(Driver currentDriver) {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.verifyBags');
+    try {
+      return super.verifyBags(currentDriver);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void verifyPhotosSent() {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.verifyPhotosSent');
+    try {
+      return super.verifyPhotosSent();
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 screenState: ${screenState},
-firstOpen: ${firstOpen},
+checkingTime: ${checkingTime},
 clientList: ${clientList},
 statusRouteBar: ${statusRouteBar}
     ''';

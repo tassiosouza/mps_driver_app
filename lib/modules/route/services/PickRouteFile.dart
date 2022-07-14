@@ -49,18 +49,60 @@ class PickRouteFile {
         .toList();
     print(fields);
 
+    bool isNumeric(String s) {
+      if (s == null) {
+        return false;
+      }
+      return double.tryParse(s) != null;
+    }
+
+    String extractClientId(String text) {
+      String result = '';
+      int maxIdCharacters = 7;
+      var sharpIndex = text.indexOf('#');
+      for (int i = sharpIndex; i < sharpIndex + maxIdCharacters; i++) {
+        if (isNumeric(text[i]) || text[i] == '#') {
+          result = result + text[i];
+        } else {
+          return result;
+        }
+      }
+      return result;
+    }
+
+    String extractClientName(String text) {
+      if (text.contains("NEW - ")) {
+        text = "${text.replaceAll("NEW - ", '')} (New)";
+      }
+      if (text.contains("Female - ")) {
+        text = "${text.replaceAll("Female - ", '')} (Female)";
+      }
+      if (text.contains("Male - ")) {
+        text = "${text.replaceAll("Male - ", '')} (Male)";
+      }
+      if (text.contains("Star Sticker - ")) {
+        text = "${text.replaceAll("Star Sticker - ", '')} (Star Sticker)";
+      }
+      text = text.replaceAllMapped(RegExp("\\([^()]*\\)"), (match) => '');
+
+      return text;
+    }
+
+    String extractClientPhone(String text) {
+      text = text.replaceAll(' ', '');
+
+      return text;
+    }
+
     getClientsList(List<List<dynamic>> fields) {
-      for (var i = 1; i < fields.length; i++) {
+      for (var i = 5; i < fields.length; i += 2) {
         Client client = Client();
-        client.id = fields[i][0].toString();
-        client.name = fields[i][1].toString();
-        client.phone = fields[i][2].toString();
-        client.address = fields[i][3].toString();
-        client.secondAddress = fields[i][4].toString();
-        client.city = fields[i][5].toString();
-        client.stateZipCode = fields[i][6].toString();
-        client.deliveryInstructions = fields[i][7].toString();
-        client.mealInstructions = fields[i][8].toString();
+        client.id = extractClientId(fields[i][2].toString());
+        client.name = extractClientName(fields[i][2].toString());
+        client.phone = extractClientPhone(fields[i][4].toString());
+        client.address = fields[i][5].toString();
+        client.deliveryInstructions = fields[i + 1][5].toString();
+        client.mealInstructions = fields[i + 1][2].toString();
         client.check = false;
         _clientList.add(client);
       }
@@ -70,9 +112,8 @@ class PickRouteFile {
 
     GeocodingApi geocodingApi = GeocodingApi();
     for (var i = 0; i < _clientList.length; i++) {
-      Future<Coordinates> coordinates = geocodingApi.getCoordinates(
-              _clientList[i].address + " " + _clientList[i].stateZipCode)
-          as Future<Coordinates>;
+      Future<Coordinates> coordinates = geocodingApi
+          .getCoordinates(_clientList[i].address) as Future<Coordinates>;
 
       await coordinates.then((data) async {
         _clientList[i].coordinates = data;

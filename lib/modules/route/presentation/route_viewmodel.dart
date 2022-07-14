@@ -63,7 +63,7 @@ abstract class _RouteViewModel with Store {
   var checkingTime = Observable('');
 
   @action
-  void setCheckingTime(String time){
+  void setCheckingTime(String time) {
     checkingTime.value = time;
   }
 

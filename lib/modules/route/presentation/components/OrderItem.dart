@@ -110,11 +110,9 @@ class OrderItem extends StatelessWidget {
   Future<void> updateOrderStatusTo(OrderStatus status) async {
     Order updatedOrder = order.copyWith(status: status);
     try {
-      // to update data in DataStore, we again pass an instance of a model to
-      // Amplify.DataStore.save()
       await Amplify.DataStore.save(updatedOrder);
     } catch (e) {
-      print('An error occurred while saving Todo: $e');
+      print('An error occurred while saving Order Status: $e');
     }
   }
 

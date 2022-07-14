@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../models/Client.dart';
 import '../../utils/getjson.dart';
+import '../models/Order.dart';
 
 class RouteOptimizationApi {
   static String baseUrl =
@@ -9,8 +10,8 @@ class RouteOptimizationApi {
 
   RouteOptimizationApi() {}
 
-  Future<List<Client>> getOrderedClients(List<Client> clients) async {
-    List<Map<String, Object>> object = GetJsonBody.getJsonBody(clients);
+  Future<List<Order>> getSortedOrders(List<Order> orders) async {
+    List<Map<String, Object>> object = GetJsonBody.getJsonBody(orders);
 
     String body = jsonEncode(<String, List<Map<String, Object>>>{
       "vehicles": [
@@ -46,16 +47,16 @@ class RouteOptimizationApi {
         orderedETAs.add(route[i]['driving_time']);
       }
 
-      List<Client> orderedClients = [];
-      for (int i = 1; i <= clients.length; i++) {
-        Client findClient(String name) =>
-            clients.firstWhere((client) => client.name == name);
-        Client client = findClient(orderedLocationsId[i]);
-        client.eta = orderedETAs[i];
-        orderedClients.add(client);
+      List<Order> sortedOrders = [];
+      for (int i = 1; i <= orders.length; i++) {
+        Order findClient(String name) =>
+            orders.firstWhere((order) => order.customer!.name == name);
+        Order order = findClient(orderedLocationsId[i]);
+        order = order.copyWith(eta: orderedETAs[i]);
+        sortedOrders.add(order);
       }
 
-      return orderedClients;
+      return sortedOrders;
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.

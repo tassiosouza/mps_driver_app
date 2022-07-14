@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mps_driver_app/models/Client.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
 
 import '../../../models/Customer.dart';
@@ -75,11 +74,11 @@ class _ExampleState extends State<SecondRoute> {
     });
   }
 
-  List<LatLng> _createPoints(List clients) {
+  List<LatLng> _createPoints(List orders) {
     final List<LatLng> points = <LatLng>[];
-    for (Client client in clients) {
-      points.add(
-          LatLng(client.coordinates.latitude, client.coordinates.longitude));
+    for (Order order in orders) {
+      points.add(LatLng(order.customer!.coordinates!.latitude,
+          order.customer!.coordinates!.longitude));
     }
     return points;
   }

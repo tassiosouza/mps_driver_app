@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
+import '../../../Services/DriverService.dart';
+import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
 
 class InitRoutePage extends StatefulWidget {
@@ -11,10 +13,27 @@ class InitRoutePage extends StatefulWidget {
 }
 
 class _InitRoutePage extends State<InitRoutePage> {
+  Driver? _currentDriver;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadDriverInformation();
+    });
+    super.initState();
+  }
+
+  void loadDriverInformation() async {
+    Driver? driver = await DriverService.getCurrentDriver();
+    setState(() {
+      _currentDriver = driver;
+    });
+  }
+
   Future<void> getClientList() async {
     Modular.to.pushNamed('./loading');
-    await widget.routeViewModel.getClientList();
-    widget.routeViewModel.getOrderList();
+    // await widget.routeViewModel.getClientList();
+    await widget.routeViewModel.getOrderList(_currentDriver!);
     Modular.to.navigate('./inroute');
   }
 

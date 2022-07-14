@@ -20,7 +20,9 @@ type Route @model @auth(rules: [{allow: public}]) {
   startTime: AWSTimestamp
   endTime: AWSTimestamp
   status: RouteStatus
-  Orders: [Order] @hasMany(indexName: "byRoute", fields: ["id"])
+  orders: [Order] @hasMany(indexName: "byRoute", fields: ["id"])
+  name: String!
+  driver: Driver @hasOne
 }
 
 enum OrderStatus {
@@ -39,6 +41,7 @@ type Order @model @auth(rules: [{allow: public}]) {
   customer: Customer @hasOne
   routeID: ID! @index(name: "byRoute")
   eta: Int
+  route: Route @belongsTo
 }
 
 type Customer @model @auth(rules: [{allow: public}]) {

@@ -34,9 +34,12 @@ class Route extends Model {
   final TemporalTimestamp? _startTime;
   final TemporalTimestamp? _endTime;
   final RouteStatus? _status;
-  final List<Order>? _Orders;
+  final List<Order>? _orders;
+  final String? _name;
+  final Driver? _driver;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
+  final String? _routeDriverId;
 
   @override
   getInstanceType() => classType;
@@ -62,8 +65,25 @@ class Route extends Model {
     return _status;
   }
   
-  List<Order>? get Orders {
-    return _Orders;
+  List<Order>? get orders {
+    return _orders;
+  }
+  
+  String get name {
+    try {
+      return _name!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  Driver? get driver {
+    return _driver;
   }
   
   TemporalDateTime? get createdAt {
@@ -74,16 +94,23 @@ class Route extends Model {
     return _updatedAt;
   }
   
-  const Route._internal({required this.id, cost, startTime, endTime, status, Orders, createdAt, updatedAt}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _Orders = Orders, _createdAt = createdAt, _updatedAt = updatedAt;
+  String? get routeDriverId {
+    return _routeDriverId;
+  }
   
-  factory Route({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, List<Order>? Orders}) {
+  const Route._internal({required this.id, cost, startTime, endTime, status, orders, required name, driver, createdAt, updatedAt, routeDriverId}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _orders = orders, _name = name, _driver = driver, _createdAt = createdAt, _updatedAt = updatedAt, _routeDriverId = routeDriverId;
+  
+  factory Route({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, List<Order>? orders, required String name, Driver? driver, String? routeDriverId}) {
     return Route._internal(
       id: id == null ? UUID.getUUID() : id,
       cost: cost,
       startTime: startTime,
       endTime: endTime,
       status: status,
-      Orders: Orders != null ? List<Order>.unmodifiable(Orders) : Orders);
+      orders: orders != null ? List<Order>.unmodifiable(orders) : orders,
+      name: name,
+      driver: driver,
+      routeDriverId: routeDriverId);
   }
   
   bool equals(Object other) {
@@ -99,7 +126,10 @@ class Route extends Model {
       _startTime == other._startTime &&
       _endTime == other._endTime &&
       _status == other._status &&
-      DeepCollectionEquality().equals(_Orders, other._Orders);
+      DeepCollectionEquality().equals(_orders, other._orders) &&
+      _name == other._name &&
+      _driver == other._driver &&
+      _routeDriverId == other._routeDriverId;
   }
   
   @override
@@ -115,21 +145,26 @@ class Route extends Model {
     buffer.write("startTime=" + (_startTime != null ? _startTime!.toString() : "null") + ", ");
     buffer.write("endTime=" + (_endTime != null ? _endTime!.toString() : "null") + ", ");
     buffer.write("status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
+    buffer.write("name=" + "$_name" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
+    buffer.write("routeDriverId=" + "$_routeDriverId");
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  Route copyWith({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, List<Order>? Orders}) {
+  Route copyWith({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, List<Order>? orders, String? name, Driver? driver, String? routeDriverId}) {
     return Route._internal(
       id: id ?? this.id,
       cost: cost ?? this.cost,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       status: status ?? this.status,
-      Orders: Orders ?? this.Orders);
+      orders: orders ?? this.orders,
+      name: name ?? this.name,
+      driver: driver ?? this.driver,
+      routeDriverId: routeDriverId ?? this.routeDriverId);
   }
   
   Route.fromJson(Map<String, dynamic> json)  
@@ -138,17 +173,22 @@ class Route extends Model {
       _startTime = json['startTime'] != null ? TemporalTimestamp.fromSeconds(json['startTime']) : null,
       _endTime = json['endTime'] != null ? TemporalTimestamp.fromSeconds(json['endTime']) : null,
       _status = enumFromString<RouteStatus>(json['status'], RouteStatus.values),
-      _Orders = json['Orders'] is List
-        ? (json['Orders'] as List)
+      _orders = json['orders'] is List
+        ? (json['orders'] as List)
           .where((e) => e?['serializedData'] != null)
           .map((e) => Order.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
+      _name = json['name'],
+      _driver = json['driver']?['serializedData'] != null
+        ? Driver.fromJson(new Map<String, dynamic>.from(json['driver']['serializedData']))
+        : null,
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
+      _routeDriverId = json['routeDriverId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'cost': _cost, 'startTime': _startTime?.toSeconds(), 'endTime': _endTime?.toSeconds(), 'status': enumToString(_status), 'Orders': _Orders?.map((Order? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'cost': _cost, 'startTime': _startTime?.toSeconds(), 'endTime': _endTime?.toSeconds(), 'status': enumToString(_status), 'orders': _orders?.map((Order? e) => e?.toJson()).toList(), 'name': _name, 'driver': _driver?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'routeDriverId': _routeDriverId
   };
 
   static final QueryField ID = QueryField(fieldName: "route.id");
@@ -157,8 +197,13 @@ class Route extends Model {
   static final QueryField ENDTIME = QueryField(fieldName: "endTime");
   static final QueryField STATUS = QueryField(fieldName: "status");
   static final QueryField ORDERS = QueryField(
-    fieldName: "Orders",
+    fieldName: "orders",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Order).toString()));
+  static final QueryField NAME = QueryField(fieldName: "name");
+  static final QueryField DRIVER = QueryField(
+    fieldName: "driver",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Driver).toString()));
+  static final QueryField ROUTEDRIVERID = QueryField(fieldName: "routeDriverId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Route";
     modelSchemaDefinition.pluralName = "Routes";
@@ -207,6 +252,19 @@ class Route extends Model {
       associatedKey: Order.ROUTEID
     ));
     
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Route.NAME,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
+      key: Route.DRIVER,
+      isRequired: false,
+      ofModelName: (Driver).toString(),
+      associatedKey: Driver.ID
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
       fieldName: 'createdAt',
       isRequired: false,
@@ -219,6 +277,12 @@ class Route extends Model {
       isRequired: false,
       isReadOnly: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Route.ROUTEDRIVERID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
   });
 }

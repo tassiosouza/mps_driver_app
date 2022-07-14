@@ -1,17 +1,19 @@
 import '../models/Client.dart';
 import 'dart:convert';
 
+import '../models/Order.dart';
+
 class GetJsonBody {
-  static List<Map<String, Object>> getJsonBody(List<Client> clients) {
+  static List<Map<String, Object>> getJsonBody(List<Order> orders) {
     List<Map<String, Object>> destinationsMap = [];
-    for (var i = 0; i < clients.length; i++) {
+    for (var i = 0; i < orders.length; i++) {
       Map<String, Object> destinationMap = {
-        "id": clients[i].name,
-        "name": clients[i].name,
+        "id": orders[i].customer!.name,
+        "name": orders[i].customer!.name,
         "address": {
-          "location_id": clients[i].name,
-          "lon": clients[i].coordinates.longitude,
-          "lat": clients[i].coordinates.latitude
+          "location_id": orders[i].customer!.name,
+          "lon": orders[i].customer!.coordinates!.longitude,
+          "lat": orders[i].customer!.coordinates!.latitude
         }
       };
       destinationsMap.add(destinationMap);

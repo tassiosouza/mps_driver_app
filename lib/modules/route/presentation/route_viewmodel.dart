@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mps_driver_app/models/Coordinates.dart';
 import 'package:mps_driver_app/models/OrderStatus.dart';
 import 'package:mps_driver_app/modules/route/presentation/RouteLoading.dart';
 import 'package:mps_driver_app/modules/route/services/PickRouteFile.dart';
@@ -7,9 +8,12 @@ import 'package:mps_driver_app/modules/route/services/TwilioService.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
 import '../../../models/Client.dart';
 import 'package:mobx/mobx.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+
 import '../../../models/Customer.dart';
 import '../../../models/Driver.dart';
 import '../../../models/Order.dart';
+import '../../../models/Route.dart' as RouteModel;
 part 'route_viewmodel.g.dart';
 
 class RouteViewModel = _RouteViewModel with _$RouteViewModel;
@@ -84,41 +88,32 @@ abstract class _RouteViewModel with Store {
 
   @action
   Future<void> getClientList() async {
-    clientList.addAll(await pickRouteFile.pickFiles());
+    //clientList.addAll(await pickRouteFile.pickFiles());
+    clientList.addAll([]);
   }
 
   @action
-  void getOrderList() {
-    Customer customer = Customer(
-        address: "1445 Washington St, #508, San Diego, CA 92103",
-        name: "Erik Clarke",
-        phone: "6197634382");
-    Customer customer1 = Customer(
-        address: "2411 El Cajon Blvd, Apt 302, San Diego, CA 92104",
-        name: "Jose Fernandes",
-        phone: "6197634382");
-    Customer customer2 = Customer(
-        address: "3740 Park Blvd, APT 118, San Diego, CA 92103",
-        name: "Tassio Souza",
-        phone: "6197634382");
-    orderList.add(Order(
-        number: "#00000",
-        routeID: "routeid",
-        customer: customer,
-        mealsInstruction: "fsdfs",
-        status: OrderStatus.RECEIVED));
-    orderList.add(Order(
-        number: "#11111",
-        routeID: "routeid",
-        customer: customer1,
-        mealsInstruction: "fsdfs",
-        status: OrderStatus.RECEIVED));
-    orderList.add(Order(
-        number: "#22222",
-        routeID: "routeid",
-        customer: customer2,
-        mealsInstruction: "fsdfs",
-        status: OrderStatus.RECEIVED));
+  Future<void> getOrderList(Driver currentDriver) async {
+    RouteModel.Route route = RouteModel.Route(
+        name: "R100 - ${currentDriver.name}",
+        routeDriverId: currentDriver.id,
+        orders: orderList,
+        driver: currentDriver);
+
+    orderList.addAll(await pickRouteFile.readOrdersFromFile(route.id));
+
+    route = route.copyWith(orders: orderList);
+
+    uploadRouteToAmplify(route);
+  }
+
+  Future<void> uploadRouteToAmplify(RouteModel.Route route) async {
+    for (Order order in route.orders!) {
+      await Amplify.DataStore.save(order.customer!.coordinates!);
+      await Amplify.DataStore.save(order.customer!);
+      await Amplify.DataStore.save(order);
+    }
+    await Amplify.DataStore.save(route);
   }
 
   @action

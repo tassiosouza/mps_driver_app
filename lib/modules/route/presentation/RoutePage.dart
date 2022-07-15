@@ -1,18 +1,25 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/Driver.dart';
 import 'package:intl/intl.dart';
+import 'package:mps_driver_app/modules/route/RouteModule.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
 import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../../Services/DriverService.dart';
 import '../../../components/AppDialogs.dart';
+import '../../../models/RouteStatus.dart';
 import 'components/OrdersListView.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as Stepper;
-
+import '../../../models/Route.dart' as RouteModel;
 import 'MapsPage.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 class RoutePage extends StatefulWidget {
   @override
@@ -23,20 +30,57 @@ class StateRoutePage extends State<RoutePage> {
   RouteViewModel screenViewModel = Modular.get<RouteViewModel>();
   int dotCount = 4;
   Driver? _currentDriver;
+  RouteModel.Route? _currentRoute;
+  late StreamSubscription<QuerySnapshot<RouteModel.Route>> _subscription;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadDriverInformation();
+    Driver? driver;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      driver = await loadDriverInformation();
+
+      _subscription = Amplify.DataStore.observeQuery(RouteModel.Route.classType,
+              where: RouteModel.Route.ROUTEDRIVERID.eq(driver?.getId()))
+          .listen((QuerySnapshot<RouteModel.Route> snapshot) {
+        List<RouteModel.Route> routes = snapshot.items;
+        RouteModel.Route currentRouteUpdate;
+        if (_currentRoute != null) {
+          currentRouteUpdate = routes
+              .where((route) => route.id == _currentRoute?.id)
+              .toList()[0];
+
+          if (currentRouteUpdate.status == RouteStatus.DONE ||
+              currentRouteUpdate.status == RouteStatus.ABORTED) {
+            screenViewModel.setIsInRoute(false);
+            Modular.to.navigate('./');
+          } else {
+            setState(() {
+              _currentRoute = currentRouteUpdate;
+            });
+            log("the current route has been update");
+          }
+        } else {
+          for (RouteModel.Route route in routes) {
+            if (route.status != RouteStatus.DONE &&
+                route.status != RouteStatus.ABORTED) {
+              setState(() {
+                _currentRoute = route;
+              });
+            }
+          }
+        }
+      });
     });
+
     super.initState();
   }
 
-  void loadDriverInformation() async {
+  Future<Driver?> loadDriverInformation() async {
     Driver? driver = await DriverService.getCurrentDriver();
     setState(() {
       _currentDriver = driver;
     });
+    return driver;
   }
 
   Future<void> welcomeDialog() {
@@ -93,23 +137,27 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   Widget toCheckIn(bool madeCheckIn) {
-    if (madeCheckIn) {
-      if (screenViewModel.checkingTime.value == '') {
-        DateTime now = DateTime.now();
-        String time = DateFormat('kk:mm').format(now);
-        screenViewModel.setCheckingTime(time);
+    if (_currentRoute != null && _currentRoute!.status!.index > 0) {
+      if (_currentRoute!.status == RouteStatus.INITIATED) {
+        screenViewModel.goToBagsChecking();
       }
+
+      DateTime time = DateTime.fromMillisecondsSinceEpoch(
+          _currentRoute!.startTime!.toSeconds() * 1000);
+      String timeFormatted = DateFormat('kk:mm').format(time);
       return Container(
-          padding: EdgeInsets.only(left: 18, top: 5),
+          padding: const EdgeInsets.only(left: 18, top: 5),
+          alignment: Alignment.centerLeft,
           child: Text(
-            "Initiated at: ${screenViewModel.checkingTime.value}",
+            "Initiated at: $timeFormatted",
             style: TextStyle(fontSize: 14, color: App_Colors.grey_dark.value),
-          ),
-          alignment: Alignment.centerLeft);
+          ));
     } else {
       return GestureDetector(
           onTap: () {
-            screenViewModel.goToBagsChecking();
+            Amplify.DataStore.save(_currentRoute!.copyWith(
+                status: RouteStatus.INITIATED,
+                startTime: TemporalTimestamp(DateTime.now())));
           },
           child: Container(
               padding: EdgeInsets.only(left: 18, top: 5),

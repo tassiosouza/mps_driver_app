@@ -15,14 +15,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_sms/flutter_sms.dart';
+import '../../../../models/Customer.dart';
 import '../../../../models/Driver.dart';
-import '../../../../models/Order.dart';
+import '../../../../models/MpsOrder.dart';
 import '../../utils/RoutePageState.dart';
 import '../../../../components/AppDialogs.dart';
 import 'InstructionsDialog.dart';
 
 class OrderItem extends StatelessWidget {
-  Order order;
+  MpsOrder order;
   int orderIndex;
   Driver currentDriver;
   TwilioSmsService? smsService = null;
@@ -107,8 +108,8 @@ class OrderItem extends StatelessWidget {
     }
   }
 
-  Future<void> updateOrderStatusTo(OrderStatus status) async {
-    Order updatedOrder = order.copyWith(status: status);
+  Future<void> updateOrderStatusTo(OrderStatus newStatus) async {
+    MpsOrder updatedOrder = order.copyWith(status: newStatus);
     try {
       await Amplify.DataStore.save(updatedOrder);
     } catch (e) {
@@ -337,7 +338,7 @@ class OrderItem extends StatelessWidget {
     return widget;
   }
 
-  getButtonIcon(IconData icon, Order order, bool isCall) {
+  getButtonIcon(IconData icon, MpsOrder order, bool isCall) {
     return SizedBox(
         width: 30,
         height: 28,
@@ -359,7 +360,7 @@ class OrderItem extends StatelessWidget {
         ));
   }
 
-  getCameraIcon(Order order, BuildContext context) {
+  getCameraIcon(MpsOrder order, BuildContext context) {
     if (order.status == OrderStatus.DELIVERED) {
       screenViewModel.verifyPhotosSent();
     }

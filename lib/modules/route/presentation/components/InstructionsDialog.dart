@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mps_driver_app/models/Client.dart';
-import '../../../../models/Order.dart';
+import '../../../../models/MpsOrder.dart';
 import '../../../../theme/app_colors.dart';
 
 class InstructionsDialog {
-  Future<void> call(BuildContext context, Order order) async {
+  Future<void> call(BuildContext context, MpsOrder order) async {
     final width = MediaQuery.of(context).size.width;
     showDialog(
         context: context,

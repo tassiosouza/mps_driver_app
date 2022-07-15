@@ -41,6 +41,22 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     });
   }
 
+  late final _$isInRouteAtom =
+      Atom(name: '_RouteViewModel.isInRoute', context: context);
+
+  @override
+  Observable<bool> get isInRoute {
+    _$isInRouteAtom.reportRead();
+    return super.isInRoute;
+  }
+
+  @override
+  set isInRoute(Observable<bool> value) {
+    _$isInRouteAtom.reportWrite(value, super.isInRoute, () {
+      super.isInRoute = value;
+    });
+  }
+
   late final _$clientListAtom =
       Atom(name: '_RouteViewModel.clientList', context: context);
 
@@ -54,6 +70,22 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   set clientList(ObservableList<Client> value) {
     _$clientListAtom.reportWrite(value, super.clientList, () {
       super.clientList = value;
+    });
+  }
+
+  late final _$orderListAtom =
+      Atom(name: '_RouteViewModel.orderList', context: context);
+
+  @override
+  ObservableList<MpsOrder> get orderList {
+    _$orderListAtom.reportRead();
+    return super.orderList;
+  }
+
+  @override
+  set orderList(ObservableList<MpsOrder> value) {
+    _$orderListAtom.reportWrite(value, super.orderList, () {
+      super.orderList = value;
     });
   }
 
@@ -79,6 +111,15 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   @override
   Future<void> getClientList() {
     return _$getClientListAsyncAction.run(() => super.getClientList());
+  }
+
+  late final _$getOrderListAsyncAction =
+      AsyncAction('_RouteViewModel.getOrderList', context: context);
+
+  @override
+  Future<void> getOrderList(Driver currentDriver) {
+    return _$getOrderListAsyncAction
+        .run(() => super.getOrderList(currentDriver));
   }
 
   late final _$_RouteViewModelActionController =
@@ -173,6 +214,28 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   }
 
   @override
+  void setIsInRoute(bool inRoute) {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.setIsInRoute');
+    try {
+      return super.setIsInRoute(inRoute);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void goToBagsScreen() {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.goToBagsScreen');
+    try {
+      return super.goToBagsScreen();
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void verifyBags(Driver currentDriver) {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
         name: '_RouteViewModel.verifyBags');
@@ -199,7 +262,9 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     return '''
 screenState: ${screenState},
 checkingTime: ${checkingTime},
+isInRoute: ${isInRoute},
 clientList: ${clientList},
+orderList: ${orderList},
 statusRouteBar: ${statusRouteBar}
     ''';
   }

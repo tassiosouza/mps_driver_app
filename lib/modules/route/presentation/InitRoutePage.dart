@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mps_driver_app/models/RouteStatus.dart';
 import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import '../../../models/Route.dart' as RouteModel;
 
 class InitRoutePage extends StatefulWidget {
   RouteViewModel routeViewModel = Modular.get<RouteViewModel>();
@@ -14,20 +20,45 @@ class InitRoutePage extends StatefulWidget {
 
 class _InitRoutePage extends State<InitRoutePage> {
   Driver? _currentDriver;
+  late StreamSubscription<QuerySnapshot<RouteModel.Route>> _subscription;
+  List<RouteModel.Route> _routes = [];
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadDriverInformation();
+    Driver? driver;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      driver = await loadDriverInformation();
+
+      _subscription = Amplify.DataStore.observeQuery(RouteModel.Route.classType,
+              where: RouteModel.Route.ROUTEDRIVERID.eq(driver?.getId()))
+          .listen((QuerySnapshot<RouteModel.Route> snapshot) {
+        // ignore: unrelated_type_equality_checks
+        if (!widget.routeViewModel.isInRoute.value) {
+          _routes = snapshot.items;
+          for (RouteModel.Route route in _routes) {
+            if (route.status != RouteStatus.DONE &&
+                route.status != RouteStatus.ABORTED) {
+              widget.routeViewModel.setIsInRoute(true);
+              Modular.to.navigate('./inroute');
+            }
+          }
+        }
+      });
     });
+
+    if (widget.routeViewModel.isInRoute.value) {
+      Modular.to.navigate('./inroute');
+    }
+
     super.initState();
   }
 
-  void loadDriverInformation() async {
+  Future<Driver?> loadDriverInformation() async {
     Driver? driver = await DriverService.getCurrentDriver();
     setState(() {
       _currentDriver = driver;
     });
+    return driver;
   }
 
   Future<void> getClientList() async {
@@ -44,8 +75,7 @@ class _InitRoutePage extends State<InitRoutePage> {
       return Center();
     } else {
       Future.delayed(Duration(seconds: 2),
-      () => widget.routeViewModel.backToFirstOpenState());
-
+          () => widget.routeViewModel.backToFirstOpenState());
     }
     return Center(
       child: Column(

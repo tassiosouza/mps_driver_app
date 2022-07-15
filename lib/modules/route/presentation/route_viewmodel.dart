@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
 import 'package:mps_driver_app/models/OrderStatus.dart';
+import 'package:mps_driver_app/models/RouteStatus.dart';
 import 'package:mps_driver_app/modules/route/presentation/RouteLoading.dart';
 import 'package:mps_driver_app/modules/route/services/PickRouteFile.dart';
 import 'package:mps_driver_app/modules/route/services/TwilioService.dart';
@@ -12,7 +13,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 
 import '../../../models/Customer.dart';
 import '../../../models/Driver.dart';
-import '../../../models/Order.dart';
+import '../../../models/MpsOrder.dart';
 import '../../../models/Route.dart' as RouteModel;
 part 'route_viewmodel.g.dart';
 
@@ -78,10 +79,18 @@ abstract class _RouteViewModel with Store {
   }
 
   @observable
+  var isInRoute = Observable(false);
+
+  @action
+  void setIsInRoute(bool inRoute) {
+    isInRoute.value = inRoute;
+  }
+
+  @observable
   var clientList = ObservableList<Client>();
 
   @observable
-  var orderList = ObservableList<Order>();
+  var orderList = ObservableList<MpsOrder>();
 
   @observable
   var statusRouteBar = Observable(0);
@@ -98,6 +107,7 @@ abstract class _RouteViewModel with Store {
         name: "R100 - ${currentDriver.name}",
         routeDriverId: currentDriver.id,
         orders: orderList,
+        status: RouteStatus.PLANNED,
         driver: currentDriver);
 
     orderList.addAll(await pickRouteFile.readOrdersFromFile(route.id));
@@ -108,7 +118,7 @@ abstract class _RouteViewModel with Store {
   }
 
   Future<void> uploadRouteToAmplify(RouteModel.Route route) async {
-    for (Order order in route.orders!) {
+    for (MpsOrder order in route.orders!) {
       await Amplify.DataStore.save(order.customer!.coordinates!);
       await Amplify.DataStore.save(order.customer!);
       await Amplify.DataStore.save(order);
@@ -125,8 +135,8 @@ abstract class _RouteViewModel with Store {
   @action
   void verifyBags(Driver currentDriver) {
     bool checkBagsFinish = true;
-    clientList.forEach((element) {
-      if (element.check == false) {
+    orderList.forEach((order) {
+      if (order.status != OrderStatus.CHECKED) {
         checkBagsFinish = false;
       }
     });

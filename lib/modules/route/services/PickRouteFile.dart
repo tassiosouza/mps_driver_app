@@ -9,9 +9,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
+import 'package:mps_driver_app/models/OrderStatus.dart';
 import '../../../../models/Client.dart';
 import '../../../models/Customer.dart';
-import '../../../models/Order.dart';
+import '../../../models/MpsOrder.dart';
 
 class PickRouteFile {
   final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -129,21 +130,21 @@ class PickRouteFile {
   //   return _clientListResult;
   // }
 
-  Future<List<Order>> readOrdersFromFile(String routeId) async {
+  Future<List<MpsOrder>> readOrdersFromFile(String routeId) async {
     // Select external csv file from storage
     String selectedCsvFilePath = await selectExternalFile();
     // Read the fields from csv file loaded
     final fields = await extractFileFields(selectedCsvFilePath);
     // Create orders and customers from extracted fields
-    List<Order> orders = createOrdersFromFields(fields, routeId);
+    List<MpsOrder> orders = createOrdersFromFields(fields, routeId);
     // Optimize orders using google geocoding api and graphhooper api
     orders = await processOptimizedOrders(orders);
 
     return orders;
   }
 
-  Future<List<Order>> processOptimizedOrders(List<Order> orders) async {
-    List<Order> result = [];
+  Future<List<MpsOrder>> processOptimizedOrders(List<MpsOrder> orders) async {
+    List<MpsOrder> result = [];
     GeocodingApi geocodingApi = GeocodingApi();
     for (var i = 0; i < orders.length; i++) {
       Future<Coordinates> coordinates =
@@ -159,11 +160,11 @@ class PickRouteFile {
 
           RouteOptimizationApi routeOptimizationApi = RouteOptimizationApi();
 
-          Future<List<Order>> sortedOrders =
+          Future<List<MpsOrder>> sortedOrders =
               routeOptimizationApi.getSortedOrders(orders);
 
           await sortedOrders.then((data) {
-            result = data.cast<Order>();
+            result = data.cast<MpsOrder>();
           }, onError: (e) {
             log(e);
           });
@@ -211,23 +212,26 @@ class PickRouteFile {
   }
 
   createOrdersFromFields(List<List<dynamic>> fields, String routeId) {
-    List<Order> result = [];
+    List<MpsOrder> result = [];
     for (var i = 5; i < fields.length; i += 2) {
       var orderId = extractClientId(fields[i][2].toString());
       var customerName = extractClientName(fields[i][2].toString());
       var customerPhone = extractClientPhone(fields[i][4].toString());
       var customerAddress = fields[i][5].toString();
       var orderDeliveryInstruction = fields[i + 1][5].toString();
-      var orderMealsInstruction = fields[i + 1][2].toString();
+      var orderMealsInstruction = fields[i + 1][2].toString() != ""
+          ? fields[i + 1][2].toString()
+          : "N/A";
       Customer customer = Customer(
           name: customerName, address: customerAddress, phone: customerPhone);
-      Order order = Order(
+      MpsOrder order = MpsOrder(
           number: orderId,
           routeID: routeId,
           customer: customer,
           deliveryInstruction: orderDeliveryInstruction,
           mealsInstruction: orderMealsInstruction,
-          orderCustomerId: customer.id);
+          mpsOrderCustomerId: customer.id,
+          status: OrderStatus.RECEIVED);
       result.add(order);
     }
     return result;

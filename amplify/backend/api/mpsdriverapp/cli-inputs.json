@@ -3,7 +3,7 @@
   "serviceConfiguration": {
     "apiName": "mpsdriverapp",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-9e1374f7-53fc-44bd-ad29-44674c7489c8/amplify/backend/api/mpsdriverapp/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-de1a9ee4-825c-45b6-bd4b-2891bd9ee985/amplify/backend/api/mpsdriverapp/schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
       "keyDescription": "api key description",

@@ -23,14 +23,14 @@ import 'package:amplify_core/amplify_core.dart';
 import 'Coordinates.dart';
 import 'Customer.dart';
 import 'Driver.dart';
-import 'Order.dart';
+import 'MpsOrder.dart';
 import 'Route.dart';
 import 'Todo.dart';
 
 export 'Coordinates.dart';
 export 'Customer.dart';
 export 'Driver.dart';
-export 'Order.dart';
+export 'MpsOrder.dart';
 export 'OrderStatus.dart';
 export 'Route.dart';
 export 'RouteStatus.dart';
@@ -38,9 +38,9 @@ export 'Todo.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "7f6b9beb0864efad9e8f7bf2050f0dc8";
+  String version = "4376b4c650065dba62b481302e64a4a9";
   @override
-  List<ModelSchema> modelSchemas = [Coordinates.schema, Customer.schema, Driver.schema, Order.schema, Route.schema, Todo.schema];
+  List<ModelSchema> modelSchemas = [Coordinates.schema, Customer.schema, Driver.schema, MpsOrder.schema, Route.schema, Todo.schema];
   static final ModelProvider _instance = ModelProvider();
   @override
   List<ModelSchema> customTypeSchemas = [];
@@ -55,8 +55,8 @@ class ModelProvider implements ModelProviderInterface {
         return Customer.classType;
       case "Driver":
         return Driver.classType;
-      case "Order":
-        return Order.classType;
+      case "MpsOrder":
+        return MpsOrder.classType;
       case "Route":
         return Route.classType;
       case "Todo":

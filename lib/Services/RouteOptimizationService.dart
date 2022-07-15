@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../models/Client.dart';
 import '../../utils/getjson.dart';
-import '../models/Order.dart';
+import '../models/MpsOrder.dart';
 
 class RouteOptimizationApi {
   static String baseUrl =
@@ -10,7 +10,7 @@ class RouteOptimizationApi {
 
   RouteOptimizationApi() {}
 
-  Future<List<Order>> getSortedOrders(List<Order> orders) async {
+  Future<List<MpsOrder>> getSortedOrders(List<MpsOrder> orders) async {
     List<Map<String, Object>> object = GetJsonBody.getJsonBody(orders);
 
     String body = jsonEncode(<String, List<Map<String, Object>>>{
@@ -47,11 +47,11 @@ class RouteOptimizationApi {
         orderedETAs.add(route[i]['driving_time']);
       }
 
-      List<Order> sortedOrders = [];
+      List<MpsOrder> sortedOrders = [];
       for (int i = 1; i <= orders.length; i++) {
-        Order findClient(String name) =>
+        MpsOrder findClient(String name) =>
             orders.firstWhere((order) => order.customer!.name == name);
-        Order order = findClient(orderedLocationsId[i]);
+        MpsOrder order = findClient(orderedLocationsId[i]);
         order = order.copyWith(eta: orderedETAs[i]);
         sortedOrders.add(order);
       }

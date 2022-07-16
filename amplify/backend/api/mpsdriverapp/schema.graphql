@@ -1,3 +1,59 @@
+type Route @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  cost: Float
+  startTime: AWSTimestamp
+  endTime: AWSTimestamp
+  status: RouteStatus
+  name: String!
+  orders: [MpsOrder] @hasMany(indexName: "byRoute", fields: ["id"])
+  driver: Driver @hasOne
+}
+
+type Coordinates @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  latitude: Float!
+  longitude: Float!
+}
+
+enum RouteStatus {
+  PLANNED
+  INITIATED
+  CHECKING_BAGS
+  IN_TRANSIT
+  DONE
+  ON_HOLD
+  ABORTED
+  SENDING_WELCOME_MESSAGES
+}
+
+enum OrderStatus {
+  RECEIVED
+  IN_TRANSIT
+  DELIVERED
+  CHECKED
+}
+
+type MpsOrder @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  number: String!
+  deliveryInstruction: String
+  mealsInstruction: String
+  status: OrderStatus
+  customer: Customer @hasOne
+  eta: Int
+  routeID: ID! @index(name: "byRoute")
+}
+
+type Customer @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  address: String!
+  plan: String
+  phone: String!
+  owner: String
+  coordinates: Coordinates @hasOne
+}
+
 type Driver @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!

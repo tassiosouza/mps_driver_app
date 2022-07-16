@@ -1,32 +1,34 @@
+// ignore_for_file: deprecated_member_use, avoid_print, prefer_typing_uninitialized_variables, must_be_immutable, depend_on_referenced_packages
+
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:mps_driver_app/models/OrderStatus.dart';
+import 'package:mps_driver_app/models/RouteStatus.dart';
+import 'package:mps_driver_app/modules/route/presentation/RoutePage.dart';
 import 'package:mps_driver_app/modules/route/services/TwilioService.dart';
-import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../../models/Client.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import '../../../../models/Driver.dart';
-import '../../utils/RoutePageState.dart';
+import '../../../../models/MpsOrder.dart';
 import '../../../../components/AppDialogs.dart';
 import 'InstructionsDialog.dart';
 
-class ClientItem extends StatelessWidget {
-  Client client;
-  int clientIndex;
+class OrderItem extends StatelessWidget {
+  MpsOrder order;
+  int orderIndex;
   Driver currentDriver;
-  TwilioSmsService? smsService = null;
-  RouteViewModel screenViewModel = Modular.get<RouteViewModel>();
+  StateRoutePage routePageReference;
+  TwilioSmsService? smsService;
 
-  ClientItem(this.client, this.clientIndex, this.currentDriver, {Key? key})
+  OrderItem(
+      this.order, this.orderIndex, this.currentDriver, this.routePageReference,
+      {Key? key})
       : super(key: key) {
     smsService = TwilioSmsService(currentDriver);
   }
@@ -37,9 +39,10 @@ class ClientItem extends StatelessWidget {
   void _launchMapsUrl() async {
     availableMaps = await MapLauncher.installedMaps;
     await availableMaps.first.showMarker(
-      coords: Coords(client.coordinates.latitude, client.coordinates.longitude),
-      title: client.name,
-      description: client.name,
+      coords: Coords(order.customer!.coordinates!.latitude,
+          order.customer!.coordinates!.longitude),
+      title: order.customer!.name,
+      description: order.customer!.name,
     );
   }
 
@@ -48,8 +51,9 @@ class ClientItem extends StatelessWidget {
     if (url.isEmpty) {
       throw Exception('Photo exception');
     } else {
-      client.setSentPhoto(true);
-      smsService?.sendSmsWithPhoto(client.phone, url);
+      smsService?.sendSmsWithPhoto(order.customer!.phone, url);
+      updateOrderStatusTo(OrderStatus.DELIVERED);
+      routePageReference.verifyAllOrderStatusChanged(OrderStatus.DELIVERED);
     }
   }
 
@@ -88,11 +92,11 @@ class ClientItem extends StatelessWidget {
   }
 
   void _sendSMS(String message, List<String> recipents) async {
-    String _result = await sendSMS(message: message, recipients: recipents)
+    String result = await sendSMS(message: message, recipients: recipents)
         .catchError((onError) {
       print(onError);
     });
-    print(_result);
+    print(result);
   }
 
   _launchCaller(String phone) async {
@@ -104,14 +108,27 @@ class ClientItem extends StatelessWidget {
     }
   }
 
+  Future<void> updateOrderStatusTo(OrderStatus newStatus) async {
+    await routePageReference.setOrderStatus(orderIndex, newStatus);
+  }
+
+  void verifyAll(OrderStatus status) {}
+
   Future<void> checkBagConfirmDialog(BuildContext context) {
-    return AppDialogs().showConfirmDialog(context, () => client.setCheck(true),
-        "Meal Instructions", client.mealInstructions);
+    return AppDialogs().showConfirmDialog(
+        context,
+        () => {
+              updateOrderStatusTo(OrderStatus.CHECKED),
+              routePageReference
+                  .verifyAllOrderStatusChanged(OrderStatus.CHECKED)
+            },
+        "Meal Instructions",
+        order.mealsInstruction);
   }
 
   Future<void> wrongCheckBagClickDialog(BuildContext context) {
-    return AppDialogs().showDialogJustMsg(context, "Attention",
-        "Make checkin first.");
+    return AppDialogs()
+        .showDialogJustMsg(context, "Attention", "Make checkin first.");
   }
 
   Future<void> wrongTakePhotoClickDialog(BuildContext context) {
@@ -125,7 +142,7 @@ class ClientItem extends StatelessWidget {
   }
 
   Color getStartButtonColor() {
-    if (screenViewModel.screenState.value == RoutePageState.inTransit) {
+    if (routePageReference.getRouteStatus() == RouteStatus.IN_TRANSIT) {
       return App_Colors.primary_color.value;
     } else {
       return App_Colors.grey_light.value;
@@ -134,21 +151,22 @@ class ClientItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(elevation: 0,
-      margin: EdgeInsets.all(5),
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.all(5),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(width: 1.0, color: App_Colors.grey_light.value)),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        SizedBox(width: 15),
+        const SizedBox(width: 15),
         Expanded(
           child: IntrinsicWidth(
             child: Column(
               children: [
                 Row(children: [
                   Container(
-                    margin: EdgeInsets.all(2),
-                    padding: EdgeInsets.all(2),
+                    margin: const EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
                         border: Border.all(
@@ -156,7 +174,7 @@ class ClientItem extends StatelessWidget {
                     child: Icon(Icons.person,
                         size: 40, color: App_Colors.grey_light.value),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,13 +182,13 @@ class ClientItem extends StatelessWidget {
                       RichText(
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                              text: client.name,
+                              text: order.customer!.name,
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: App_Colors.black_text.value,
                                   fontFamily: 'Poppins'))),
-                      Text(client.address,
+                      Text(order.customer!.address,
                           style: TextStyle(
                               color: App_Colors.black_text.value,
                               fontFamily: 'Poppins',
@@ -180,7 +198,8 @@ class ClientItem extends StatelessWidget {
                   Column(
                     children: [
                       GestureDetector(
-                          onTap: () => InstructionsDialog().call(context, client),
+                          onTap: () =>
+                              InstructionsDialog().call(context, order),
                           child: Container(
                               padding: const EdgeInsets.only(right: 15),
                               child: const Icon(
@@ -196,27 +215,28 @@ class ClientItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    getButtonIcon(CustomIcon.sms_driver_icon, client, false),
-                    getButtonIcon(CustomIcon.call_driver_icon, client, true),
-                    Observer(builder: (_) => bagIcon(client.check, context)),
+                    getButtonIcon(CustomIcon.sms_driver_icon, order, false),
+                    getButtonIcon(CustomIcon.call_driver_icon, order, true),
+                    bagIcon(order.status, context),
                     const SizedBox(width: 1),
                     ElevatedButton(
                       onPressed: () {
-                        if (screenViewModel.screenState.value ==
-                            RoutePageState.inTransit) {
+                        if (routePageReference.getRouteStatus() ==
+                            RouteStatus.IN_TRANSIT) {
                           _launchMapsUrl();
                         } else {
                           wrongStartRouteClickDialog(context);
                         }
                       },
                       style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.only(left: 20, right: 20)),
                           backgroundColor:
                               MaterialStateProperty.all(getStartButtonColor()),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(18.0),
-                                      side: BorderSide(
+                                      side: const BorderSide(
                                           color: Colors.transparent)))),
                       child: Row(children: const [
                         Text("Start", style:
@@ -225,7 +245,7 @@ class ClientItem extends StatelessWidget {
                         Icon(CustomIcon.start_driver_icon, size: 9)
                       ]),
                     ),
-                    SizedBox(width: 1),
+                    const SizedBox(width: 1),
                   ],
                 ),
               ],
@@ -240,8 +260,8 @@ class ClientItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                    margin: EdgeInsets.all(0),
-                    decoration: BoxDecoration(
+                    margin: const EdgeInsets.all(0),
+                    decoration: const BoxDecoration(
                       border: Border(
                           bottom: BorderSide(
                               color: Colors.green,
@@ -249,32 +269,32 @@ class ClientItem extends StatelessWidget {
                               style: BorderStyle.solid)),
                     ),
                     child: Container(
+                        padding: const EdgeInsets.only(
+                            left: 35, right: 35, top: 8, bottom: 8),
                         child: Text(
-                          "${clientIndex + 1}°",
-                          style: TextStyle(
+                          "${orderIndex + 1}°",
+                          style: const TextStyle(
                               color: Colors.green,
                               fontSize: 14,
                               fontWeight: FontWeight.w500),
-                        ),
-                        padding: EdgeInsets.only(
-                            left: 35, right: 35, top: 8, bottom: 8))),
-                Observer(builder: (_) => getCameraIcon(client, context)),
-                Text(
+                        ))),
+                getCameraIcon(order, context),
+                const Text(
                   "Deliver",
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
                       fontFamily: 'Poppins'),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
-                  client.id,
+                  order.number,
                   style: TextStyle(
                       color: App_Colors.grey_text.value,
                       fontSize: 14,
                       fontFamily: 'Poppins'),
                 ),
-                SizedBox(height: 5)
+                const SizedBox(height: 5)
               ],
             )
           ]),
@@ -283,34 +303,32 @@ class ClientItem extends StatelessWidget {
     );
   }
 
-  bagIcon(bool check, BuildContext context) {
+  bagIcon(OrderStatus? status, BuildContext context) {
     Widget widget;
-    if (check) {
-      widget = getButtonIcon(Icons.check, client, false);
-      if(screenViewModel.screenState.value == RoutePageState.bagsChecking){
-        screenViewModel.verifyBags(currentDriver);
-      }
+    if (order.status != OrderStatus.RECEIVED) {
+      widget = getButtonIcon(Icons.check, order, false);
     } else {
       widget = SizedBox(
           width: 30,
           height: 28,
           child: ElevatedButton(
             onPressed: () {
-              if (screenViewModel.screenState.value ==
-                  RoutePageState.bagsChecking) {
+              if (routePageReference.getRouteStatus() ==
+                  RouteStatus.CHECKING_BAGS) {
                 checkBagConfirmDialog(context);
               } else {
                 wrongCheckBagClickDialog(context);
               }
             },
             style: ButtonStyle(
-              shape: MaterialStateProperty.all(CircleBorder()),
-              padding: MaterialStateProperty.all(EdgeInsets.all(0)),
+              shape: MaterialStateProperty.all(const CircleBorder()),
+              padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
               backgroundColor: MaterialStateProperty.all(
                   App_Colors.white_background.value), // <-- Button color
               overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                if (states.contains(MaterialState.pressed))
-                  return Colors.lightGreen; // <-- Splash color
+                if (states.contains(MaterialState.pressed)) {
+                  return Colors.lightGreen;
+                } // <-- Splash color
               }),
             ),
             child: Icon(CustomIcon.bag_driver_icon,
@@ -320,34 +338,32 @@ class ClientItem extends StatelessWidget {
     return widget;
   }
 
-  getButtonIcon(IconData icon, Client client, bool isCall) {
+  getButtonIcon(IconData icon, MpsOrder order, bool isCall) {
     return SizedBox(
         width: 30,
         height: 28,
         child: ElevatedButton(
           onPressed: () => isCall
-              ? _launchCaller(client.phone.replaceAll(' ', ''))
-              : _sendSMS("", [client.phone]),
+              ? _launchCaller(order.customer!.phone.replaceAll(' ', ''))
+              : _sendSMS("", [order.customer!.phone]),
           style: ButtonStyle(
-            shape: MaterialStateProperty.all(CircleBorder()),
-            padding: MaterialStateProperty.all(EdgeInsets.all(0)),
+            shape: MaterialStateProperty.all(const CircleBorder()),
+            padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
             backgroundColor: MaterialStateProperty.all(
                 App_Colors.white_background.value), // <-- Button color
             overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-              if (states.contains(MaterialState.pressed))
-                return Colors.lightGreen; // <-- Splash color
+              if (states.contains(MaterialState.pressed)) {
+                return Colors.lightGreen;
+              } // <-- Splash color
             }),
           ),
           child: Icon(icon, size: 14, color: App_Colors.primary_color.value),
         ));
   }
 
-  getCameraIcon(Client client, BuildContext context) {
-    if (client.sentPhoto) {
-      screenViewModel.verifyPhotosSent();
-    }
+  getCameraIcon(MpsOrder order, BuildContext context) {
     Icon icon;
-    if (client.sentPhoto) {
+    if (order.status == OrderStatus.DELIVERED) {
       icon = Icon(Icons.check, size: 17, color: App_Colors.primary_color.value);
     } else {
       icon = Icon(CustomIcon.camera_driver_icon,
@@ -360,22 +376,23 @@ class ClientItem extends StatelessWidget {
             height: 35,
             child: ElevatedButton(
               onPressed: () {
-                if (screenViewModel.screenState.value ==
-                    RoutePageState.inTransit) {
+                if (routePageReference.getRouteStatus() ==
+                    RouteStatus.IN_TRANSIT) {
                   _onImageButtonPressed(ImageSource.camera, context: context);
                 } else {
                   wrongTakePhotoClickDialog(context);
                 }
               },
               style: ButtonStyle(
-                shape: MaterialStateProperty.all(CircleBorder()),
-                padding: MaterialStateProperty.all(EdgeInsets.all(0)),
+                shape: MaterialStateProperty.all(const CircleBorder()),
+                padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
                 backgroundColor: MaterialStateProperty.all(
                     App_Colors.white_background.value), // <-- Button color
                 overlayColor:
                     MaterialStateProperty.resolveWith<Color?>((states) {
-                  if (states.contains(MaterialState.pressed))
-                    return Colors.lightGreen; // <-- Splash color
+                  if (states.contains(MaterialState.pressed)) {
+                    return Colors.lightGreen;
+                  } // <-- Splash color
                 }),
               ),
               child: icon,

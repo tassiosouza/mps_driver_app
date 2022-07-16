@@ -1,40 +1,101 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
+import 'package:mps_driver_app/models/RouteStatus.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
+import '../../../Services/DriverService.dart';
+import '../../../models/Driver.dart';
+import '../../../models/MpsOrder.dart';
 import '../../../theme/app_colors.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import '../../../models/Route.dart' as route_model;
+import '../services/PickRouteFile.dart';
 
 class InitRoutePage extends StatefulWidget {
-  RouteViewModel routeViewModel = Modular.get<RouteViewModel>();
+  const InitRoutePage({Key? key}) : super(key: key);
+
+  @override
   _InitRoutePage createState() => _InitRoutePage();
 }
 
 class _InitRoutePage extends State<InitRoutePage> {
-  Future<void> getClientList() async {
-    Modular.to.pushNamed('./loading');
-    await widget.routeViewModel.getClientList();
-    Modular.to.navigate('./inroute');
+  Driver? _currentDriver;
+  late StreamSubscription<QuerySnapshot<route_model.Route>> _subscription;
+  PickRouteFile pickRouteFile = PickRouteFile();
+
+  @override
+  void initState() {
+    Driver? driver;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Amplify.DataStore.start();
+      driver = await loadDriverInformation();
+
+      _subscription =
+          Amplify.DataStore.observeQuery(route_model.Route.classType)
+              .listen((QuerySnapshot<route_model.Route> snapshot) {
+        for (route_model.Route route in snapshot.items) {
+          if (route.routeDriverId == driver!.id &&
+              (route.status != RouteStatus.DONE &&
+                  route.status != RouteStatus.ABORTED)) {
+            Modular.to.navigate('./inroute');
+            _subscription.cancel();
+          }
+        }
+      });
+    });
+
+    super.initState();
+  }
+
+  Future<Driver?> loadDriverInformation() async {
+    Driver? driver = await DriverService.getCurrentDriver();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _currentDriver = driver;
+      });
+    });
+    return driver;
+  }
+
+  Future<void> uploadRoute() async {
+    route_model.Route route = route_model.Route(
+        name: "R100 - ${_currentDriver!.name}",
+        routeDriverId: _currentDriver!.id,
+        status: RouteStatus.PLANNED,
+        driver: _currentDriver);
+
+    var orderList = await pickRouteFile.readOrdersFromFile(route);
+
+    route =
+        route.copyWith(orders: orderList, name: pickRouteFile.getFileName());
+
+    uploadRouteToAmplify(route);
+  }
+
+  Future<void> uploadRouteToAmplify(route_model.Route route) async {
+    for (MpsOrder order in route.orders!) {
+      await Amplify.DataStore.save(order.customer!.coordinates!);
+      await Amplify.DataStore.save(order.customer!);
+      await Amplify.DataStore.save(order);
+    }
+    await Amplify.DataStore.save(route);
   }
 
   @override
   Widget build(BuildContext context) {
-    if(widget.routeViewModel.clientList.isNotEmpty){
-      Modular.to.navigate('./inroute');
-      return Center();
-    } else {
-      Future.delayed(Duration(seconds: 2),
-      () => widget.routeViewModel.backToFirstOpenState());
-
-    }
     return Center(
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 80,
           ),
-          Image(image: AssetImage('assets/images/initNewRouteScreen.png')),
-          SizedBox(height: 48),
+          const Image(
+              image: AssetImage('assets/images/initNewRouteScreen.png')),
+          const SizedBox(height: 48),
           Text(
             "Upload your route",
             style: TextStyle(
@@ -44,11 +105,11 @@ class _InitRoutePage extends State<InitRoutePage> {
                 fontFamily: 'Poppins',
                 decoration: TextDecoration.none),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           Container(
-              padding: EdgeInsets.only(left: 30, right: 30),
+              padding: const EdgeInsets.only(left: 30, right: 30),
               child: Text(
                 "Please, upload the route you received from the logistics team",
                 style: TextStyle(
@@ -59,17 +120,17 @@ class _InitRoutePage extends State<InitRoutePage> {
                     decoration: TextDecoration.none),
                 textAlign: TextAlign.center,
               )),
-          SizedBox(
+          const SizedBox(
             height: 70,
           ),
           Container(
-              padding: EdgeInsets.only(left: 30, right: 30),
+              padding: const EdgeInsets.only(left: 30, right: 30),
               child: ElevatedButton(
-                onPressed: () => getClientList(),
+                onPressed: () => uploadRoute(),
                 style: ElevatedButton.styleFrom(
                     primary: App_Colors.primary_color.value),
                 child: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [

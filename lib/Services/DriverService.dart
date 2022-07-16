@@ -13,7 +13,7 @@ class DriverService {
 
   static Future<Driver?> getCurrentDriver() async {
     if (_driver == null) {
-      await retrieveDriverFromAmplify();
+      _driver = await retrieveDriverFromAmplify();
     }
     return _driver;
   }
@@ -100,19 +100,28 @@ class DriverService {
         });
 
     try {
-      List<Driver> driversQueryResult = await Amplify.DataStore.query(
-          Driver.classType,
-          where: Driver.OWNER.eq(amplifyDriverId));
+      List<Driver> driversQueryResult =
+          await Amplify.DataStore.query(Driver.classType);
 
-      if (driversQueryResult.isEmpty) {
-        await createNewAmplifyDriver(amplifyDriverId!, amplifyDriverName,
-            amplifyDriverEmail, amplifyPhoneNumber);
-        driversQueryResult = await Amplify.DataStore.query(Driver.classType,
-            where: Driver.OWNER.eq(amplifyDriverId));
+      Driver? registeredDriver;
+      for (Driver driver in driversQueryResult) {
+        if (driver.owner == amplifyDriverId) {
+          registeredDriver = driver;
+        }
       }
 
-      _driver = driversQueryResult[0];
-      return _driver;
+      if (registeredDriver == null) {
+        await createNewAmplifyDriver(amplifyDriverId!, amplifyDriverName,
+            amplifyDriverEmail, amplifyPhoneNumber);
+        driversQueryResult = await Amplify.DataStore.query(Driver.classType);
+        for (Driver driver in driversQueryResult) {
+          if (driver.owner == amplifyDriverId) {
+            registeredDriver = driver;
+          }
+        }
+      }
+
+      return registeredDriver;
     } catch (e) {
       print("Could not query DataStore: $e");
     }

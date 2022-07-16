@@ -283,21 +283,18 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   Widget routeDone() {
-    return Container(
-        padding:
-            const EdgeInsets.only(left: 50, right: 50, top: 160, bottom: 160),
+    return Center(
         child: ElevatedButton(
-          onPressed: () => {
-            setState(() {
-              _currentRoute = null;
-            }),
-            Modular.to.navigate('./'),
-          },
-          style:
-              ElevatedButton.styleFrom(primary: App_Colors.primary_color.value),
-          child: const Text("Finish route",
-              style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
-        ));
+      onPressed: () => {
+        setState(() {
+          _currentRoute = null;
+        }),
+        Modular.to.navigate('./'),
+      },
+      style: ElevatedButton.styleFrom(primary: App_Colors.primary_color.value),
+      child: const Text("Finish route",
+          style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
+    ));
   }
 
   int getActiveStepperByRouteStatus() {
@@ -498,11 +495,13 @@ class StateRoutePage extends State<RoutePage> {
                             if (_currentRoute!.status == RouteStatus.DONE) {
                               return routeDone();
                             }
-                            if (_currentDriver != null) {
+                            if (_currentDriver != null &&
+                                _currentRoute!.status != RouteStatus.DONE) {
                               return OrdersListView(
                                   _currentDriver!, _currentOrders!, this);
+                            } else {
+                              return const Center();
                             }
-                            return const Center();
                           }()))
                     ]),
                   ])),

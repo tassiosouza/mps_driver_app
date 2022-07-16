@@ -50,10 +50,14 @@ abstract class _RouteViewModel with Store {
   }
 
   @action
-  void goToInTransitScreen(Driver currentDriver) {
+  void goToInTransitScreen(
+      Driver currentDriver, List<MpsOrder> orders, bool alreadySent) {
     TwilioSmsService smsService = TwilioSmsService(currentDriver);
-    for (var client in clientList) {
-      smsService.sendSms(client.name, client.phone, client.eta);
+    if (!alreadySent) {
+      for (var order in orders) {
+        smsService.sendSms(
+            order.customer!.name, order.customer!.phone, order.eta);
+      }
     }
     screenState.value = RoutePageState.inTransit;
     statusRouteBar.value = 2;
@@ -91,6 +95,20 @@ abstract class _RouteViewModel with Store {
 
   @observable
   var orderList = ObservableList<MpsOrder>();
+
+  @action
+  void setOrderList(List<MpsOrder> orders) {
+    orderList.clear();
+    orderList.addAll(orders);
+  }
+
+  @observable
+  var currentRoute = Observable<RouteModel.Route>(RouteModel.Route(name: ""));
+
+  @action
+  void setCurrentRoute(RouteModel.Route route) {
+    currentRoute.value = route;
+  }
 
   @observable
   var statusRouteBar = Observable(0);
@@ -135,11 +153,11 @@ abstract class _RouteViewModel with Store {
   @action
   void verifyBags(Driver currentDriver) {
     bool checkBagsFinish = true;
-    orderList.forEach((order) {
+    for (var order in orderList) {
       if (order.status != OrderStatus.CHECKED) {
         checkBagsFinish = false;
       }
-    });
+    }
     if (checkBagsFinish == true) {
       screenState.value = RoutePageState.bagsChecked;
     }
@@ -148,13 +166,15 @@ abstract class _RouteViewModel with Store {
   @action
   void verifyPhotosSent() {
     bool routeFinish = true;
-    orderList.forEach((order) {
+    for (var order in orderList) {
       if (order.status != OrderStatus.DELIVERED) {
         routeFinish = false;
       }
-    });
+    }
     if (routeFinish == true) {
       goToRouteDoneScreen();
+      Amplify.DataStore.save(
+          currentRoute.value.copyWith(status: RouteStatus.DONE));
     }
   }
 }

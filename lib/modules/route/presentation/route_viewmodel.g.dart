@@ -170,11 +170,12 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   }
 
   @override
-  void goToInTransitScreen(Driver currentDriver) {
+  void goToInTransitScreen(
+      Driver currentDriver, List<MpsOrder> orders, bool alreadySent) {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
         name: '_RouteViewModel.goToInTransitScreen');
     try {
-      return super.goToInTransitScreen(currentDriver);
+      return super.goToInTransitScreen(currentDriver, orders, alreadySent);
     } finally {
       _$_RouteViewModelActionController.endAction(_$actionInfo);
     }
@@ -219,6 +220,17 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
         name: '_RouteViewModel.setIsInRoute');
     try {
       return super.setIsInRoute(inRoute);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setOrderList(List<MpsOrder> orders) {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.setOrderList');
+    try {
+      return super.setOrderList(orders);
     } finally {
       _$_RouteViewModelActionController.endAction(_$actionInfo);
     }

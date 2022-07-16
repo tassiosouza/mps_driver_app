@@ -303,7 +303,7 @@ class OrderItem extends StatelessWidget {
 
   bagIcon(OrderStatus? status, BuildContext context) {
     Widget widget;
-    if (order.status == OrderStatus.CHECKED) {
+    if (order.status != OrderStatus.RECEIVED) {
       widget = getButtonIcon(Icons.check, order, false);
       if (screenViewModel.screenState.value == RoutePageState.bagsChecking) {
         screenViewModel.verifyBags(currentDriver);
@@ -361,12 +361,10 @@ class OrderItem extends StatelessWidget {
   }
 
   getCameraIcon(MpsOrder order, BuildContext context) {
-    if (order.status == OrderStatus.DELIVERED) {
-      screenViewModel.verifyPhotosSent();
-    }
     Icon icon;
     if (order.status == OrderStatus.DELIVERED) {
       icon = Icon(Icons.check, size: 17, color: App_Colors.primary_color.value);
+      screenViewModel.verifyPhotosSent();
     } else {
       icon = Icon(CustomIcon.camera_driver_icon,
           size: 17, color: App_Colors.primary_color.value);

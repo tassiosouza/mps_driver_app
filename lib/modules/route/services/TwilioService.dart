@@ -23,7 +23,7 @@ class TwilioSmsService {
     return result;
   }
 
-  void sendSms(String client_name, String clientPhone, int client_eta) {
+  void sendSms(String client_name, String clientPhone, int? client_eta) {
     log('calling send sms');
     String _printDuration(Duration duration) {
       String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -34,7 +34,7 @@ class TwilioSmsService {
 
     String firstName = getFirstName(client_name);
     String eta = _printDuration(
-        Duration(seconds: client_eta + 2700)); //Plus 45min to bags checking
+        Duration(seconds: client_eta! + 2700)); //Plus 45min to bags checking
     String message = """Hello, $firstName"""
             """\nI am ${getFirstName(_currentDriver!.name)} and I will be your driver today. I will be delivering your meals from Meal Prep Sunday San Diego. I want to inform you that your meals will be leaving our facilities soon and you can expect to receive them in $eta."""
             """\n\nIn case you won’t be home and it is needed further information to get into your building or gated community, please send a message to me at ${_currentDriver!.phone} with the instructions. In case you need to talk to the customer service, please reply this message""" +

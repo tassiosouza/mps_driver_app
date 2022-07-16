@@ -6,6 +6,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/Driver.dart';
 import 'package:intl/intl.dart';
+import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/modules/route/RouteModule.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
 import 'package:mps_driver_app/modules/route/presentation/route_viewmodel.dart';
@@ -31,7 +32,9 @@ class StateRoutePage extends State<RoutePage> {
   int dotCount = 4;
   Driver? _currentDriver;
   RouteModel.Route? _currentRoute;
-  late StreamSubscription<QuerySnapshot<RouteModel.Route>> _subscription;
+  late StreamSubscription<QuerySnapshot<RouteModel.Route>> _routesSubscription;
+  late StreamSubscription<QuerySnapshot<MpsOrder>> _ordersSubscription;
+  List<MpsOrder>? _currentOrders;
 
   @override
   void initState() {
@@ -39,7 +42,8 @@ class StateRoutePage extends State<RoutePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       driver = await loadDriverInformation();
 
-      _subscription = Amplify.DataStore.observeQuery(RouteModel.Route.classType,
+      _routesSubscription = Amplify.DataStore.observeQuery(
+              RouteModel.Route.classType,
               where: RouteModel.Route.ROUTEDRIVERID.eq(driver?.getId()))
           .listen((QuerySnapshot<RouteModel.Route> snapshot) {
         List<RouteModel.Route> routes = snapshot.items;
@@ -57,6 +61,7 @@ class StateRoutePage extends State<RoutePage> {
             setState(() {
               _currentRoute = currentRouteUpdate;
             });
+            updateViewModelStatus(_currentRoute!);
             log("the current route has been update");
           }
         } else {
@@ -66,6 +71,8 @@ class StateRoutePage extends State<RoutePage> {
               setState(() {
                 _currentRoute = route;
               });
+              updateViewModelStatus(_currentRoute!);
+              configureOrdersSubscription(route);
             }
           }
         }
@@ -73,6 +80,33 @@ class StateRoutePage extends State<RoutePage> {
     });
 
     super.initState();
+  }
+
+  void configureOrdersSubscription(RouteModel.Route route) {
+    _ordersSubscription = Amplify.DataStore.observeQuery(MpsOrder.classType,
+            where: MpsOrder.ROUTEID.eq(route.getId()))
+        .listen((QuerySnapshot<MpsOrder> snapshot) async {
+      _currentOrders = snapshot.items;
+      for (int i = 0; i < _currentOrders!.length; i++) {
+        List<Customer> customers = await Amplify.DataStore.query(
+            Customer.classType,
+            where: Customer.ID.eq(_currentOrders![i].mpsOrderCustomerId));
+        Customer orderCustomer = customers[0];
+        //Add amplify coordinates to customer
+        List<Coordinates> coordinates = await Amplify.DataStore.query(
+            Coordinates.classType,
+            where: Coordinates.ID.eq(customers[0]!.customerCoordinatesId));
+        orderCustomer = orderCustomer.copyWith(coordinates: coordinates[0]);
+
+        //Add amplify customer to order
+        _currentOrders![i] =
+            _currentOrders![i].copyWith(customer: orderCustomer);
+      }
+      setState(() {
+        _currentOrders = _currentOrders;
+      });
+      screenViewModel.setOrderList(_currentOrders!);
+    });
   }
 
   Future<Driver?> loadDriverInformation() async {
@@ -101,7 +135,11 @@ class StateRoutePage extends State<RoutePage> {
   Future<void> sendingWelcomeMessageDialog() {
     return AppDialogs().showConfirmDialog(
         context,
-        () => {screenViewModel.goToInTransitScreen(_currentDriver!)},
+        () => {
+              screenViewModel.goToInTransitScreen(
+                  _currentDriver!, _currentOrders!, false),
+              updateRouteStatus(RouteStatus.IN_TRANSIT)
+            },
         "Confirm",
         "Welcome messages will be sent to customers and you can start delivering!");
   }
@@ -136,10 +174,15 @@ class StateRoutePage extends State<RoutePage> {
                 color: getStatusColor(fixedNumber, varNumber))));
   }
 
+  void updateRouteStatus(RouteStatus newStatus) {
+    Amplify.DataStore.save(_currentRoute!.copyWith(status: newStatus));
+  }
+
   Widget toCheckIn(bool madeCheckIn) {
     if (_currentRoute != null && _currentRoute!.status!.index > 0) {
       if (_currentRoute!.status == RouteStatus.INITIATED) {
         screenViewModel.goToBagsChecking();
+        updateRouteStatus(RouteStatus.CHECKING);
       }
 
       DateTime time = DateTime.fromMillisecondsSinceEpoch(
@@ -155,9 +198,9 @@ class StateRoutePage extends State<RoutePage> {
     } else {
       return GestureDetector(
           onTap: () {
-            Amplify.DataStore.save(_currentRoute!.copyWith(
-                status: RouteStatus.INITIATED,
-                startTime: TemporalTimestamp(DateTime.now())));
+            _currentRoute = _currentRoute!
+                .copyWith(startTime: TemporalTimestamp(DateTime.now()));
+            updateRouteStatus(RouteStatus.INITIATED);
           },
           child: Container(
               padding: EdgeInsets.only(left: 18, top: 5),
@@ -192,7 +235,7 @@ class StateRoutePage extends State<RoutePage> {
           child: Container(
             padding: EdgeInsets.only(right: 25, top: 5),
             child: Text(
-              "Welcome message",
+              "Welcome messages",
               style: TextStyle(
                   fontSize: 14, color: App_Colors.primary_color.value),
             ),
@@ -203,12 +246,34 @@ class StateRoutePage extends State<RoutePage> {
       return Container(
         padding: EdgeInsets.only(right: 25, top: 5),
         child: Text(
-          "message sent",
+          "Welcome messages sent",
           style: TextStyle(fontSize: 14, color: App_Colors.grey_text.value),
         ),
         alignment: Alignment.centerLeft,
       );
     }
+  }
+
+  void updateViewModelStatus(RouteModel.Route? currentRoute) {
+    switch (currentRoute!.status) {
+      case RouteStatus.PLANNED:
+        // do nothing
+        break;
+      case RouteStatus.INITIATED:
+      case RouteStatus.CHECKING:
+        screenViewModel.goToBagsChecking();
+        break;
+      case RouteStatus.IN_TRANSIT:
+        screenViewModel.goToInTransitScreen(
+            _currentDriver!, _currentOrders!, true);
+        break;
+      case RouteStatus.DONE:
+      case RouteStatus.ON_HOLD:
+      case RouteStatus.ABORTED:
+        screenViewModel.goToRouteDoneScreen();
+        break;
+    }
+    screenViewModel.setCurrentRoute(currentRoute);
   }
 
   void goToViewOnMap() {
@@ -404,7 +469,8 @@ class StateRoutePage extends State<RoutePage> {
                             return routeDone();
                           }
                           if (_currentDriver != null) {
-                            return OrdersListView(_currentDriver!);
+                            return OrdersListView(
+                                _currentDriver!, _currentOrders!);
                           }
                           return Center();
                         }))

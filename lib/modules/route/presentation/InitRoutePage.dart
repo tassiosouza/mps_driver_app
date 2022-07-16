@@ -62,6 +62,7 @@ class _InitRoutePage extends State<InitRoutePage> {
   }
 
   Future<void> uploadRoute() async {
+    Modular.to.pushNamed('./loading');
     route_model.Route route = route_model.Route(
         name: "R100 - ${_currentDriver!.name}",
         routeDriverId: _currentDriver!.id,

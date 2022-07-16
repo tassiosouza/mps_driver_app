@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({required this.title});
   final String title;
 
   @override
@@ -25,7 +25,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TwilioFlutter twilioFlutter;
+  late TwilioFlutter twilioFlutter;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void sendSms() async {
-    twilioFlutter.sendSMS(toNumber: '', messageBody: 'hello world');
+    twilioFlutter.sendSMS(toNumber: '', messageBody: 'hello world', messageMediaUrl: '');
   }
 
   void sendWhatsApp() {

@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:mps_driver_app/models/OrderStatus.dart';
 import 'package:mps_driver_app/models/RouteStatus.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_sms/flutter_sms.dart';
 import '../../../../models/Driver.dart';
 import '../../../../models/MpsOrder.dart';
 import '../../../../components/AppDialogs.dart';
+import '../../../profile/presentation/ProfileViewModel.dart';
 import 'InstructionsDialog.dart';
 
 class OrderItem extends StatelessWidget {
@@ -36,9 +38,14 @@ class OrderItem extends StatelessWidget {
 
   final ImagePicker _picker = ImagePicker();
 
+  final profileViewModel = Modular.get<ProfileViewModel>();
+
   void _launchMapsUrl() async {
-    availableMaps = await MapLauncher.installedMaps;
-    await availableMaps.first.showMarker(
+    if(profileViewModel.chosenMap.value.mapName == ''){
+      await profileViewModel.getMapOptions();
+      await profileViewModel.setDefaultMap();
+    }
+    await profileViewModel.chosenMap.value.showMarker(
       coords: Coords(order.customer!.coordinates!.latitude,
           order.customer!.coordinates!.longitude),
       title: order.customer!.name,

@@ -15,7 +15,8 @@ class AppModule extends Module {
 
   @override
   List<Module> get imports => [
-    RouteModule()
+    RouteModule(),
+    ProfileModule()
   ];
 
   @override

@@ -34,8 +34,8 @@ class MpsOrder extends Model {
   final String? _mealsInstruction;
   final OrderStatus? _status;
   final Customer? _customer;
-  final String? _routeID;
   final int? _eta;
+  final String? _routeID;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
   final String? _mpsOrderCustomerId;
@@ -77,6 +77,10 @@ class MpsOrder extends Model {
     return _customer;
   }
   
+  int? get eta {
+    return _eta;
+  }
+  
   String get routeID {
     try {
       return _routeID!;
@@ -88,10 +92,6 @@ class MpsOrder extends Model {
           underlyingException: e.toString()
           );
     }
-  }
-  
-  int? get eta {
-    return _eta;
   }
   
   TemporalDateTime? get createdAt {
@@ -106,9 +106,9 @@ class MpsOrder extends Model {
     return _mpsOrderCustomerId;
   }
   
-  const MpsOrder._internal({required this.id, required number, deliveryInstruction, mealsInstruction, status, customer, required routeID, eta, createdAt, updatedAt, mpsOrderCustomerId}): _number = number, _deliveryInstruction = deliveryInstruction, _mealsInstruction = mealsInstruction, _status = status, _customer = customer, _routeID = routeID, _eta = eta, _createdAt = createdAt, _updatedAt = updatedAt, _mpsOrderCustomerId = mpsOrderCustomerId;
+  const MpsOrder._internal({required this.id, required number, deliveryInstruction, mealsInstruction, status, customer, eta, required routeID, createdAt, updatedAt, mpsOrderCustomerId}): _number = number, _deliveryInstruction = deliveryInstruction, _mealsInstruction = mealsInstruction, _status = status, _customer = customer, _eta = eta, _routeID = routeID, _createdAt = createdAt, _updatedAt = updatedAt, _mpsOrderCustomerId = mpsOrderCustomerId;
   
-  factory MpsOrder({String? id, required String number, String? deliveryInstruction, String? mealsInstruction, OrderStatus? status, Customer? customer, required String routeID, int? eta, String? mpsOrderCustomerId}) {
+  factory MpsOrder({String? id, required String number, String? deliveryInstruction, String? mealsInstruction, OrderStatus? status, Customer? customer, int? eta, required String routeID, String? mpsOrderCustomerId}) {
     return MpsOrder._internal(
       id: id == null ? UUID.getUUID() : id,
       number: number,
@@ -116,8 +116,8 @@ class MpsOrder extends Model {
       mealsInstruction: mealsInstruction,
       status: status,
       customer: customer,
-      routeID: routeID,
       eta: eta,
+      routeID: routeID,
       mpsOrderCustomerId: mpsOrderCustomerId);
   }
   
@@ -135,8 +135,8 @@ class MpsOrder extends Model {
       _mealsInstruction == other._mealsInstruction &&
       _status == other._status &&
       _customer == other._customer &&
-      _routeID == other._routeID &&
       _eta == other._eta &&
+      _routeID == other._routeID &&
       _mpsOrderCustomerId == other._mpsOrderCustomerId;
   }
   
@@ -153,8 +153,8 @@ class MpsOrder extends Model {
     buffer.write("deliveryInstruction=" + "$_deliveryInstruction" + ", ");
     buffer.write("mealsInstruction=" + "$_mealsInstruction" + ", ");
     buffer.write("status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
-    buffer.write("routeID=" + "$_routeID" + ", ");
     buffer.write("eta=" + (_eta != null ? _eta!.toString() : "null") + ", ");
+    buffer.write("routeID=" + "$_routeID" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
     buffer.write("mpsOrderCustomerId=" + "$_mpsOrderCustomerId");
@@ -163,7 +163,7 @@ class MpsOrder extends Model {
     return buffer.toString();
   }
   
-  MpsOrder copyWith({String? id, String? number, String? deliveryInstruction, String? mealsInstruction, OrderStatus? status, Customer? customer, String? routeID, int? eta, String? mpsOrderCustomerId}) {
+  MpsOrder copyWith({String? id, String? number, String? deliveryInstruction, String? mealsInstruction, OrderStatus? status, Customer? customer, int? eta, String? routeID, String? mpsOrderCustomerId}) {
     return MpsOrder._internal(
       id: id ?? this.id,
       number: number ?? this.number,
@@ -171,8 +171,8 @@ class MpsOrder extends Model {
       mealsInstruction: mealsInstruction ?? this.mealsInstruction,
       status: status ?? this.status,
       customer: customer ?? this.customer,
-      routeID: routeID ?? this.routeID,
       eta: eta ?? this.eta,
+      routeID: routeID ?? this.routeID,
       mpsOrderCustomerId: mpsOrderCustomerId ?? this.mpsOrderCustomerId);
   }
   
@@ -185,14 +185,14 @@ class MpsOrder extends Model {
       _customer = json['customer']?['serializedData'] != null
         ? Customer.fromJson(new Map<String, dynamic>.from(json['customer']['serializedData']))
         : null,
-      _routeID = json['routeID'],
       _eta = (json['eta'] as num?)?.toInt(),
+      _routeID = json['routeID'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
       _mpsOrderCustomerId = json['mpsOrderCustomerId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'number': _number, 'deliveryInstruction': _deliveryInstruction, 'mealsInstruction': _mealsInstruction, 'status': enumToString(_status), 'customer': _customer?.toJson(), 'routeID': _routeID, 'eta': _eta, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mpsOrderCustomerId': _mpsOrderCustomerId
+    'id': id, 'number': _number, 'deliveryInstruction': _deliveryInstruction, 'mealsInstruction': _mealsInstruction, 'status': enumToString(_status), 'customer': _customer?.toJson(), 'eta': _eta, 'routeID': _routeID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mpsOrderCustomerId': _mpsOrderCustomerId
   };
 
   static final QueryField ID = QueryField(fieldName: "mpsOrder.id");
@@ -203,8 +203,8 @@ class MpsOrder extends Model {
   static final QueryField CUSTOMER = QueryField(
     fieldName: "customer",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Customer).toString()));
-  static final QueryField ROUTEID = QueryField(fieldName: "routeID");
   static final QueryField ETA = QueryField(fieldName: "eta");
+  static final QueryField ROUTEID = QueryField(fieldName: "routeID");
   static final QueryField MPSORDERCUSTOMERID = QueryField(fieldName: "mpsOrderCustomerId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "MpsOrder";
@@ -255,15 +255,15 @@ class MpsOrder extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsOrder.ROUTEID,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: MpsOrder.ETA,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsOrder.ROUTEID,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

@@ -34,8 +34,8 @@ class Route extends Model {
   final TemporalTimestamp? _startTime;
   final TemporalTimestamp? _endTime;
   final RouteStatus? _status;
-  final List<MpsOrder>? _orders;
   final String? _name;
+  final List<MpsOrder>? _orders;
   final Driver? _driver;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
@@ -65,10 +65,6 @@ class Route extends Model {
     return _status;
   }
   
-  List<MpsOrder>? get orders {
-    return _orders;
-  }
-  
   String get name {
     try {
       return _name!;
@@ -80,6 +76,10 @@ class Route extends Model {
           underlyingException: e.toString()
           );
     }
+  }
+  
+  List<MpsOrder>? get orders {
+    return _orders;
   }
   
   Driver? get driver {
@@ -98,17 +98,17 @@ class Route extends Model {
     return _routeDriverId;
   }
   
-  const Route._internal({required this.id, cost, startTime, endTime, status, orders, required name, driver, createdAt, updatedAt, routeDriverId}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _orders = orders, _name = name, _driver = driver, _createdAt = createdAt, _updatedAt = updatedAt, _routeDriverId = routeDriverId;
+  const Route._internal({required this.id, cost, startTime, endTime, status, required name, orders, driver, createdAt, updatedAt, routeDriverId}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _name = name, _orders = orders, _driver = driver, _createdAt = createdAt, _updatedAt = updatedAt, _routeDriverId = routeDriverId;
   
-  factory Route({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, List<MpsOrder>? orders, required String name, Driver? driver, String? routeDriverId}) {
+  factory Route({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, required String name, List<MpsOrder>? orders, Driver? driver, String? routeDriverId}) {
     return Route._internal(
       id: id == null ? UUID.getUUID() : id,
       cost: cost,
       startTime: startTime,
       endTime: endTime,
       status: status,
-      orders: orders != null ? List<MpsOrder>.unmodifiable(orders) : orders,
       name: name,
+      orders: orders != null ? List<MpsOrder>.unmodifiable(orders) : orders,
       driver: driver,
       routeDriverId: routeDriverId);
   }
@@ -126,8 +126,8 @@ class Route extends Model {
       _startTime == other._startTime &&
       _endTime == other._endTime &&
       _status == other._status &&
-      DeepCollectionEquality().equals(_orders, other._orders) &&
       _name == other._name &&
+      DeepCollectionEquality().equals(_orders, other._orders) &&
       _driver == other._driver &&
       _routeDriverId == other._routeDriverId;
   }
@@ -154,15 +154,15 @@ class Route extends Model {
     return buffer.toString();
   }
   
-  Route copyWith({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, List<MpsOrder>? orders, String? name, Driver? driver, String? routeDriverId}) {
+  Route copyWith({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, String? name, List<MpsOrder>? orders, Driver? driver, String? routeDriverId}) {
     return Route._internal(
       id: id ?? this.id,
       cost: cost ?? this.cost,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       status: status ?? this.status,
-      orders: orders ?? this.orders,
       name: name ?? this.name,
+      orders: orders ?? this.orders,
       driver: driver ?? this.driver,
       routeDriverId: routeDriverId ?? this.routeDriverId);
   }
@@ -173,13 +173,13 @@ class Route extends Model {
       _startTime = json['startTime'] != null ? TemporalTimestamp.fromSeconds(json['startTime']) : null,
       _endTime = json['endTime'] != null ? TemporalTimestamp.fromSeconds(json['endTime']) : null,
       _status = enumFromString<RouteStatus>(json['status'], RouteStatus.values),
+      _name = json['name'],
       _orders = json['orders'] is List
         ? (json['orders'] as List)
           .where((e) => e?['serializedData'] != null)
           .map((e) => MpsOrder.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
-      _name = json['name'],
       _driver = json['driver']?['serializedData'] != null
         ? Driver.fromJson(new Map<String, dynamic>.from(json['driver']['serializedData']))
         : null,
@@ -188,7 +188,7 @@ class Route extends Model {
       _routeDriverId = json['routeDriverId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'cost': _cost, 'startTime': _startTime?.toSeconds(), 'endTime': _endTime?.toSeconds(), 'status': enumToString(_status), 'orders': _orders?.map((MpsOrder? e) => e?.toJson()).toList(), 'name': _name, 'driver': _driver?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'routeDriverId': _routeDriverId
+    'id': id, 'cost': _cost, 'startTime': _startTime?.toSeconds(), 'endTime': _endTime?.toSeconds(), 'status': enumToString(_status), 'name': _name, 'orders': _orders?.map((MpsOrder? e) => e?.toJson()).toList(), 'driver': _driver?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'routeDriverId': _routeDriverId
   };
 
   static final QueryField ID = QueryField(fieldName: "route.id");
@@ -196,10 +196,10 @@ class Route extends Model {
   static final QueryField STARTTIME = QueryField(fieldName: "startTime");
   static final QueryField ENDTIME = QueryField(fieldName: "endTime");
   static final QueryField STATUS = QueryField(fieldName: "status");
+  static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField ORDERS = QueryField(
     fieldName: "orders",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (MpsOrder).toString()));
-  static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField DRIVER = QueryField(
     fieldName: "driver",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Driver).toString()));
@@ -245,17 +245,17 @@ class Route extends Model {
       ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)
     ));
     
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Route.NAME,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
       key: Route.ORDERS,
       isRequired: false,
       ofModelName: (MpsOrder).toString(),
       associatedKey: MpsOrder.ROUTEID
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Route.NAME,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(

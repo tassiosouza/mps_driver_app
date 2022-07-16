@@ -1,34 +1,34 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mps_driver_app/modules/profile/presentation/ProfileViewModel.dart';
+import 'package:mps_driver_app/modules/profile/presentation/components/ChooseMapDialog.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage();
-
-  @override
-  Widget build(BuildContext context) {
-    return ProfilePageState();
-  }
-}
-
-class ProfilePageState extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePageState> {
+class _ProfilePageState extends State<ProfilePage> {
   Driver? _currentDriver;
+  final viewModel = Modular.get<ProfileViewModel>();
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadDriverInformation();
     });
+    getLocalMaps();
+  }
 
-    super.initState();
+  void getLocalMaps() async {
+    await viewModel.getMapOptions();
+    viewModel.setDefaultMap();
   }
 
   void loadDriverInformation() async {
@@ -132,17 +132,24 @@ class _ProfilePageState extends State<ProfilePageState> {
                                 fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                         ])),
-                    SizedBox(height: 25),
-                    GestureDetector(
-                      child: Container(
-                          padding: EdgeInsets.only(left: 25),
-                          child: Row(children: [
-                            Text("Change password",
-                                style: TextStyle(fontSize: 14)),
-                          ])),
-                      onTap: () {},
-                    ),
-                    SizedBox(height: 25),
+                    SizedBox(height: 20),
+                     Container(padding: EdgeInsets.only(bottom: 20, left: 25, right: 25),
+                       child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                       children: [
+                         GestureDetector(onTap: () => {ChooseMapDialog().call(context)},
+                             child: Container(
+                               child:Text("Choose map", style: TextStyle(
+                                   color: App_Colors.black_text.value,
+                                   fontSize: 14)),
+                             )),
+                         GestureDetector(child: Container(child: Observer(builder:
+                         (_) => Text(viewModel.chosenMap.value.mapName, style:
+                         TextStyle(fontSize: 14, fontFamily: 'Poppins',
+                             fontWeight: FontWeight.w500, color: App_Colors.black_text.value),
+                         ),)), onTap: () => {ChooseMapDialog().call(context)})
+                       ]),),
+                    getAccountOptions("Change password", (){}),
                     GestureDetector(
                       onTap: () => logout(),
                       child: Container(
@@ -176,6 +183,19 @@ class _ProfilePageState extends State<ProfilePageState> {
       SizedBox(height: 10),
       Text(label, style: TextStyle(fontSize: 14))
     ]);
+  }
+
+  getAccountOptions(String text, Function function){
+    return GestureDetector(
+      onTap: () => {},
+      child: Container(
+          padding: EdgeInsets.only(left: 25, bottom: 20),
+          child: Row(children: [
+            Text(text, style: TextStyle(
+                    color: App_Colors.black_text.value,
+                    fontSize: 14)),
+          ])),
+    );
   }
 
   getInfoRow(String label, String? value) {
@@ -235,7 +255,9 @@ class _ProfilePageState extends State<ProfilePageState> {
                       border: InputBorder.none,
                       label: Container(
                         alignment: Alignment.centerRight,
-                        child: Text(value.toString()),
+                        child: Text(value.toString(), style:
+                          TextStyle(fontSize: 14, fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500, color: App_Colors.black_text.value),),
                       ),
                       alignLabelWithHint: true),
                 ),

@@ -219,8 +219,7 @@ class ClientItem extends StatelessWidget {
                                       side: BorderSide(
                                           color: Colors.transparent)))),
                       child: Row(children: const [
-                        Text("Start",
-                            style:
+                        Text("Start", style:
                                 TextStyle(fontSize: 13, fontFamily: 'Poppins')),
                         SizedBox(width: 10),
                         Icon(CustomIcon.start_driver_icon, size: 9)

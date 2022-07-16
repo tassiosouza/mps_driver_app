@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:mps_driver_app/models/OrderStatus.dart';
 import 'package:mps_driver_app/models/RouteStatus.dart';
@@ -17,7 +16,6 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import '../../../../models/Driver.dart';
 import '../../../../models/MpsOrder.dart';
-import '../../utils/RoutePageState.dart';
 import '../../../../components/AppDialogs.dart';
 import 'InstructionsDialog.dart';
 
@@ -231,6 +229,7 @@ class OrderItem extends StatelessWidget {
                         }
                       },
                       style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.only(left: 20, right: 20)),
                           backgroundColor:
                               MaterialStateProperty.all(getStartButtonColor()),
                           shape:

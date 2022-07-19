@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/RouteStatus.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
@@ -88,7 +89,7 @@ class _InitRoutePage extends State<InitRoutePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return SingleChildScrollView(
       child: Column(
         children: [
           const SizedBox(
@@ -96,7 +97,7 @@ class _InitRoutePage extends State<InitRoutePage> {
           ),
           const Image(
               image: AssetImage('assets/images/initNewRouteScreen.png')),
-          const SizedBox(height: 48),
+          const SizedBox(height: 30),
           Text(
             "Upload your route",
             style: TextStyle(
@@ -106,13 +107,11 @@ class _InitRoutePage extends State<InitRoutePage> {
                 fontFamily: 'Poppins',
                 decoration: TextDecoration.none),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 10),
           Container(
               padding: const EdgeInsets.only(left: 30, right: 30),
               child: Text(
-                "Please, upload the route you received from the logistics team",
+                "Please select your final destination and upload the route you received from the logistics team",
                 style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontFamily: 'Poppins',
@@ -121,27 +120,58 @@ class _InitRoutePage extends State<InitRoutePage> {
                     decoration: TextDecoration.none),
                 textAlign: TextAlign.center,
               )),
-          const SizedBox(
-            height: 70,
-          ),
-          Container(
-              padding: const EdgeInsets.only(left: 30, right: 30),
-              child: ElevatedButton(
-                onPressed: () => uploadRoute(),
-                style: ElevatedButton.styleFrom(
-                    primary: App_Colors.primary_color.value),
-                child: Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(CustomIcon.upload_icon, size: 20),
-                          SizedBox(width: 20),
-                          Text("Upload route",
-                              style: TextStyle(
-                                  fontSize: 20, fontFamily: 'Poppins')),
-                        ])),
-              ))
+          const SizedBox(height: 20),
+          Row(children: [
+            SizedBox(width: 60),
+            Observer(builder: (_) => Checkbox(
+                activeColor: App_Colors.primary_color.value,
+                value: false,
+                shape: CircleBorder(),
+                checkColor: App_Colors.primary_color.value,
+                onChanged: (bool? value){
+
+                })),
+            Observer(builder: (_) => GestureDetector(child: Text(
+                'Meal Prep Sunday', style:
+            TextStyle(fontSize: 14, fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500, color: App_Colors.grey_dark.value)),
+                onTap: () => {}))
+          ]),
+          Row(children: [
+            SizedBox(width: 60),
+            Observer(builder: (_) => Checkbox(
+                activeColor: App_Colors.primary_color.value,
+                value: true,
+                shape: CircleBorder(),
+                checkColor: App_Colors.primary_color.value,
+                onChanged: (bool? value){
+
+                })),
+            Observer(builder: (_) => GestureDetector(child: Text(
+                'Custom', style:
+            TextStyle(fontSize: 14, fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500, color: App_Colors.grey_dark.value)),
+                onTap: () => {}))
+          ]),
+          Container(child: TextField(decoration: InputDecoration(icon: Icon(Icons.location_on_outlined,
+              color: App_Colors.primary_color.value))), padding: EdgeInsets.only(left: 30, right: 30),
+              ),
+          const SizedBox(height: 40),
+          Row(children: [ Container(child: ElevatedButton(
+              onPressed: () => uploadRoute(),
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(
+                  App_Colors.primary_color.value), padding: MaterialStateProperty.all(
+                  EdgeInsets.only(left: 80, right: 80, top: 10, bottom: 10)
+              ),
+              ),
+              child: Container(child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(CustomIcon.upload_icon, size: 20),
+                    SizedBox(width: 20), Text("Upload route",
+                        style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
+                  ])),
+            ))], mainAxisAlignment: MainAxisAlignment.center,)
         ],
       ),
     );

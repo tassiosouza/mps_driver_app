@@ -41,6 +41,14 @@ mixin _$ProfileViewModel on _ProfileViewModel, Store {
     });
   }
 
+  late final _$setDefaultMapAsyncAction =
+      AsyncAction('_ProfileViewModel.setDefaultMap', context: context);
+
+  @override
+  Future setDefaultMap() {
+    return _$setDefaultMapAsyncAction.run(() => super.setDefaultMap());
+  }
+
   late final _$getMapOptionsAsyncAction =
       AsyncAction('_ProfileViewModel.getMapOptions', context: context);
 

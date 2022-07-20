@@ -1,4 +1,6 @@
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:http/http.dart' as http;
+import 'package:mps_driver_app/modules/route/presentation/RouteViewModel.dart';
 import 'dart:convert';
 import '../../models/Client.dart';
 import '../../utils/getjson.dart';
@@ -8,24 +10,46 @@ class RouteOptimizationApi {
   static String baseUrl =
       'https://graphhopper.com/api/1/vrp?key=110bcab4-47b7-4242-a713-bb7970de2e02';
 
+  final routeViewModel = Modular.get<RouteViewModel>();
+
   RouteOptimizationApi() {}
 
   Future<List<MpsOrder>> getSortedOrders(List<MpsOrder> orders) async {
     List<Map<String, Object>> object = GetJsonBody.getJsonBody(orders);
 
-    String body = jsonEncode(<String, List<Map<String, Object>>>{
-      "vehicles": [
-        {
-          "vehicle_id": "driver_vehicle",
-          "start_address": {
-            "location_id": "mps_facility",
-            "lon": -117.2310085,
-            "lat": 33.1522247
+    late String body;
+    if(routeViewModel.endAddress.value != 'Meal Prep Sunday'){
+      body = jsonEncode(<String, List<Map<String, Object>>>{
+        "vehicles": [
+          {
+            "vehicle_id": "driver_vehicle",
+            "end_address": {
+              " " : " "
+            },
+            "start_address": {
+              "location_id": "mps_facility",
+              "lon": -117.2310085,
+              "lat": 33.1522247
+            }
           }
-        }
-      ],
-      "services": object
-    });
+        ],
+        "services": object
+      });
+    } else {
+      body = jsonEncode(<String, List<Map<String, Object>>>{
+        "vehicles": [
+          {
+            "vehicle_id": "driver_vehicle",
+            "start_address": {
+              "location_id": "mps_facility",
+              "lon": -117.2310085,
+              "lat": 33.1522247
+            }
+          }
+        ],
+        "services": object
+      });
+    }
 
     var response = await http.post(Uri.parse(baseUrl),
         headers: <String, String>{

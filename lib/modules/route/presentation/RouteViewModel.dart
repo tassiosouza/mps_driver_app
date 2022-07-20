@@ -1,8 +1,37 @@
+import 'package:google_place/google_place.dart';
 import 'package:mobx/mobx.dart';
+import 'package:mps_driver_app/modules/route/services/ManageEndAddress.dart';
 part 'RouteViewModel.g.dart';
 
 class RouteViewModel = _RouteViewModel with _$RouteViewModel;
 
 abstract class _RouteViewModel with Store {
+  ManageEndAddress manageEndAddress = ManageEndAddress();
 
+  @observable
+  var endAddress = Observable('Meal Prep Sunday');
+
+  @observable
+  var predictions = ObservableList();
+
+  @action
+  addPredictions(List<AutocompletePrediction> predct){
+    predictions.addAll(predct);
+  }
+  @action
+  clearPredictions(){
+    predictions.clear();
+  }
+
+  @action
+  setEndAddress(String address){
+    endAddress.value = address;
+    manageEndAddress.saveEndAddress(address);
+  }
+
+  @action
+  setFirstEndAddress() async {
+    final address = await manageEndAddress.getEndAddress();
+    endAddress.value = address!;
+  }
 }

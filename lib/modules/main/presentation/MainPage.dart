@@ -15,7 +15,7 @@ class MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    Modular.to.navigate('/route/');
+    Modular.to.navigate('/history/');
     return Scaffold(
         body: const RouterOutlet(),
         bottomNavigationBar: Observer(builder: (_) {

@@ -24,7 +24,7 @@ class InitRoutePage extends StatefulWidget {
   const InitRoutePage({Key? key}) : super(key: key);
 
   @override
-  _InitRoutePage createState() => _InitRoutePage();
+  createState() => _InitRoutePage();
 }
 
 class _InitRoutePage extends State<InitRoutePage> {

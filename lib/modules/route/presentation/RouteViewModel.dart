@@ -29,9 +29,8 @@ abstract class _RouteViewModel with Store {
     manageEndAddress.saveEndAddress(address);
   }
 
-  @action
   setFirstEndAddress() async {
-    final address = await manageEndAddress.getEndAddress();
-    endAddress.value = address!;
+    var address = await manageEndAddress.getEndAddress();
+    setEndAddress(address!);
   }
 }

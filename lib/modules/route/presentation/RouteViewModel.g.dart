@@ -25,8 +25,46 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     });
   }
 
+  late final _$predictionsAtom =
+      Atom(name: '_RouteViewModel.predictions', context: context);
+
+  @override
+  ObservableList<dynamic> get predictions {
+    _$predictionsAtom.reportRead();
+    return super.predictions;
+  }
+
+  @override
+  set predictions(ObservableList<dynamic> value) {
+    _$predictionsAtom.reportWrite(value, super.predictions, () {
+      super.predictions = value;
+    });
+  }
+
   late final _$_RouteViewModelActionController =
       ActionController(name: '_RouteViewModel', context: context);
+
+  @override
+  dynamic addPredictions(List<AutocompletePrediction> predct) {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.addPredictions');
+    try {
+      return super.addPredictions(predct);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic clearPredictions() {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.clearPredictions');
+    try {
+      return super.clearPredictions();
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   dynamic setEndAddress(String address) {
@@ -40,20 +78,10 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   }
 
   @override
-  dynamic setFirstEndAddress() {
-    final _$actionInfo = _$_RouteViewModelActionController.startAction(
-        name: '_RouteViewModel.setFirstEndAddress');
-    try {
-      return super.setFirstEndAddress();
-    } finally {
-      _$_RouteViewModelActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   String toString() {
     return '''
-endAddress: ${endAddress}
+endAddress: ${endAddress},
+predictions: ${predictions}
     ''';
   }
 }

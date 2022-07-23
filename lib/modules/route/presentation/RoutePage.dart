@@ -323,6 +323,7 @@ class StateRoutePage extends State<RoutePage> {
     bool allChanged = true;
     for (MpsOrder order in _currentOrders!) {
       allChanged = (order.status == status);
+      if (!allChanged) break;
     }
     if (allChanged) {
       if (status == OrderStatus.CHECKED) {

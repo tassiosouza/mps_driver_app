@@ -1,4 +1,7 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:core';
+import 'dart:developer';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -9,6 +12,7 @@ import 'modules/main/presentation/MainPage.dart';
 import 'modules/main/presentation/SingInPage.dart';
 import 'modules/main/presentation/SingUpPage.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +26,6 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainWidgetState extends State<MainWidget> {
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -30,31 +33,39 @@ class MainWidgetState extends State<MainWidget> {
     });
     super.initState();
   }
+
   Future<void> _initializeApp() async {
     await AmplifyInit().configureAmplify();
-    FlutterNativeSplash.remove();
+    var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
+      if (msg.eventName == "ready") {
+        log("logfirst");
+        FlutterNativeSplash.remove();
+      }
+      print(msg.eventName);
+    });
   }
+
   final customTheme = CustomTheme();
 
   @override
   Widget build(BuildContext context) {
     return Authenticator(
-      authenticatorBuilder: (BuildContext context, AuthenticatorState state) {
-        switch (state.currentStep) {
-          case AuthenticatorStep.signIn:
-            return SingInPage(state);
-          case AuthenticatorStep.signUp:
-            return SingUpPage(state);
-          default:
-            return null;
-        }
-      },
-      child: MaterialApp.router(
-        theme: customTheme.customLightTheme,
-        themeMode: ThemeMode.system,
-        builder: Authenticator.builder(),
-        routerDelegate: Modular.routerDelegate,
-        routeInformationParser: Modular.routeInformationParser,
-      ));
+        authenticatorBuilder: (BuildContext context, AuthenticatorState state) {
+          switch (state.currentStep) {
+            case AuthenticatorStep.signIn:
+              return SingInPage(state);
+            case AuthenticatorStep.signUp:
+              return SingUpPage(state);
+            default:
+              return null;
+          }
+        },
+        child: MaterialApp.router(
+          theme: customTheme.customLightTheme,
+          themeMode: ThemeMode.system,
+          builder: Authenticator.builder(),
+          routerDelegate: Modular.routerDelegate,
+          routeInformationParser: Modular.routeInformationParser,
+        ));
   }
 }

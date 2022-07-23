@@ -12,9 +12,7 @@ class DriverService {
   DriverService._internal();
 
   static Future<Driver?> getCurrentDriver() async {
-    if (_driver == null) {
-      _driver = await retrieveDriverFromAmplify();
-    }
+    _driver ??= await retrieveDriverFromAmplify();
     return _driver;
   }
 
@@ -102,6 +100,8 @@ class DriverService {
     try {
       List<Driver> driversQueryResult =
           await Amplify.DataStore.query(Driver.classType);
+
+      log("logsecond");
 
       Driver? registeredDriver;
       for (Driver driver in driversQueryResult) {

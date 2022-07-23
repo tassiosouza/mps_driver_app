@@ -9,14 +9,17 @@ class GeocodingApi {
 
   GeocodingApi() {}
 
-  Future<Coordinates> getCoordinates(String address) async {
+  Future<Coordinates> getCoordinates(
+      String address, bool processeAddress) async {
     final split = address.split(',');
     final Map<int, String> values = {
       for (int i = 0; i < split.length; i++) i: split[i]
     };
 
-    var response = await http
-        .get(Uri.parse("$baseUrl${values[0]},${values[values.length - 1]}"));
+    var addressToSearch =
+        processeAddress ? '${values[0]},${values[values.length - 1]}' : address;
+
+    var response = await http.get(Uri.parse("$baseUrl$addressToSearch"));
     if (response.statusCode == 200) {
       try {
         var data = jsonDecode(response.body);

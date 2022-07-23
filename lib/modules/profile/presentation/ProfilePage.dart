@@ -1,3 +1,5 @@
+// ignore_for_file: must_call_super, depend_on_referenced_packages
+
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -10,6 +12,8 @@ import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _ProfilePageState();
 }
@@ -20,7 +24,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Amplify.DataStore.start();
       loadDriverInformation();
     });
     getLocalMaps();
@@ -59,9 +64,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Column(
                                 children: [
-                                  SizedBox(height: 85),
+                                  const SizedBox(height: 85),
                                   Container(
-                                    padding: EdgeInsets.all(2),
+                                    padding: const EdgeInsets.all(2),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(80),
                                         border: Border.all(
@@ -72,10 +77,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                         size: 90,
                                         color: App_Colors.grey_light.value),
                                   ),
-                                  SizedBox(height: 15),
+                                  const SizedBox(height: 15),
                                   Text(
                                     "${_currentDriver?.name}",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 18, color: Colors.white),
                                   ),
                                   Text("Driver",
@@ -85,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ],
                               ),
                             ])),
-                    SizedBox(height: 18),
+                    const SizedBox(height: 18),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -94,14 +99,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           getInfoColumn('327', "Deliveries"),
                           getInfoColumn("4.8", "Rating")
                         ]),
-                    SizedBox(height: 22),
+                    const SizedBox(height: 22),
                     Container(
                         color: App_Colors.grey_background.value,
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             left: 25, top: 5, right: 25, bottom: 5),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
+                            children: const [
                               Text(
                                 "Profile",
                                 style: TextStyle(
@@ -112,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 style: TextStyle(fontSize: 12),
                               )
                             ])),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     getInfoRow("Full Name", _currentDriver!.name),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
                     getInfoRow("Email", _currentDriver!.email),
@@ -121,39 +126,51 @@ class _ProfilePageState extends State<ProfilePage> {
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
                     getInfoRow(
                         "Car capacity", _currentDriver?.carCapacity.toString()),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Container(
                         color: App_Colors.grey_background.value,
-                        padding: EdgeInsets.only(left: 25, top: 5, bottom: 5),
-                        child: Row(children: [
+                        padding:
+                            const EdgeInsets.only(left: 25, top: 5, bottom: 5),
+                        child: Row(children: const [
                           Text(
                             "Account",
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                         ])),
-                    SizedBox(height: 20),
-                     Container(padding: EdgeInsets.only(bottom: 20, left: 25, right: 25),
-                       child: Row(crossAxisAlignment: CrossAxisAlignment.center,
-                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                       children: [
-                         GestureDetector(onTap: () => {ChooseMapDialog().call(context)},
-                             child: Container(
-                               child:Text("Choose map", style: TextStyle(
-                                   color: App_Colors.black_text.value,
-                                   fontSize: 14)),
-                             )),
-                         GestureDetector(child: Container(child: Observer(builder:
-                         (_) => Text(viewModel.chosenMap.value.mapName, style:
-                         TextStyle(fontSize: 14, fontFamily: 'Poppins',
-                             fontWeight: FontWeight.w500, color: App_Colors.black_text.value),
-                         ),)), onTap: () => {ChooseMapDialog().call(context)})
-                       ]),),
-                    getAccountOptions("Change password", (){}),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.only(
+                          bottom: 20, left: 25, right: 25),
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                                onTap: () => {ChooseMapDialog().call(context)},
+                                child: Text("Choose map",
+                                    style: TextStyle(
+                                        color: App_Colors.black_text.value,
+                                        fontSize: 14))),
+                            GestureDetector(
+                                child: Observer(
+                                  builder: (_) => Text(
+                                    viewModel.chosenMap.value.mapName,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w500,
+                                        color: App_Colors.black_text.value),
+                                  ),
+                                ),
+                                onTap: () => {ChooseMapDialog().call(context)})
+                          ]),
+                    ),
+                    getAccountOptions("Change password", () {}),
                     GestureDetector(
                       onTap: () => logout(),
                       child: Container(
-                          padding: EdgeInsets.only(left: 25, bottom: 25),
+                          padding: const EdgeInsets.only(left: 25, bottom: 25),
                           child: Row(children: [
                             Text("Logout",
                                 style: TextStyle(
@@ -162,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ])),
                     ),
                   ]))
-            : Center(child: CircularProgressIndicator()));
+            : const Center(child: CircularProgressIndicator()));
   }
 
   logout() {
@@ -180,34 +197,34 @@ class _ProfilePageState extends State<ProfilePage> {
             fontWeight: FontWeight.w500,
             fontSize: 20),
       ),
-      SizedBox(height: 10),
-      Text(label, style: TextStyle(fontSize: 14))
+      const SizedBox(height: 10),
+      Text(label, style: const TextStyle(fontSize: 14))
     ]);
   }
 
-  getAccountOptions(String text, Function function){
+  getAccountOptions(String text, Function function) {
     return GestureDetector(
       onTap: () => {},
       child: Container(
-          padding: EdgeInsets.only(left: 25, bottom: 20),
+          padding: const EdgeInsets.only(left: 25, bottom: 20),
           child: Row(children: [
-            Text(text, style: TextStyle(
-                    color: App_Colors.black_text.value,
-                    fontSize: 14)),
+            Text(text,
+                style: TextStyle(
+                    color: App_Colors.black_text.value, fontSize: 14)),
           ])),
     );
   }
 
   getInfoRow(String label, String? value) {
-    TextEditingController myController = new TextEditingController();
+    TextEditingController myController = TextEditingController();
     return Container(
-      padding: EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 3),
+      padding: const EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14),
           ),
           Expanded(
             child: Padding(
@@ -255,9 +272,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       border: InputBorder.none,
                       label: Container(
                         alignment: Alignment.centerRight,
-                        child: Text(value.toString(), style:
-                          TextStyle(fontSize: 14, fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500, color: App_Colors.black_text.value),),
+                        child: Text(
+                          value.toString(),
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              color: App_Colors.black_text.value),
+                        ),
                       ),
                       alignLabelWithHint: true),
                 ),

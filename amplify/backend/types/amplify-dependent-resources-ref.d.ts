@@ -12,7 +12,7 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "storage": {
-        "s3mpsdriverappstorage3f06b925": {
+        "s3mpsdriverappstoragedev": {
             "BucketName": "string",
             "Region": "string"
         }

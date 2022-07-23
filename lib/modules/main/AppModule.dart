@@ -9,25 +9,25 @@ import '../route/RouteModule.dart';
 
 class AppModule extends Module {
   @override
-  List<Bind> get binds => [
-    Bind.singleton((i) => MainViewModel())
-  ];
+  List<Bind> get binds => [Bind.singleton((i) => MainViewModel())];
 
   @override
-  List<Module> get imports => [
-    RouteModule(),
-    ProfileModule()
-  ];
+  List<Module> get imports => [RouteModule(), ProfileModule()];
 
   @override
   List<ModularRoute> get routes => [
-    ChildRoute('/', child: (context, args) => MainPage(),
-    children: [
-      ModuleRoute('/prepnews/', module: PrepNewsModule()),
-      ModuleRoute('/history/', module: HistoryModule()),
-      ModuleRoute('/route/', module: RouteModule()),
-      ModuleRoute('/rating/', module: RatingModule()),
-      ModuleRoute('/profile/', module: ProfileModule()),
-    ])
-  ];
+        ChildRoute('/', child: (context, args) => MainPage(), children: [
+          ModuleRoute('/prepnews/',
+              module: PrepNewsModule(),
+              transition: TransitionType.noTransition),
+          ModuleRoute('/history/',
+              module: HistoryModule(), transition: TransitionType.noTransition),
+          ModuleRoute('/route/',
+              module: RouteModule(), transition: TransitionType.noTransition),
+          ModuleRoute('/rating/',
+              module: RatingModule(), transition: TransitionType.noTransition),
+          ModuleRoute('/profile/',
+              module: ProfileModule(), transition: TransitionType.noTransition),
+        ])
+      ];
 }

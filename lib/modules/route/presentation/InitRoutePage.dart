@@ -2,9 +2,9 @@
 
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_place/google_place.dart';
 import 'package:mps_driver_app/models/RouteStatus.dart';
@@ -18,7 +18,6 @@ import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import '../../../models/Route.dart' as route_model;
 import '../services/PickRouteFile.dart';
-import 'RouteViewModel.dart';
 
 class InitRoutePage extends StatefulWidget {
   const InitRoutePage({Key? key}) : super(key: key);
@@ -29,10 +28,11 @@ class InitRoutePage extends StatefulWidget {
 
 class _InitRoutePage extends State<InitRoutePage> {
   Driver? _currentDriver;
+  bool _isCustomSelected = false;
+  String _customAddress = 'Custom';
+  late GooglePlace googlePlace;
   late StreamSubscription<QuerySnapshot<route_model.Route>> _subscription;
   PickRouteFile pickRouteFile = PickRouteFile();
-  final viewModel = Modular.get<RouteViewModel>();
-  late GooglePlace googlePlace;
   Timer? _debounce;
 
   @override
@@ -57,8 +57,6 @@ class _InitRoutePage extends State<InitRoutePage> {
       googlePlace = GooglePlace('AIzaSyBtiYdIofNKeq0cN4gRG7L1ngEgkjDQ0Lo');
     });
 
-    viewModel.setFirstEndAddress();
-
     super.initState();
   }
 
@@ -75,12 +73,12 @@ class _InitRoutePage extends State<InitRoutePage> {
   Future<void> uploadRoute() async {
     Modular.to.pushNamed('./loading');
     route_model.Route route = route_model.Route(
-        name: "R100 - ${_currentDriver!.name}",
+        name: "Route - ${_currentDriver!.name}",
         routeDriverId: _currentDriver!.id,
-        status: RouteStatus.PLANNED,
-        driver: _currentDriver);
+        status: RouteStatus.PLANNED);
 
-    var orderList = await pickRouteFile.readOrdersFromFile(route);
+    var orderList = await pickRouteFile.readOrdersFromFile(
+        route, _customAddress != 'Custom' ? _customAddress : '');
 
     route =
         route.copyWith(orders: orderList, name: pickRouteFile.getFileName());
@@ -102,68 +100,33 @@ class _InitRoutePage extends State<InitRoutePage> {
     await Amplify.DataStore.save(route);
   }
 
-  Color getOptionsTextColor(bool isChecked){
-    if(isChecked){
-      return App_Colors.black_text.value;
-    } else {
-      return App_Colors.grey_text.value;
-    }
-  }
-
-  void getPredictions(String value) async {
-    var result = await googlePlace.autocomplete.get(value);
-    if(result != null && result.predictions != null && mounted){
-      viewModel.addPredictions(result.predictions!);
-    }
-  }
-
-  final _autocompleteController = TextEditingController();
-  final focusNode = FocusNode();
-  DetailsResult? detailsResult;
-
-  Widget getTextFieldCustomEndAddress(){
-    if(viewModel.endAddress.value == 'Meal Prep Sunday'){
-      return const SizedBox(height: 90);
-    } else {
-      return Container(padding: EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 30),
-          child: TextField(decoration: InputDecoration(icon: Icon(Icons.location_on_outlined,
-          color: App_Colors.primary_color.value)),
-          controller: _autocompleteController, style: const TextStyle(fontSize: 14),
-          focusNode: focusNode,
-          onChanged: (value){
-            if (_debounce?.isActive ?? false) _debounce!.cancel();
-            _debounce = Timer(const Duration(milliseconds: 1000), () {
-            if(value.isNotEmpty){
-              viewModel.clearPredictions();
-              getPredictions(value);
-            } else {
-              viewModel.clearPredictions();
-              detailsResult = null;
-            }});
-          }));
-    }
-  }
-
-  chooseEndAddress(int index) async {
-    viewModel.setEndAddress(viewModel.predictions[index].description.toString());
-    _autocompleteController.text = viewModel.predictions[index].description.toString();
-    final details = await googlePlace.details.get(viewModel.predictions[index].placeId);
-    detailsResult = details?.result;
-    viewModel.clearPredictions();
+  Future<void> getCustomAddress() {
+    return AppDialogs().showSelectAddressDialog(
+        context,
+        googlePlace,
+        (address) => {
+              log('address set'),
+              setState(() {
+                _customAddress = address;
+                _isCustomSelected = true;
+              })
+            });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 80,
-          ),
-          const Image(
-              image: AssetImage('assets/images/initNewRouteScreen.png')),
-          const SizedBox(height: 30),
-          Text(
+    return Column(
+      children: [
+        const SizedBox(height: 60),
+        const Expanded(
+          flex: 5,
+          child:
+              Image(image: AssetImage('assets/images/initNewRouteScreen.png')),
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          flex: 1,
+          child: Text(
             "Upload your route",
             style: TextStyle(
                 fontWeight: FontWeight.w600,
@@ -172,94 +135,102 @@ class _InitRoutePage extends State<InitRoutePage> {
                 fontFamily: 'Poppins',
                 decoration: TextDecoration.none),
           ),
-          const SizedBox(height: 10),
-          Container(
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          flex: 2,
+          child: Container(
               padding: const EdgeInsets.only(left: 30, right: 30),
               child: Text(
-                "Please select your final destination and upload the route you received from the logistics team",
+                "Please select your final destination and upload the route file.",
                 style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontFamily: 'Poppins',
                     color: App_Colors.grey_text.value,
-                    fontSize: 16,
+                    fontSize: 14,
                     decoration: TextDecoration.none),
                 textAlign: TextAlign.center,
               )),
-          const SizedBox(height: 20),
-          Row(children: [
-            SizedBox(width: 60),
-            Observer(builder: (_) => Checkbox(
+        ),
+        Expanded(
+          flex: 1,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Checkbox(
                 activeColor: App_Colors.primary_color.value,
-                value: viewModel.endAddress.value == 'Meal Prep Sunday',
-                shape: CircleBorder(),
+                value: !_isCustomSelected,
+                shape: const CircleBorder(),
                 checkColor: App_Colors.primary_color.value,
-                onChanged: (bool? value){
-                  viewModel.setEndAddress('Meal Prep Sunday');
-                  viewModel.clearPredictions();
-                  _autocompleteController.clear();
-                })),
-            Observer(builder: (_) => GestureDetector(child: Text(
-                'Meal Prep Sunday', style:
-            TextStyle(fontSize: 14, fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500, color:
-                getOptionsTextColor(viewModel.endAddress.value == 'Meal Prep Sunday'))),
-                onTap: () => {}))
+                onChanged: (bool? value) {
+                  setState(() {
+                    _isCustomSelected = value! ? false : true;
+                    _customAddress = 'Custom';
+                  });
+                }),
+            GestureDetector(
+                child: SizedBox(
+                    width: 150,
+                    child: Text('Meal Prep Sunday',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            color: App_Colors.grey_dark.value))),
+                onTap: () => {})
           ]),
-          Row(children: [
-            SizedBox(width: 60),
-            Observer(builder: (_) => Checkbox(
+        ),
+        Expanded(
+          flex: 1,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Checkbox(
                 activeColor: App_Colors.primary_color.value,
-                value: viewModel.endAddress.value != 'Meal Prep Sunday',
-                shape: CircleBorder(),
+                value: _isCustomSelected,
+                shape: const CircleBorder(),
                 checkColor: App_Colors.primary_color.value,
-                onChanged: (bool? value){
-                  viewModel.setEndAddress('');
-                })),
-            Observer(builder: (_) => GestureDetector(child: Text(
-                'Custom', style:
-            TextStyle(fontSize: 14, fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500, color:
-            getOptionsTextColor(viewModel.endAddress.value != 'Meal Prep Sunday'))),
-                onTap: () => {}))
+                onChanged: (bool? value) {
+                  if (value!) {
+                    getCustomAddress();
+                  }
+                }),
+            GestureDetector(
+                child: SizedBox(
+                    width: 150,
+                    child: Text(_customAddress,
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            color: App_Colors.grey_dark.value))),
+                onTap: () => {})
           ]),
-          Observer(builder: (_) => getTextFieldCustomEndAddress()),
-          Observer(builder: (_) => Container(height: viewModel.predictions.length*50,
-              child: Observer(builder: (_){
-                return ListView.builder(itemCount: viewModel.predictions.length,
-                    itemBuilder: (context, index){
-                      return ListTile(title: Text(viewModel.predictions[index].description.toString()),
-                          onTap: () async {
-                            chooseEndAddress(index);
-                          },
-                          leading: Icon(Icons.location_on_outlined));
-                    });
-              },))),
-          Row(mainAxisAlignment: MainAxisAlignment.center,children: [
-            Container(child: ElevatedButton(
-              onPressed: (){
-                if((viewModel.endAddress.value != '' &&
-                    viewModel.endAddress.value == _autocompleteController.text) ||
-                    viewModel.endAddress.value == 'Meal Prep Sunday'){
-                  uploadRoute();
-                } else {
-                  chooseEndAddressDialog();
-                }
-              },
-              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(
-                  App_Colors.primary_color.value), padding: MaterialStateProperty.all(
-                  EdgeInsets.only(left: 80, right: 80, top: 10, bottom: 10)
-              ),
-              ),
-              child: Container(child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(CustomIcon.upload_icon, size: 20),
-                    SizedBox(width: 20), Text("Upload route",
-                        style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),
-                  ])),
-            ))],)
-        ],
-      ),
+        ),
+        const SizedBox(height: 30),
+        Expanded(
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => uploadRoute(),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        App_Colors.primary_color.value),
+                    padding: MaterialStateProperty.all(const EdgeInsets.only(
+                        left: 80, right: 80, top: 10, bottom: 10)),
+                  ),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(CustomIcon.upload_icon, size: 20),
+                        SizedBox(width: 20),
+                        Text("Upload route",
+                            style:
+                                TextStyle(fontSize: 20, fontFamily: 'Poppins')),
+                      ]),
+                ),
+              ],
+            )),
+        const SizedBox(height: 10)
+      ],
     );
   }
 }

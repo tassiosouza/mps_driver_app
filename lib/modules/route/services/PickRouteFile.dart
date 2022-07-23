@@ -22,26 +22,28 @@ class PickRouteFile {
   List<Client> _clientListResult = [];
   String? _extension;
 
-  Future<List<MpsOrder>> readOrdersFromFile(route_model.Route route) async {
+  Future<List<MpsOrder>> readOrdersFromFile(route_model.Route route,
+      [String customAddress = '']) async {
     // Select external csv file from storage
     String selectedCsvFilePath = await selectExternalFile();
-    _fileName = selectedCsvFilePath;
+    _fileName = (selectedCsvFilePath.split('/').last);
     // Read the fields from csv file loaded
     final fields = await extractFileFields(selectedCsvFilePath);
     // Create orders and customers from extracted fields
     List<MpsOrder> orders = createOrdersFromFields(fields, route);
     // Optimize orders using google geocoding api and graphhooper api
-    orders = await processOptimizedOrders(orders);
+    orders = await processOptimizedOrders(orders, customAddress);
 
     return orders;
   }
 
-  Future<List<MpsOrder>> processOptimizedOrders(List<MpsOrder> orders) async {
+  Future<List<MpsOrder>> processOptimizedOrders(
+      List<MpsOrder> orders, String customAddress) async {
     List<MpsOrder> result = [];
     GeocodingApi geocodingApi = GeocodingApi();
     for (var i = 0; i < orders.length; i++) {
       Future<Coordinates> coordinates =
-          geocodingApi.getCoordinates(orders[i].customer!.address);
+          geocodingApi.getCoordinates(orders[i].customer!.address, true);
 
       await coordinates.then((data) async {
         orders[i] = orders[i].copyWith(
@@ -52,6 +54,11 @@ class PickRouteFile {
           //call optimize api using coordinates
 
           RouteOptimizationApi routeOptimizationApi = RouteOptimizationApi();
+          if (customAddress.isNotEmpty) {
+            Coordinates finalCoordinates =
+                await geocodingApi.getCoordinates(customAddress, false);
+            routeOptimizationApi.setFinalDestination(finalCoordinates);
+          }
 
           Future<List<MpsOrder>> sortedOrders =
               routeOptimizationApi.getSortedOrders(orders);

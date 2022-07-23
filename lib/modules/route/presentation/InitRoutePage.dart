@@ -127,7 +127,7 @@ class _InitRoutePage extends State<InitRoutePage> {
         Expanded(
           flex: 1,
           child: Text(
-            "Upload your route",
+            "Upload your routes",
             style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 25,
@@ -162,7 +162,7 @@ class _InitRoutePage extends State<InitRoutePage> {
                 checkColor: App_Colors.primary_color.value,
                 onChanged: (bool? value) {
                   setState(() {
-                    _isCustomSelected = value! ? false : true;
+                    _isCustomSelected = false;
                     _customAddress = 'Custom';
                   });
                 }),

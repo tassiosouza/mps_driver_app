@@ -36,13 +36,7 @@ class MainWidgetState extends State<MainWidget> {
 
   Future<void> _initializeApp() async {
     await AmplifyInit().configureAmplify();
-    var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
-      if (msg.eventName == "ready") {
-        log("logfirst");
-        FlutterNativeSplash.remove();
-      }
-      print(msg.eventName);
-    });
+    FlutterNativeSplash.remove();
   }
 
   final customTheme = CustomTheme();

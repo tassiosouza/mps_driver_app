@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/Route.dart' as rt;
+import 'package:mps_driver_app/modules/history/presentation/HistoryRouteDetails.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 
 import '../../../theme/CustomIcon.dart';
@@ -83,7 +85,9 @@ class HistoryRouteListItem extends StatelessWidget{
                         ], mainAxisAlignment: MainAxisAlignment.spaceBetween,),
                       ],), flex: 4)
                     ]), flex: 7)]
-                  )), padding: EdgeInsets.all(10)))))
+                  )), padding: EdgeInsets.all(10)))), onTap: (){
+            //Modular.to.pushNamed('./details', arguments: route);
+          })
         ]);
   }
 }

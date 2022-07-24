@@ -131,12 +131,12 @@ class DriverService {
   static Future<void> createNewAmplifyDriver(
       String driverId, String name, String email, String phone) async {
     final item = Driver(
-      name: name,
-      email: email,
-      owner: driverId,
-      phone: phone,
-      carCapacity: 22,
-    );
+        name: name,
+        email: email,
+        owner: driverId,
+        phone: phone,
+        carCapacity: 22,
+        onBoard: false);
     await Amplify.DataStore.save(item);
   }
 

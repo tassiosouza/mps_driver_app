@@ -185,6 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
   logout() {
     Amplify.Auth.signOut();
     DriverService.logout();
+    Modular.to.navigate('/');
   }
 
   getInfoColumn(String value, String label) {

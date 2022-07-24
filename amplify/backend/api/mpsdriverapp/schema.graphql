@@ -61,6 +61,7 @@ type Driver @model @auth(rules: [{allow: public}]) {
   phone: String
   carCapacity: Int
   owner: String!
+  onBoard: Boolean
 }
 
 type Todo @model @auth(rules: [{allow: public}]) {

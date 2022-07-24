@@ -15,7 +15,7 @@ class MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    Modular.to.navigate('/prepnews/');
+    Modular.to.navigate('/main/route/');
     return Scaffold(
         body: const RouterOutlet(),
         bottomNavigationBar: Observer(builder: (_) {
@@ -45,19 +45,19 @@ class MainPageState extends State<MainPage> {
               viewModel.setCurrentIndex(index);
               switch (index) {
                 case 0:
-                  Modular.to.navigate('/prepnews/');
+                  Modular.to.navigate('/main/prepnews/');
                   break;
                 case 1:
-                  Modular.to.navigate('/history/');
+                  Modular.to.navigate('/main/history/');
                   break;
                 case 2:
-                  Modular.to.navigate('/route/');
+                  Modular.to.navigate('/main/route/');
                   break;
                 case 3:
-                  Modular.to.navigate('/rating/');
+                  Modular.to.navigate('/main/rating/');
                   break;
                 case 4:
-                  Modular.to.navigate('/profile/');
+                  Modular.to.navigate('/main/profile/');
                   break;
               }
             },

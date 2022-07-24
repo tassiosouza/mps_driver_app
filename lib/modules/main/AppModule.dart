@@ -2,6 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/history/HistoryModule.dart';
 import 'package:mps_driver_app/modules/main/presentation/MainPage.dart';
 import 'package:mps_driver_app/modules/main/presentation/MainViewModel.dart';
+import 'package:mps_driver_app/modules/main/presentation/OnBoarding.dart';
 import 'package:mps_driver_app/modules/prepnews/PrepNewsModule.dart';
 import 'package:mps_driver_app/modules/profile/ProfileModule.dart';
 import 'package:mps_driver_app/modules/rating/RatingModule.dart';
@@ -16,7 +17,8 @@ class AppModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute('/', child: (context, args) => MainPage(), children: [
+        ChildRoute('/', child: (context, args) => OnBoarding()),
+        ChildRoute('/main', child: (context, args) => MainPage(), children: [
           ModuleRoute('/prepnews/',
               module: PrepNewsModule(),
               transition: TransitionType.noTransition),

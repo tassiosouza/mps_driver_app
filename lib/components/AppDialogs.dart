@@ -68,7 +68,6 @@ class AppDialogs {
   Future<void> showSelectAddressDialog(
       BuildContext context, GooglePlace googlePlace, Function function) async {
     final width = MediaQuery.of(context).size.width;
-    var address = 'fdgdfg';
     Timer? _debounce;
     List<AutocompletePrediction> _predictions = [];
 

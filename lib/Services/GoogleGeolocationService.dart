@@ -9,20 +9,23 @@ class GeocodingApi {
 
   GeocodingApi() {}
 
-  Future<Coordinates> getCoordinates(String address) async {
+  Future<Coordinates> getCoordinates(
+      String address, bool processeAddress) async {
     final split = address.split(',');
     final Map<int, String> values = {
       for (int i = 0; i < split.length; i++) i: split[i]
     };
 
-    var response = await http
-        .get(Uri.parse("$baseUrl${values[0]},${values[values.length - 1]}"));
+    var addressToSearch =
+        processeAddress ? '${values[0]},${values[values.length - 1]}' : address;
+
+    var response = await http.get(Uri.parse("$baseUrl$addressToSearch"));
     if (response.statusCode == 200) {
       try {
         var data = jsonDecode(response.body);
         var lat = data["results"][0]["geometry"]["location"]["lat"];
         var long = data["results"][0]["geometry"]["location"]["lng"];
-        return new Coordinates(lat, long);
+        return Coordinates(latitude: lat, longitude: long);
       } catch (e) {
         // ignore: use_build_context_synchronously
         throw Exception('Could not locate: $address');
@@ -31,6 +34,5 @@ class GeocodingApi {
       // ignore: use_build_context_synchronously
       throw Exception('Could not locate: $address');
     }
-    return Coordinates(0, 0);
   }
 }

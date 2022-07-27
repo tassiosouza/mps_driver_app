@@ -5,22 +5,20 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/main/presentation/MainViewModel.dart';
 import '../../../theme/app_colors.dart';
 
-class MainPage extends StatefulWidget{
+class MainPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => MainPageState();
 }
 
-class MainPageState extends State<MainPage>{
-
+class MainPageState extends State<MainPage> {
   final viewModel = Modular.get<MainViewModel>();
 
   @override
   Widget build(BuildContext context) {
-    Modular.to.navigate('/route/');
+    Modular.to.navigate('/main/route/');
     return Scaffold(
-      body: RouterOutlet(),
-      bottomNavigationBar: Observer(
-        builder: (_) {
+        body: const RouterOutlet(),
+        bottomNavigationBar: Observer(builder: (_) {
           return BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -43,27 +41,29 @@ class MainPageState extends State<MainPage>{
               ),
             ],
             currentIndex: viewModel.currentIndex.value,
-            onTap: (index){
+            onTap: (index) {
               viewModel.setCurrentIndex(index);
-              switch(index){
-                case 0: Modular.to.navigate('/prepnews/');
-                break;
-                case 1: Modular.to.navigate('/history/');
-                break;
-                case 2: Modular.to.navigate('/route/');
-                break;
-                case 3: Modular.to.navigate('/rating/');
-                break;
-                case 4: Modular.to.navigate('/profile/');
-                break;
+              switch (index) {
+                case 0:
+                  Modular.to.navigate('/main/prepnews/');
+                  break;
+                case 1:
+                  Modular.to.navigate('/main/history/');
+                  break;
+                case 2:
+                  Modular.to.navigate('/main/route/');
+                  break;
+                case 3:
+                  Modular.to.navigate('/main/rating/');
+                  break;
+                case 4:
+                  Modular.to.navigate('/main/profile/');
+                  break;
               }
-              },
+            },
             selectedItemColor: App_Colors.primary_color.value,
             unselectedItemColor: App_Colors.grey_dark.value,
           );
-        },
-      ),
-    );
+        }));
   }
-
 }

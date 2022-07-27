@@ -4,12 +4,11 @@ import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import '../../../utils/amplifyconfiguration.dart';
+import '../../../amplifyconfiguration.dart';
 
-class AmplifyInit{
-
+class AmplifyInit {
   final AmplifyDataStore _dataStorePlugin =
-  AmplifyDataStore(modelProvider: ModelProvider.instance);
+      AmplifyDataStore(modelProvider: ModelProvider.instance);
   final AmplifyStorageS3 _storagePlugin = AmplifyStorageS3();
   final AmplifyAPI _apiPlugin = AmplifyAPI();
   final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
@@ -20,9 +19,9 @@ class AmplifyInit{
 
     try {
       await Amplify.configure(amplifyconfig);
+      await Amplify.DataStore.start();
     } catch (e) {
       print('An error occurred while configuring Amplify: $e');
     }
   }
-
 }

@@ -131,6 +131,8 @@ PODS:
   - SDWebImage (5.12.5):
     - SDWebImage/Core (= 5.12.5)
   - SDWebImage/Core (5.12.5)
+  - shared_preferences_ios (0.0.1):
+    - Flutter
   - SQLite.swift (0.13.2):
     - SQLite.swift/standard (= 0.13.2)
   - SQLite.swift/standard (0.13.2)
@@ -157,6 +159,7 @@ DEPENDENCIES:
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - map_launcher (from `.symlinks/plugins/map_launcher/ios`)
+  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
 
@@ -210,6 +213,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   map_launcher:
     :path: ".symlinks/plugins/map_launcher/ios"
+  shared_preferences_ios:
+    :path: ".symlinks/plugins/shared_preferences_ios/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   video_player_avfoundation:
@@ -244,6 +249,7 @@ SPEC CHECKSUMS:
   map_launcher: e325db1261d029ff33e08e03baccffe09593ffea
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
   SDWebImage: 0905f1b7760fc8ac4198cae0036600d67478751e
+  shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   SQLite.swift: 4fc2be46c36392e3b87afe6fe7f1801c1daa07ef
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SwiftFormat: 016c15401d06959ef9f81d7956462e91f55b8ac5
@@ -254,4 +260,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

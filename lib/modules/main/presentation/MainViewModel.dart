@@ -8,7 +8,7 @@ abstract class _MainViewModel with Store {
   var currentIndex = Observable(2);
 
   @action
-  setCurrentIndex(int index){
+  setCurrentIndex(int index) {
     currentIndex.value = index;
   }
 }

@@ -33,6 +33,7 @@ class Driver extends Model {
   final String? _phone;
   final int? _carCapacity;
   final String? _owner;
+  final bool? _onBoard;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -91,6 +92,10 @@ class Driver extends Model {
     }
   }
   
+  bool? get onBoard {
+    return _onBoard;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -99,16 +104,17 @@ class Driver extends Model {
     return _updatedAt;
   }
   
-  const Driver._internal({required this.id, required name, required email, phone, carCapacity, required owner, createdAt, updatedAt}): _name = name, _email = email, _phone = phone, _carCapacity = carCapacity, _owner = owner, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Driver._internal({required this.id, required name, required email, phone, carCapacity, required owner, onBoard, createdAt, updatedAt}): _name = name, _email = email, _phone = phone, _carCapacity = carCapacity, _owner = owner, _onBoard = onBoard, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Driver({String? id, required String name, required String email, String? phone, int? carCapacity, required String owner}) {
+  factory Driver({String? id, required String name, required String email, String? phone, int? carCapacity, required String owner, bool? onBoard}) {
     return Driver._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
       email: email,
       phone: phone,
       carCapacity: carCapacity,
-      owner: owner);
+      owner: owner,
+      onBoard: onBoard);
   }
   
   bool equals(Object other) {
@@ -124,7 +130,8 @@ class Driver extends Model {
       _email == other._email &&
       _phone == other._phone &&
       _carCapacity == other._carCapacity &&
-      _owner == other._owner;
+      _owner == other._owner &&
+      _onBoard == other._onBoard;
   }
   
   @override
@@ -141,6 +148,7 @@ class Driver extends Model {
     buffer.write("phone=" + "$_phone" + ", ");
     buffer.write("carCapacity=" + (_carCapacity != null ? _carCapacity!.toString() : "null") + ", ");
     buffer.write("owner=" + "$_owner" + ", ");
+    buffer.write("onBoard=" + (_onBoard != null ? _onBoard!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -148,14 +156,15 @@ class Driver extends Model {
     return buffer.toString();
   }
   
-  Driver copyWith({String? id, String? name, String? email, String? phone, int? carCapacity, String? owner}) {
+  Driver copyWith({String? id, String? name, String? email, String? phone, int? carCapacity, String? owner, bool? onBoard}) {
     return Driver._internal(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
       phone: phone ?? this.phone,
       carCapacity: carCapacity ?? this.carCapacity,
-      owner: owner ?? this.owner);
+      owner: owner ?? this.owner,
+      onBoard: onBoard ?? this.onBoard);
   }
   
   Driver.fromJson(Map<String, dynamic> json)  
@@ -165,11 +174,12 @@ class Driver extends Model {
       _phone = json['phone'],
       _carCapacity = (json['carCapacity'] as num?)?.toInt(),
       _owner = json['owner'],
+      _onBoard = json['onBoard'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'email': _email, 'phone': _phone, 'carCapacity': _carCapacity, 'owner': _owner, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'email': _email, 'phone': _phone, 'carCapacity': _carCapacity, 'owner': _owner, 'onBoard': _onBoard, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "driver.id");
@@ -178,6 +188,7 @@ class Driver extends Model {
   static final QueryField PHONE = QueryField(fieldName: "phone");
   static final QueryField CARCAPACITY = QueryField(fieldName: "carCapacity");
   static final QueryField OWNER = QueryField(fieldName: "owner");
+  static final QueryField ONBOARD = QueryField(fieldName: "onBoard");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Driver";
     modelSchemaDefinition.pluralName = "Drivers";
@@ -223,6 +234,12 @@ class Driver extends Model {
       key: Driver.OWNER,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Driver.ONBOARD,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

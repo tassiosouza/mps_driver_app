@@ -5,7 +5,7 @@ import 'package:mps_driver_app/models/Route.dart' as rt;
 import 'package:amplify_flutter/amplify_flutter.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
-import 'HistoryRouteListItem.dart';
+import 'components/HistoryRouteListItem.dart';
 
 class HistoryPage extends StatefulWidget{
   @override

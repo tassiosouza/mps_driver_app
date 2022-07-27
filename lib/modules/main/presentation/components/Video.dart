@@ -50,7 +50,7 @@ class VideoState extends State<Video> {
       _timer.cancel();
     });
     if (_firstPlay) {
-      _statusTimer = Timer.periodic(const Duration(milliseconds: 30000), (_) {
+      _statusTimer = Timer.periodic(const Duration(milliseconds: 3000), (_) {
         widget.stateReference.setStatus(WhatchingStatus.done);
         setState(() {
           _firstPlay = false;
@@ -79,7 +79,7 @@ class VideoState extends State<Video> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          Row(children: const [
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
             Text(
               'Watch the video ',
               style: TextStyle(
@@ -114,17 +114,32 @@ class VideoState extends State<Video> {
                       if (snapshot.connectionState == ConnectionState.done) {
                         return Stack(children: [
                           Center(
-                            child: AspectRatio(
-                              aspectRatio: _videoController.value.aspectRatio,
-                              child: VideoPlayer(_videoController),
-                            ),
+                            child: Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      blurRadius: 8.0,
+                                      spreadRadius: 1.0,
+                                    )
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: AspectRatio(
+                                      aspectRatio:
+                                          _videoController.value.aspectRatio,
+                                      child: VideoPlayer(_videoController),
+                                    ))),
                           ),
                           GestureDetector(
                               onTap: () => {setTimeToDismissButton()},
                               child: Container(
                                 color: _videoController.value.isPlaying
                                     ? Colors.transparent
-                                    : Colors.grey.withOpacity(0.5),
+                                    : Color.fromARGB(1, 255, 255, 255)
+                                        .withOpacity(0.5),
                                 alignment: Alignment.center,
                                 child: FlatButton(
                                   shape: CircleBorder(

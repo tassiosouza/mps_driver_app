@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/main/presentation/MainViewModel.dart';
+import 'package:mps_driver_app/modules/main/presentation/components/CheckList.dart';
+import 'package:mps_driver_app/modules/main/presentation/components/Clothes.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import '../presentation/components/Welcome.dart';
+import 'components/Book.dart';
 import 'components/Video.dart';
 
 class OnBoarding extends StatefulWidget {
@@ -67,9 +70,14 @@ class OnBoardingState extends State<OnBoarding> {
       case 2:
         return videoStateFullWidget;
       case 3:
-        return Welcome(_currentDriver);
+        return const Clothes();
+      case 4:
+        return const Book();
+      case 5:
+        return const CheckList();
       default:
-        return Welcome(_currentDriver);
+        log('could not load');
+        return Container();
     }
   }
 
@@ -79,8 +87,15 @@ class OnBoardingState extends State<OnBoarding> {
         return 'Here you can view your optimized route and get directions to your destinations, along with interact with customers quickly and easily.';
       case 2:
         return 'Before proceeding, it is essential that you watch this video as it provides important information for all collaborators.';
+      case 3:
+        return 'Please make sure you are wearing the MPS dress code. Remember that you are the face of our company. Smile! Have positive & upbeat communication with the customer.';
+      case 4:
+        return '''Download the driver's manual book to have access to all the important instructions on how to behave and what to do when making deliveries to our customers.''';
+      case 5:
+        return '''Download the driver's manual book to have access to all the important instructions on how to behave and what to do when making deliveries to our customers.''';
+
       default:
-        return 'bla bla default';
+        return '';
     }
   }
 
@@ -97,7 +112,7 @@ class OnBoardingState extends State<OnBoarding> {
                     Container(
                       padding: const EdgeInsets.only(right: 32),
                       alignment: Alignment.topRight,
-                      child: Text('$_currentStep/2',
+                      child: Text('$_currentStep/5',
                           style: const TextStyle(
                             color: Colors.green,
                             fontSize: 16,
@@ -124,14 +139,15 @@ class OnBoardingState extends State<OnBoarding> {
                         height: 250,
                         child: Column(children: [
                           Container(
-                              padding: const EdgeInsets.all(25),
+                              padding: const EdgeInsets.only(
+                                  top: 20, left: 20, right: 20, bottom: 10),
                               height: 150,
                               child: Text(
                                 _currentMessage,
                                 style: const TextStyle(
                                     color: Color(0xffF2F2F2), fontSize: 15),
                               )),
-                          const Expanded(child: SizedBox(height: 0)),
+                          const Expanded(flex: 1, child: SizedBox(height: 0)),
                           Container(
                             padding: EdgeInsets.only(left: 25, right: 25),
                             child: Row(
@@ -181,23 +197,22 @@ class OnBoardingState extends State<OnBoarding> {
   }
 
   void getNextButtonAction() {
-    switch (_currentStep) {
-      case 1:
+    if (_currentStep == 2) {
+      if (_videoStatus == WhatchingStatus.done) {
         setState(() {
           _currentStep = _currentStep + 1;
           _currentMessage = getCurrentMessage();
         });
-        break;
-      case 2:
-        if (_videoStatus == WhatchingStatus.done) {
-          setState(() {
-            _currentStep = _currentStep + 1;
-            _currentMessage = getCurrentMessage();
-          });
-        }
-        break;
-      default:
-        log('could not handle status');
+      }
+    } else if (_currentStep == 5) {
+      Modular.to.navigate('main/route/');
+      Driver updatedDriver = _currentDriver!.copyWith(onBoard: true);
+      Amplify.DataStore.save(updatedDriver);
+    } else {
+      setState(() {
+        _currentStep = _currentStep + 1;
+        _currentMessage = getCurrentMessage();
+      });
     }
   }
 
@@ -205,6 +220,7 @@ class OnBoardingState extends State<OnBoarding> {
     switch (_currentStep) {
       case 1:
       case 3:
+      case 4:
         return const Text(
           'Next',
           style: TextStyle(color: Color(0xffF2F2F2), fontFamily: 'Poppings'),
@@ -229,6 +245,11 @@ class OnBoardingState extends State<OnBoarding> {
               color: Colors.white,
             );
         }
+      case 5:
+        return const Text(
+          'Finish',
+          style: TextStyle(color: Color(0xffF2F2F2), fontFamily: 'Poppings'),
+        );
       default:
         return const Text(
           'Next',

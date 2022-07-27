@@ -127,7 +127,7 @@ class _InitRoutePage extends State<InitRoutePage> {
         Expanded(
           flex: 1,
           child: Text(
-            "Upload your routes",
+            "Upload your route",
             style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 25,

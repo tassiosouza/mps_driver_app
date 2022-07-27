@@ -10,6 +10,8 @@ class RouteOptimizationApi {
       'https://graphhopper.com/api/1/vrp?key=110bcab4-47b7-4242-a713-bb7970de2e02';
   static Coordinates finalCoordinates =
       Coordinates(latitude: 33.1522247, longitude: -117.2310085);
+  static int lastRouteDistance = 0;
+  static int lastRouteDuration = 0;
 
   RouteOptimizationApi();
 
@@ -46,8 +48,8 @@ class RouteOptimizationApi {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       var data = jsonDecode(response.body);
-      var time = data['solution']['time'];
-      var distance = data['solution']['distance'];
+      lastRouteDuration = data['solution']['time'];
+      lastRouteDistance = data['solution']['distance'];
       var route = data['solution']['routes'][0]['activities'];
       List<String> orderedLocationsId = [];
       List<int> orderedETAs = [];
@@ -73,6 +75,14 @@ class RouteOptimizationApi {
     }
 
     return [];
+  }
+
+  getLastRouteDistance() {
+    return lastRouteDistance;
+  }
+
+  getLastRouteDuration() {
+    return lastRouteDuration;
   }
 
   setFinalDestination(Coordinates value) {

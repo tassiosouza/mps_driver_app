@@ -13,16 +13,16 @@ import 'package:mps_driver_app/models/OrderStatus.dart';
 import '../../../../models/Client.dart';
 import '../../../models/Customer.dart';
 import '../../../models/MpsOrder.dart';
-import '../../../models/Route.dart' as route_model;
+import '../../../models/MpsRoute.dart';
 
 class PickRouteFile {
   final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   String? _fileName;
-  List<Client> _clientList = [];
-  List<Client> _clientListResult = [];
+  static int lastRouteDistance = 0;
+  static int lastRouteDuration = 0;
   String? _extension;
 
-  Future<List<MpsOrder>> readOrdersFromFile(route_model.Route route,
+  Future<List<MpsOrder>> readOrdersFromFile(MpsRoute route,
       [String customAddress = '']) async {
     // Select external csv file from storage
     String selectedCsvFilePath = await selectExternalFile();
@@ -65,6 +65,8 @@ class PickRouteFile {
 
           await sortedOrders.then((data) {
             result = data.cast<MpsOrder>();
+            lastRouteDistance = routeOptimizationApi.getLastRouteDistance();
+            lastRouteDuration = routeOptimizationApi.getLastRouteDuration();
           }, onError: (e) {
             log(e);
           });
@@ -74,6 +76,14 @@ class PickRouteFile {
       });
     }
     return result;
+  }
+
+  getLastRouteDistance() {
+    return lastRouteDistance;
+  }
+
+  getLastRouteDuration() {
+    return lastRouteDuration;
   }
 
   Future<List<List>> extractFileFields(String filePath) async {
@@ -111,7 +121,7 @@ class PickRouteFile {
     return filePath;
   }
 
-  createOrdersFromFields(List<List<dynamic>> fields, route_model.Route route) {
+  createOrdersFromFields(List<List<dynamic>> fields, MpsRoute route) {
     List<MpsOrder> result = [];
     for (var i = 5; i < fields.length; i += 2) {
       var orderId = extractClientId(fields[i][2].toString());
@@ -180,20 +190,6 @@ class PickRouteFile {
     text = text.replaceAll(' ', '');
 
     return text;
-  }
-
-  getClientsList(List<List<dynamic>> fields) {
-    for (var i = 5; i < fields.length; i += 2) {
-      Client client = Client();
-      client.id = extractClientId(fields[i][2].toString());
-      client.name = extractClientName(fields[i][2].toString());
-      client.phone = extractClientPhone(fields[i][4].toString());
-      client.address = fields[i][5].toString();
-      client.deliveryInstructions = fields[i + 1][5].toString();
-      client.mealInstructions = fields[i + 1][2].toString();
-      client.check = false;
-      _clientList.add(client);
-    }
   }
 
   void _logException(String message) {

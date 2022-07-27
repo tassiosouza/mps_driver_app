@@ -7,6 +7,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_place/google_place.dart';
+import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/models/RouteStatus.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../../Services/DriverService.dart';
@@ -16,7 +17,6 @@ import '../../../models/MpsOrder.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import '../../../models/Route.dart' as route_model;
 import '../services/PickRouteFile.dart';
 
 class InitRoutePage extends StatefulWidget {
@@ -31,7 +31,7 @@ class _InitRoutePage extends State<InitRoutePage> {
   bool _isCustomSelected = false;
   String _customAddress = 'Custom';
   late GooglePlace googlePlace;
-  late StreamSubscription<QuerySnapshot<route_model.Route>> _subscription;
+  late StreamSubscription<QuerySnapshot<MpsRoute>> _subscription;
   PickRouteFile pickRouteFile = PickRouteFile();
   Timer? _debounce;
 
@@ -42,11 +42,10 @@ class _InitRoutePage extends State<InitRoutePage> {
       await Amplify.DataStore.start();
       driver = await loadDriverInformation();
 
-      _subscription =
-          Amplify.DataStore.observeQuery(route_model.Route.classType)
-              .listen((QuerySnapshot<route_model.Route> snapshot) {
-        for (route_model.Route route in snapshot.items) {
-          if (route.routeDriverId == driver!.id &&
+      _subscription = Amplify.DataStore.observeQuery(MpsRoute.classType)
+          .listen((QuerySnapshot<MpsRoute> snapshot) {
+        for (MpsRoute route in snapshot.items) {
+          if (route.mpsRouteDriverId == driver!.id &&
               (route.status != RouteStatus.DONE &&
                   route.status != RouteStatus.ABORTED)) {
             Modular.to.navigate('./inroute');
@@ -72,16 +71,19 @@ class _InitRoutePage extends State<InitRoutePage> {
 
   Future<void> uploadRoute() async {
     Modular.to.pushNamed('./loading');
-    route_model.Route route = route_model.Route(
+    MpsRoute route = MpsRoute(
         name: "Route - ${_currentDriver!.name}",
-        routeDriverId: _currentDriver!.id,
+        mpsRouteDriverId: _currentDriver!.id,
         status: RouteStatus.PLANNED);
 
     var orderList = await pickRouteFile.readOrdersFromFile(
         route, _customAddress != 'Custom' ? _customAddress : '');
 
-    route =
-        route.copyWith(orders: orderList, name: pickRouteFile.getFileName());
+    route = route.copyWith(
+        orders: orderList,
+        name: pickRouteFile.getFileName(),
+        distance: pickRouteFile.getLastRouteDistance(),
+        duration: pickRouteFile.getLastRouteDuration());
 
     uploadRouteToAmplify(route);
   }
@@ -91,7 +93,7 @@ class _InitRoutePage extends State<InitRoutePage> {
         "Chose a correct address or check Meal Prep Sunday to load your route.");
   }
 
-  Future<void> uploadRouteToAmplify(route_model.Route route) async {
+  Future<void> uploadRouteToAmplify(MpsRoute route) async {
     for (MpsOrder order in route.orders!) {
       await Amplify.DataStore.save(order.customer!.coordinates!);
       await Amplify.DataStore.save(order.customer!);

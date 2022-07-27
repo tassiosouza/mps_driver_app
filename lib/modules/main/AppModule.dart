@@ -17,13 +17,8 @@ class AppModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute('/', child: (context, args) => OnBoarding(), children: [
-          ModuleRoute('/video/',
-              module: PrepNewsModule(),
-              transition: TransitionType.noTransition),
-          ModuleRoute('/cloths/',
-              module: PrepNewsModule(), transition: TransitionType.noTransition)
-        ]),
+        ChildRoute('/', child: (context, args) => OnBoarding()),
+        ChildRoute('/onboarding', child: (context, args) => OnBoarding()),
         ChildRoute('/main', child: (context, args) => MainPage(), children: [
           ModuleRoute('/prepnews/',
               module: PrepNewsModule(),

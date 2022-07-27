@@ -15,7 +15,6 @@ import '../services/TwilioService.dart';
 import 'components/OrdersListView.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as stepper;
-import '../../../models/Route.dart' as route_model;
 import 'MapsPage.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -28,8 +27,8 @@ class RoutePage extends StatefulWidget {
 class StateRoutePage extends State<RoutePage> {
   int dotCount = 4;
   Driver? _currentDriver;
-  route_model.Route? _currentRoute;
-  late StreamSubscription<QuerySnapshot<route_model.Route>> _routesSubscription;
+  MpsRoute? _currentRoute;
+  late StreamSubscription<QuerySnapshot<MpsRoute>> _routesSubscription;
   late StreamSubscription<QuerySnapshot<MpsOrder>> _ordersSubscription;
   List<MpsOrder>? _currentOrders;
 
@@ -39,12 +38,11 @@ class StateRoutePage extends State<RoutePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       driver = await loadDriverInformation();
 
-      _routesSubscription = Amplify.DataStore.observeQuery(
-              route_model.Route.classType,
-              where: route_model.Route.ROUTEDRIVERID.eq(driver?.getId()))
-          .listen((QuerySnapshot<route_model.Route> snapshot) {
-        List<route_model.Route> routes = snapshot.items;
-        route_model.Route currentRouteUpdate;
+      _routesSubscription = Amplify.DataStore.observeQuery(MpsRoute.classType,
+              where: MpsRoute.MPSROUTEDRIVERID.eq(driver?.getId()))
+          .listen((QuerySnapshot<MpsRoute> snapshot) {
+        List<MpsRoute> routes = snapshot.items;
+        MpsRoute currentRouteUpdate;
         if (_currentRoute != null) {
           currentRouteUpdate = routes
               .where((route) =>
@@ -58,7 +56,7 @@ class StateRoutePage extends State<RoutePage> {
           });
           log("the current route has been update");
         } else {
-          for (route_model.Route route in routes) {
+          for (MpsRoute route in routes) {
             if (route.status != RouteStatus.DONE &&
                 route.status != RouteStatus.ABORTED) {
               setState(() {
@@ -80,7 +78,7 @@ class StateRoutePage extends State<RoutePage> {
     super.initState();
   }
 
-  void configureOrdersSubscription(route_model.Route route) {
+  void configureOrdersSubscription(MpsRoute route) {
     _ordersSubscription = Amplify.DataStore.observeQuery(MpsOrder.classType,
             where: MpsOrder.ROUTEID.eq(route.getId()))
         .listen((QuerySnapshot<MpsOrder> snapshot) async {
@@ -183,7 +181,7 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   void setRouteStatus(RouteStatus newStatus) {
-    route_model.Route newRoute = _currentRoute!.copyWith(status: newStatus);
+    MpsRoute newRoute = _currentRoute!.copyWith(status: newStatus);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _currentRoute = newRoute;

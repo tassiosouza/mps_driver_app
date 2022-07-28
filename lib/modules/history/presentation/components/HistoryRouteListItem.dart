@@ -5,11 +5,20 @@ import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../../../models/MpsOrder.dart';
 import '../../../../models/MpsRoute.dart';
 import '../../../../theme/CustomIcon.dart';
+import '../../../../utils/Utils.dart';
 
 // ignore: must_be_immutable
 class HistoryRouteListItem extends StatelessWidget {
   MpsRoute route;
   HistoryRouteListItem(this.route, {Key? key}) : super(key: key);
+
+  String getFormattedAddress() {
+    MpsOrder lastOrder = route.orders![route.orders!.length - 1];
+    int zipcodeIndex = lastOrder.customer!.address.split(',').length - 1;
+    String street = lastOrder.customer!.address.split(',')[0];
+    String zipcode = lastOrder.customer!.address.split(',')[zipcodeIndex];
+    return '$street, $zipcode';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,13 +75,14 @@ class HistoryRouteListItem extends StatelessWidget {
                                           child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
-                                              children: const [
-                                            Text("Meal Prep Sunday",
+                                              children: [
+                                            const Text("Meal Prep Sunday",
                                                 style: TextStyle(fontSize: 12)),
-                                            SizedBox(height: 13),
+                                            const SizedBox(height: 13),
                                             Text(
-                                              "202 Island Avenue, CA 92101",
-                                              style: TextStyle(fontSize: 12),
+                                              getFormattedAddress(),
+                                              style:
+                                                  const TextStyle(fontSize: 12),
                                               overflow: TextOverflow.ellipsis,
                                             )
                                           ]))
@@ -83,12 +93,16 @@ class HistoryRouteListItem extends StatelessWidget {
                                     const Icon(Icons.watch_later_outlined,
                                         size: 18),
                                     const SizedBox(width: 5),
-                                    const Text("08:00",
+                                    Text(
+                                        Utils.getFormattedTime(
+                                            route.startTime, false),
                                         style: const TextStyle(fontSize: 12)),
                                     const Text(" - ",
-                                        style: const TextStyle(fontSize: 12)),
-                                    const Text("16:00",
                                         style: TextStyle(fontSize: 12)),
+                                    Text(
+                                        Utils.getFormattedTime(
+                                            route.endTime, false),
+                                        style: const TextStyle(fontSize: 12)),
                                     const SizedBox(width: 50),
                                     const Icon(CustomIcon.bag_driver_icon,
                                         size: 17),
@@ -116,7 +130,9 @@ class HistoryRouteListItem extends StatelessWidget {
                                                   fontSize: 12,
                                                   color: App_Colors
                                                       .grey_text.value)),
-                                          Text("26.2 m",
+                                          Text(
+                                              Utils.getFormattedDistance(
+                                                  route.distance, true),
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: App_Colors
@@ -128,12 +144,14 @@ class HistoryRouteListItem extends StatelessWidget {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text("Time",
+                                          Text("Duration",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: App_Colors
                                                       .grey_text.value)),
-                                          Text("27min",
+                                          Text(
+                                              Utils.getFormattedDuration(
+                                                  route.duration),
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: App_Colors

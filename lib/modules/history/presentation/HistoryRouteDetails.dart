@@ -97,7 +97,8 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
             const Text("Meal Prep Sunday", style: TextStyle(fontSize: 14)),
             Container(
                 padding: const EdgeInsets.only(right: 20),
-                child: Text(Utils.getFormattedTime(widget.route.startTime)))
+                child:
+                    Text(Utils.getFormattedTime(widget.route.startTime, true)))
           ]),
           const SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -106,7 +107,7 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
                 overflow: TextOverflow.ellipsis),
             Container(
                 padding: const EdgeInsets.only(right: 20),
-                child: Text(Utils.getFormattedTime(widget.route.endTime)))
+                child: Text(Utils.getFormattedTime(widget.route.endTime, true)))
           ]),
         ]))
       ]),
@@ -117,8 +118,8 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
         const SizedBox(width: 20),
         Expanded(
             child: Column(children: [
-          getInfos(
-              "Distance", Utils.getFormattedDistance(widget.route.distance)),
+          getInfos("Distance",
+              Utils.getFormattedDistance(widget.route.distance, false)),
           const SizedBox(height: 15),
           getInfos(
               "Duration", Utils.getFormattedDuration(widget.route.duration))
@@ -152,7 +153,6 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
       ]),
       const SizedBox(height: 15),
       Divider(thickness: 1, color: App_Colors.grey_light.value),
-      const SizedBox(height: 10),
       Container(
           height: 500,
           child: ListView.builder(

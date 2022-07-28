@@ -16,20 +16,22 @@ class Utils {
     return timeFormatted;
   }
 
-  static String getFormattedTime(TemporalTimestamp? timestamp) {
+  static String getFormattedTime(
+      TemporalTimestamp? timestamp, bool withSuffix) {
     if (timestamp == null) return '-';
     DateTime dateTime =
-        DateTime.fromMillisecondsSinceEpoch(timestamp!.toSeconds() * 1000);
+        DateTime.fromMillisecondsSinceEpoch(timestamp.toSeconds() * 1000);
 
-    String timeFormatted = DateFormat('kk:mm a').format(dateTime);
+    String timeFormatted =
+        DateFormat(withSuffix ? 'kk:mm a' : 'kk:mm').format(dateTime);
     return timeFormatted;
   }
 
-  static String getFormattedDistance(int? meters) {
+  static String getFormattedDistance(int? meters, bool abv) {
     if (meters == null) return '-';
     double miles = meters * 0.000621371192;
-
-    String milesFormatted = '${miles.toString().split('.')[0]} miles';
+    String suffix = abv ? 'mi' : 'miles';
+    String milesFormatted = '${miles.toString().split('.')[0]} $suffix';
     return milesFormatted;
   }
 

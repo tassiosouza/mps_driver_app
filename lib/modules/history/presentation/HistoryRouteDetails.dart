@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/modules/history/presentation/components/ListHistoryOrderItem.dart';
+import 'package:mps_driver_app/utils/Utils.dart';
 
 import '../../../theme/app_colors.dart';
 
@@ -17,6 +18,22 @@ class HistoryRouteDetails extends StatefulWidget {
 }
 
 class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
+  String getFormattedAddress() {
+    MpsOrder lastOrder = widget.route.orders![widget.route.orders!.length - 1];
+    int zipcodeIndex = lastOrder.customer!.address.split(',').length - 1;
+    String street = lastOrder.customer!.address.split(',')[0];
+    String zipcode = lastOrder.customer!.address.split(',')[zipcodeIndex];
+    return '$street, $zipcode';
+  }
+
+  int getBagsDeliveredCount() {
+    int result = 0;
+    for (MpsOrder order in widget.route.orders ?? []) {
+      result = result + (order.status == OrderStatus.DELIVERED ? 1 : 0);
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     String routeName = "#Route ${widget.route.name}";
@@ -80,16 +97,16 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
             const Text("Meal Prep Sunday", style: TextStyle(fontSize: 14)),
             Container(
                 padding: const EdgeInsets.only(right: 20),
-                child: const Text("09:10 AM"))
+                child: Text(Utils.getFormattedTime(widget.route.startTime)))
           ]),
           const SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text("202 Island Avenue, CA 92101",
-                style: TextStyle(fontSize: 14),
+            Text(getFormattedAddress(),
+                style: const TextStyle(fontSize: 14),
                 overflow: TextOverflow.ellipsis),
             Container(
                 padding: const EdgeInsets.only(right: 20),
-                child: const Text("17:10 PM"))
+                child: Text(Utils.getFormattedTime(widget.route.endTime)))
           ]),
         ]))
       ]),
@@ -100,16 +117,21 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
         const SizedBox(width: 20),
         Expanded(
             child: Column(children: [
-          getInfos("Distance", "26,2 m"),
+          getInfos(
+              "Distance", Utils.getFormattedDistance(widget.route.distance)),
           const SizedBox(height: 15),
-          getInfos("Time", "45 min")
+          getInfos(
+              "Duration", Utils.getFormattedDuration(widget.route.duration))
         ])),
         const SizedBox(width: 40),
         Expanded(
             child: Column(children: [
-          getInfos("Bags delivered", "21"),
+          getInfos("Bags delivered", getBagsDeliveredCount().toString()),
           const SizedBox(height: 15),
-          getInfos("Bags not delivered", "01")
+          getInfos(
+              "Bags not delivered",
+              (widget.route.orders!.length - getBagsDeliveredCount())
+                  .toString())
         ])),
         const SizedBox(width: 20)
       ]),
@@ -120,12 +142,12 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: App_Colors.black_text.value)),
-        const SizedBox(width: 5),
+        const SizedBox(width: 10),
         Text("N/A",
             style: TextStyle(
                 color: App_Colors.primary_color.value,
                 fontWeight: FontWeight.w500,
-                fontSize: 20)),
+                fontSize: 17)),
         const SizedBox(width: 15)
       ]),
       const SizedBox(height: 15),

@@ -65,6 +65,12 @@ class HistoryPageState extends State<HistoryPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _routesSubscription.cancel();
+    super.dispose();
+  }
+
   Future<Driver?> loadDriverInformation() async {
     Driver? driver = await DriverService.getCurrentDriver();
     setState(() {

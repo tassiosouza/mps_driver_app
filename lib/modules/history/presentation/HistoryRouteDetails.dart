@@ -121,7 +121,7 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
                 fontWeight: FontWeight.w500,
                 color: App_Colors.black_text.value)),
         const SizedBox(width: 5),
-        Text("\$25.00",
+        Text("N/A",
             style: TextStyle(
                 color: App_Colors.primary_color.value,
                 fontWeight: FontWeight.w500,
@@ -134,9 +134,9 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
       Container(
           height: 500,
           child: ListView.builder(
-              itemCount: widget.route.orders?.length,
+              itemCount: widget.route.orders!.length,
               itemBuilder: (context, index) {
-                return ListHistoryOrderItem(order);
+                return ListHistoryOrderItem(widget.route.orders![index]);
               }))
     ])));
   }

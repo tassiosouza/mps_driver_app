@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 
+import '../../../../models/MpsOrder.dart';
 import '../../../../models/MpsRoute.dart';
 import '../../../../theme/CustomIcon.dart';
 
@@ -78,18 +79,22 @@ class HistoryRouteListItem extends StatelessWidget {
                                     ],
                                   ),
                                   const SizedBox(height: 15),
-                                  Row(children: const [
-                                    Icon(Icons.watch_later_outlined, size: 18),
-                                    SizedBox(width: 5),
-                                    Text("08:00",
+                                  Row(children: [
+                                    const Icon(Icons.watch_later_outlined,
+                                        size: 18),
+                                    const SizedBox(width: 5),
+                                    const Text("08:00",
+                                        style: const TextStyle(fontSize: 12)),
+                                    const Text(" - ",
+                                        style: const TextStyle(fontSize: 12)),
+                                    const Text("16:00",
                                         style: TextStyle(fontSize: 12)),
-                                    Text(" - ", style: TextStyle(fontSize: 12)),
-                                    Text("16:00",
-                                        style: TextStyle(fontSize: 12)),
-                                    SizedBox(width: 30),
-                                    Icon(CustomIcon.bag_driver_icon, size: 17),
-                                    SizedBox(width: 5),
-                                    Text("22", style: TextStyle(fontSize: 12))
+                                    const SizedBox(width: 50),
+                                    const Icon(CustomIcon.bag_driver_icon,
+                                        size: 17),
+                                    const SizedBox(width: 5),
+                                    Text(route.orders!.length.toString(),
+                                        style: const TextStyle(fontSize: 12))
                                   ])
                                 ])),
                         VerticalDivider(
@@ -152,7 +157,7 @@ class HistoryRouteListItem extends StatelessWidget {
                                         children: [
                                           const Text("Total",
                                               style: TextStyle(fontSize: 12)),
-                                          Text("\$40.00",
+                                          Text("N/A",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: App_Colors

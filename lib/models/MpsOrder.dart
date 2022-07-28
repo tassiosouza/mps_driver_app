@@ -23,7 +23,6 @@ import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
-
 /** This is an auto generated class representing the MpsOrder type in your schema. */
 @immutable
 class MpsOrder extends Model {
@@ -42,255 +41,308 @@ class MpsOrder extends Model {
 
   @override
   getInstanceType() => classType;
-  
+
   @override
   String getId() {
     return id;
   }
-  
+
   String get number {
     try {
       return _number!;
-    } catch(e) {
+    } catch (e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
+          AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion: AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString());
     }
   }
-  
+
   String? get deliveryInstruction {
     return _deliveryInstruction;
   }
-  
+
   String? get mealsInstruction {
     return _mealsInstruction;
   }
-  
+
   OrderStatus? get status {
     return _status;
   }
-  
+
   Customer? get customer {
     return _customer;
   }
-  
+
   int? get eta {
     return _eta;
   }
-  
+
   String get routeID {
     try {
       return _routeID!;
-    } catch(e) {
+    } catch (e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
+          AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion: AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString());
     }
   }
-  
+
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
-  
+
   TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-  
+
   String? get mpsOrderCustomerId {
     return _mpsOrderCustomerId;
   }
-  
-  const MpsOrder._internal({required this.id, required number, deliveryInstruction, mealsInstruction, status, customer, eta, required routeID, createdAt, updatedAt, mpsOrderCustomerId}): _number = number, _deliveryInstruction = deliveryInstruction, _mealsInstruction = mealsInstruction, _status = status, _customer = customer, _eta = eta, _routeID = routeID, _createdAt = createdAt, _updatedAt = updatedAt, _mpsOrderCustomerId = mpsOrderCustomerId;
-  
-  factory MpsOrder({String? id, required String number, String? deliveryInstruction, String? mealsInstruction, OrderStatus? status, Customer? customer, int? eta, required String routeID, String? mpsOrderCustomerId}) {
+
+  const MpsOrder._internal(
+      {required this.id,
+      required number,
+      deliveryInstruction,
+      mealsInstruction,
+      status,
+      customer,
+      eta,
+      required routeID,
+      createdAt,
+      updatedAt,
+      mpsOrderCustomerId})
+      : _number = number,
+        _deliveryInstruction = deliveryInstruction,
+        _mealsInstruction = mealsInstruction,
+        _status = status,
+        _customer = customer,
+        _eta = eta,
+        _routeID = routeID,
+        _createdAt = createdAt,
+        _updatedAt = updatedAt,
+        _mpsOrderCustomerId = mpsOrderCustomerId;
+
+  factory MpsOrder(
+      {String? id,
+      required String number,
+      String? deliveryInstruction,
+      String? mealsInstruction,
+      OrderStatus? status,
+      Customer? customer,
+      int? eta,
+      required String routeID,
+      String? mpsOrderCustomerId}) {
     return MpsOrder._internal(
-      id: id == null ? UUID.getUUID() : id,
-      number: number,
-      deliveryInstruction: deliveryInstruction,
-      mealsInstruction: mealsInstruction,
-      status: status,
-      customer: customer,
-      eta: eta,
-      routeID: routeID,
-      mpsOrderCustomerId: mpsOrderCustomerId);
+        id: id == null ? UUID.getUUID() : id,
+        number: number,
+        deliveryInstruction: deliveryInstruction,
+        mealsInstruction: mealsInstruction,
+        status: status,
+        customer: customer,
+        eta: eta,
+        routeID: routeID,
+        mpsOrderCustomerId: mpsOrderCustomerId);
   }
-  
+
   bool equals(Object other) {
     return this == other;
   }
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is MpsOrder &&
-      id == other.id &&
-      _number == other._number &&
-      _deliveryInstruction == other._deliveryInstruction &&
-      _mealsInstruction == other._mealsInstruction &&
-      _status == other._status &&
-      _customer == other._customer &&
-      _eta == other._eta &&
-      _routeID == other._routeID &&
-      _mpsOrderCustomerId == other._mpsOrderCustomerId;
+        id == other.id &&
+        _number == other._number &&
+        _deliveryInstruction == other._deliveryInstruction &&
+        _mealsInstruction == other._mealsInstruction &&
+        _status == other._status &&
+        _customer == other._customer &&
+        _eta == other._eta &&
+        _routeID == other._routeID &&
+        _mpsOrderCustomerId == other._mpsOrderCustomerId;
   }
-  
+
   @override
   int get hashCode => toString().hashCode;
-  
+
   @override
   String toString() {
     var buffer = new StringBuffer();
-    
+
     buffer.write("MpsOrder {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("number=" + "$_number" + ", ");
     buffer.write("deliveryInstruction=" + "$_deliveryInstruction" + ", ");
     buffer.write("mealsInstruction=" + "$_mealsInstruction" + ", ");
-    buffer.write("status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
+    buffer.write(
+        "status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
     buffer.write("eta=" + (_eta != null ? _eta!.toString() : "null") + ", ");
     buffer.write("routeID=" + "$_routeID" + ", ");
-    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
+    buffer.write("createdAt=" +
+        (_createdAt != null ? _createdAt!.format() : "null") +
+        ", ");
+    buffer.write("updatedAt=" +
+        (_updatedAt != null ? _updatedAt!.format() : "null") +
+        ", ");
     buffer.write("mpsOrderCustomerId=" + "$_mpsOrderCustomerId");
     buffer.write("}");
-    
+
     return buffer.toString();
   }
-  
-  MpsOrder copyWith({String? id, String? number, String? deliveryInstruction, String? mealsInstruction, OrderStatus? status, Customer? customer, int? eta, String? routeID, String? mpsOrderCustomerId}) {
+
+  MpsOrder copyWith(
+      {String? id,
+      String? number,
+      String? deliveryInstruction,
+      String? mealsInstruction,
+      OrderStatus? status,
+      Customer? customer,
+      int? eta,
+      String? routeID,
+      String? mpsOrderCustomerId}) {
     return MpsOrder._internal(
-      id: id ?? this.id,
-      number: number ?? this.number,
-      deliveryInstruction: deliveryInstruction ?? this.deliveryInstruction,
-      mealsInstruction: mealsInstruction ?? this.mealsInstruction,
-      status: status ?? this.status,
-      customer: customer ?? this.customer,
-      eta: eta ?? this.eta,
-      routeID: routeID ?? this.routeID,
-      mpsOrderCustomerId: mpsOrderCustomerId ?? this.mpsOrderCustomerId);
+        id: id ?? this.id,
+        number: number ?? this.number,
+        deliveryInstruction: deliveryInstruction ?? this.deliveryInstruction,
+        mealsInstruction: mealsInstruction ?? this.mealsInstruction,
+        status: status ?? this.status,
+        customer: customer ?? this.customer,
+        eta: eta ?? this.eta,
+        routeID: routeID ?? this.routeID,
+        mpsOrderCustomerId: mpsOrderCustomerId ?? this.mpsOrderCustomerId);
   }
-  
-  MpsOrder.fromJson(Map<String, dynamic> json)  
-    : id = json['id'],
-      _number = json['number'],
-      _deliveryInstruction = json['deliveryInstruction'],
-      _mealsInstruction = json['mealsInstruction'],
-      _status = enumFromString<OrderStatus>(json['status'], OrderStatus.values),
-      _customer = json['customer']?['serializedData'] != null
-        ? Customer.fromJson(new Map<String, dynamic>.from(json['customer']['serializedData']))
-        : null,
-      _eta = (json['eta'] as num?)?.toInt(),
-      _routeID = json['routeID'],
-      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
-      _mpsOrderCustomerId = json['mpsOrderCustomerId'];
-  
+
+  MpsOrder.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        _number = json['number'],
+        _deliveryInstruction = json['deliveryInstruction'],
+        _mealsInstruction = json['mealsInstruction'],
+        _status =
+            enumFromString<OrderStatus>(json['status'], OrderStatus.values),
+        _customer = json['customer']?['serializedData'] != null
+            ? Customer.fromJson(new Map<String, dynamic>.from(
+                json['customer']['serializedData']))
+            : null,
+        _eta = (json['eta'] as num?)?.toInt(),
+        _routeID = json['routeID'],
+        _createdAt = json['createdAt'] != null
+            ? TemporalDateTime.fromString(json['createdAt'])
+            : null,
+        _updatedAt = json['updatedAt'] != null
+            ? TemporalDateTime.fromString(json['updatedAt'])
+            : null,
+        _mpsOrderCustomerId = json['mpsOrderCustomerId'];
+
   Map<String, dynamic> toJson() => {
-    'id': id, 'number': _number, 'deliveryInstruction': _deliveryInstruction, 'mealsInstruction': _mealsInstruction, 'status': enumToString(_status), 'customer': _customer?.toJson(), 'eta': _eta, 'routeID': _routeID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mpsOrderCustomerId': _mpsOrderCustomerId
-  };
+        'id': id,
+        'number': _number,
+        'deliveryInstruction': _deliveryInstruction,
+        'mealsInstruction': _mealsInstruction,
+        'status': enumToString(_status),
+        'customer': _customer?.toJson(),
+        'eta': _eta,
+        'routeID': _routeID,
+        'createdAt': _createdAt?.format(),
+        'updatedAt': _updatedAt?.format(),
+        'mpsOrderCustomerId': _mpsOrderCustomerId
+      };
 
   static final QueryField ID = QueryField(fieldName: "mpsOrder.id");
   static final QueryField NUMBER = QueryField(fieldName: "number");
-  static final QueryField DELIVERYINSTRUCTION = QueryField(fieldName: "deliveryInstruction");
-  static final QueryField MEALSINSTRUCTION = QueryField(fieldName: "mealsInstruction");
+  static final QueryField DELIVERYINSTRUCTION =
+      QueryField(fieldName: "deliveryInstruction");
+  static final QueryField MEALSINSTRUCTION =
+      QueryField(fieldName: "mealsInstruction");
   static final QueryField STATUS = QueryField(fieldName: "status");
   static final QueryField CUSTOMER = QueryField(
-    fieldName: "customer",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Customer).toString()));
+      fieldName: "customer",
+      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
+          ofModelName: (Customer).toString()));
   static final QueryField ETA = QueryField(fieldName: "eta");
   static final QueryField ROUTEID = QueryField(fieldName: "routeID");
-  static final QueryField MPSORDERCUSTOMERID = QueryField(fieldName: "mpsOrderCustomerId");
-  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+  static final QueryField MPSORDERCUSTOMERID =
+      QueryField(fieldName: "mpsOrderCustomerId");
+  static var schema =
+      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "MpsOrder";
     modelSchemaDefinition.pluralName = "MpsOrders";
-    
+
     modelSchemaDefinition.authRules = [
-      AuthRule(
-        authStrategy: AuthStrategy.PUBLIC,
-        operations: [
-          ModelOperation.CREATE,
-          ModelOperation.UPDATE,
-          ModelOperation.DELETE,
-          ModelOperation.READ
-        ])
+      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
+        ModelOperation.CREATE,
+        ModelOperation.UPDATE,
+        ModelOperation.DELETE,
+        ModelOperation.READ
+      ])
     ];
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsOrder.NUMBER,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: MpsOrder.NUMBER,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsOrder.DELIVERYINSTRUCTION,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: MpsOrder.DELIVERYINSTRUCTION,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsOrder.MEALSINSTRUCTION,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: MpsOrder.MEALSINSTRUCTION,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsOrder.STATUS,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)
-    ));
-    
+        key: MpsOrder.STATUS,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-      key: MpsOrder.CUSTOMER,
-      isRequired: false,
-      ofModelName: (Customer).toString(),
-      associatedKey: Customer.ID
-    ));
-    
+        key: MpsOrder.CUSTOMER,
+        isRequired: false,
+        ofModelName: (Customer).toString(),
+        associatedKey: Customer.ID));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsOrder.ETA,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.int)
-    ));
-    
+        key: MpsOrder.ETA,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.int)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsOrder.ROUTEID,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: MpsOrder.ROUTEID,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'createdAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        fieldName: 'createdAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'updatedAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        fieldName: 'updatedAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsOrder.MPSORDERCUSTOMERID,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
+        key: MpsOrder.MPSORDERCUSTOMERID,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
   });
 }
 
 class _MpsOrderModelType extends ModelType<MpsOrder> {
   const _MpsOrderModelType();
-  
+
   @override
   MpsOrder fromJson(Map<String, dynamic> jsonData) {
     return MpsOrder.fromJson(jsonData);

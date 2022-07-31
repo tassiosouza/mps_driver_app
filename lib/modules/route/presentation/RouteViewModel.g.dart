@@ -25,6 +25,22 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     });
   }
 
+  late final _$routesHistoryAtom =
+      Atom(name: '_RouteViewModel.routesHistory', context: context);
+
+  @override
+  List<MpsRoute>? get routesHistory {
+    _$routesHistoryAtom.reportRead();
+    return super.routesHistory;
+  }
+
+  @override
+  set routesHistory(List<MpsRoute>? value) {
+    _$routesHistoryAtom.reportWrite(value, super.routesHistory, () {
+      super.routesHistory = value;
+    });
+  }
+
   late final _$currentDriverAtom =
       Atom(name: '_RouteViewModel.currentDriver', context: context);
 
@@ -89,12 +105,13 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     });
   }
 
-  late final _$loadCurrentDriverAsyncAction =
-      AsyncAction('_RouteViewModel.loadCurrentDriver', context: context);
+  late final _$fetchCurrentDriverAsyncAction =
+      AsyncAction('_RouteViewModel.fetchCurrentDriver', context: context);
 
   @override
-  Future loadCurrentDriver() {
-    return _$loadCurrentDriverAsyncAction.run(() => super.loadCurrentDriver());
+  Future fetchCurrentDriver() {
+    return _$fetchCurrentDriverAsyncAction
+        .run(() => super.fetchCurrentDriver());
   }
 
   late final _$updateDriverInformationAsyncAction =
@@ -115,6 +132,39 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
         name: '_RouteViewModel.setlastActivedRoute');
     try {
       return super.setlastActivedRoute(route);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setEmptyHistory() {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.setEmptyHistory');
+    try {
+      return super.setEmptyHistory();
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic addToRoutesHistory(MpsRoute route) {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.addToRoutesHistory');
+    try {
+      return super.addToRoutesHistory(route);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void cleanLocalData() {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.cleanLocalData');
+    try {
+      return super.cleanLocalData();
     } finally {
       _$_RouteViewModelActionController.endAction(_$actionInfo);
     }
@@ -168,6 +218,7 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   String toString() {
     return '''
 lastActivedRoute: ${lastActivedRoute},
+routesHistory: ${routesHistory},
 currentDriver: ${currentDriver},
 isRouteActived: ${isRouteActived},
 endAddress: ${endAddress},

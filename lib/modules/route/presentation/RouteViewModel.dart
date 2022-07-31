@@ -3,8 +3,13 @@ import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/Services/DriverService.dart';
 import 'package:mps_driver_app/models/MpsRoute.dart';
 import 'package:mps_driver_app/modules/route/services/ManageEndAddress.dart';
-
+import 'package:amplify_flutter/amplify_flutter.dart';
+import '../../../models/Customer.dart';
 import '../../../models/Driver.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
+
+import '../../../models/MpOrder.dart';
+import '../../../models/RouteStatus.dart';
 part 'RouteViewModel.g.dart';
 
 class RouteViewModel = _RouteViewModel with _$RouteViewModel;
@@ -21,10 +26,36 @@ abstract class _RouteViewModel with Store {
   }
 
   @observable
+  List<MpsRoute>? routesHistory = null;
+
+  @action
+  setEmptyHistory() {
+    routesHistory = [];
+  }
+
+  @action
+  addToRoutesHistory(MpsRoute route) {
+    routesHistory ??= [];
+    routesHistory!.add(route);
+  }
+
+  @action
+  void cleanLocalData() {
+    lastActivedRoute = null;
+    routesHistory = null;
+  }
+
+  syncAmplifyData() async {
+    await Amplify.DataStore.clear();
+    await Amplify.DataStore.stop();
+    await Amplify.DataStore.start();
+  }
+
+  @observable
   Driver? currentDriver;
 
   @action
-  loadCurrentDriver() async {
+  fetchCurrentDriver() async {
     currentDriver ??= await DriverService.getCurrentDriver();
     return currentDriver;
   }

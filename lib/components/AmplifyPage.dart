@@ -149,7 +149,6 @@ class TodoItem extends StatelessWidget {
           //_deleteTodo(context);
 
           Amplify.Auth.signOut();
-          DriverService.logout();
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),

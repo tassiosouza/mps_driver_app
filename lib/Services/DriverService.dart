@@ -1,10 +1,14 @@
+import 'package:flutter_modular/flutter_modular.dart';
+
 import '../models/Driver.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'dart:developer';
 
+import '../modules/route/presentation/RouteViewModel.dart';
+
 class DriverService {
   static final DriverService _instance = DriverService._internal();
-  static Driver? _driver;
+  static final _routeViewModel = Modular.get<RouteViewModel>();
 
   factory DriverService() {
     return _instance;
@@ -16,14 +20,13 @@ class DriverService {
   }
 
   static Future<bool> setDriverName(String name) async {
-    Driver updatedDriver = _driver!.copyWith(
+    Driver updatedDriver = _routeViewModel.currentDriver!.copyWith(
       name: name,
     );
     bool result = false;
-
+    _routeViewModel.updateDriverInformation(updatedDriver);
     await Amplify.DataStore.save(updatedDriver)
         .then((driver) => {
-              _driver = updatedDriver,
               result = true,
             })
         .catchError((Object error) {
@@ -35,14 +38,13 @@ class DriverService {
   }
 
   static Future<bool> setDriverPhone(String phone) async {
-    Driver updatedDriver = _driver!.copyWith(
+    Driver updatedDriver = _routeViewModel.currentDriver!.copyWith(
       phone: phone,
     );
     bool result = false;
-
+    _routeViewModel.updateDriverInformation(updatedDriver);
     await Amplify.DataStore.save(updatedDriver)
         .then((driver) => {
-              _driver = updatedDriver,
               result = true,
             })
         .catchError((Object error) {
@@ -54,14 +56,13 @@ class DriverService {
   }
 
   static Future<bool> setDriverCapacity(int carCapacity) async {
-    Driver updatedDriver = _driver!.copyWith(
+    Driver updatedDriver = _routeViewModel.currentDriver!.copyWith(
       carCapacity: carCapacity,
     );
     bool result = false;
-
+    _routeViewModel.updateDriverInformation(updatedDriver);
     await Amplify.DataStore.save(updatedDriver)
         .then((driver) => {
-              _driver = updatedDriver,
               result = true,
             })
         .catchError((Object error) {
@@ -135,9 +136,5 @@ class DriverService {
         carCapacity: 22,
         onBoard: false);
     await Amplify.DataStore.save(item);
-  }
-
-  static void logout() {
-    _driver = null;
   }
 }

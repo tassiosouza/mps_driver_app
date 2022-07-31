@@ -30,7 +30,6 @@ class InitRoutePage extends StatefulWidget {
 }
 
 class _InitRoutePage extends State<InitRoutePage> {
-  Driver? _currentDriver;
   bool _isCustomSelected = false;
   String _customAddress = 'Custom';
   late GooglePlace googlePlace;
@@ -92,8 +91,8 @@ class _InitRoutePage extends State<InitRoutePage> {
   Future<void> uploadRoute() async {
     Modular.to.pushNamed('./loading');
     MpsRoute route = MpsRoute(
-        name: "Route - ${_currentDriver!.name}",
-        mpsRouteDriverId: _currentDriver!.id,
+        name: "Route - ${_routeViewModel.currentDriver!.name}",
+        mpsRouteDriverId: _routeViewModel.currentDriver!.id,
         status: RouteStatus.PLANNED);
 
     var orderList = await pickRouteFile.readOrdersFromFile(

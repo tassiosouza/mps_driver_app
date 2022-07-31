@@ -20,12 +20,10 @@ class MainLoadingState extends State<MainLoading> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Amplify.DataStore.clear();
-      await Amplify.DataStore.stop();
-      await Amplify.DataStore.start();
+      _routeViewModel.syncAmplifyData();
       hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
         if (msg.eventName == "ready") {
-          await _routeViewModel.loadCurrentDriver();
+          await _routeViewModel.fetchCurrentDriver();
           String nextPage = _routeViewModel.currentDriver!.onBoard == true
               ? '/main'
               : '/onboarding';

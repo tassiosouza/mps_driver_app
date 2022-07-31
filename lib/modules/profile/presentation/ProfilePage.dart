@@ -21,16 +21,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Driver? _currentDriver;
   final viewModel = Modular.get<ProfileViewModel>();
   final _routeViewModel = Modular.get<RouteViewModel>();
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Amplify.DataStore.start();
-      loadDriverInformation();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {});
     getLocalMaps();
   }
 
@@ -39,17 +35,10 @@ class _ProfilePageState extends State<ProfilePage> {
     viewModel.setDefaultMap();
   }
 
-  void loadDriverInformation() async {
-    Driver? driver = _routeViewModel.currentDriver;
-    setState(() {
-      _currentDriver = driver;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: _currentDriver != null
+        body: _routeViewModel.currentDriver != null
             ? SingleChildScrollView(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   const SizedBox(height: 15),
                                   Text(
-                                    "${_currentDriver?.name}",
+                                    "${_routeViewModel.currentDriver?.name}",
                                     style: const TextStyle(
                                         fontSize: 18, color: Colors.white),
                                   ),
@@ -121,14 +110,16 @@ class _ProfilePageState extends State<ProfilePage> {
                               )
                             ])),
                     const SizedBox(height: 15),
-                    getInfoRow("Full Name", _currentDriver!.name),
+                    getInfoRow(
+                        "Full Name", _routeViewModel.currentDriver!.name),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
-                    getInfoRow("Email", _currentDriver!.email),
-                    Divider(thickness: 1, color: App_Colors.grey_light.value),
-                    getInfoRow("Phone number", _currentDriver?.phone),
+                    getInfoRow("Email", _routeViewModel.currentDriver!.email),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
                     getInfoRow(
-                        "Car capacity", _currentDriver?.carCapacity.toString()),
+                        "Phone number", _routeViewModel.currentDriver?.phone),
+                    Divider(thickness: 1, color: App_Colors.grey_light.value),
+                    getInfoRow("Car capacity",
+                        _routeViewModel.currentDriver?.carCapacity.toString()),
                     const SizedBox(height: 20),
                     Container(
                         color: App_Colors.grey_background.value,
@@ -189,8 +180,7 @@ class _ProfilePageState extends State<ProfilePage> {
     Amplify.Auth.signOut();
     await Amplify.DataStore.clear();
     await Amplify.DataStore.stop();
-    _routeViewModel.updateDriverInformation(null);
-    DriverService.logout();
+    _routeViewModel.cleanLocalData();
     Modular.to.navigate('/');
   }
 

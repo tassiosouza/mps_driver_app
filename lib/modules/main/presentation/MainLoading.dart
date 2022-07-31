@@ -1,9 +1,11 @@
-// ignore_for_file: depend_on_referenced_packages, unused_local_variable
+// ignore_for_file: depend_on_referenced_packages, unused_local_variable, prefer_typing_uninitialized_variables
 
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+
+import '../../route/presentation/RouteViewModel.dart';
 
 class MainLoading extends StatefulWidget {
   const MainLoading({Key? key}) : super(key: key);
@@ -14,17 +16,20 @@ class MainLoading extends StatefulWidget {
 
 class MainLoadingState extends State<MainLoading> {
   late var hubSubscription;
+  final _routeViewModel = Modular.get<RouteViewModel>();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      log('entering main loading again');
+      await Amplify.DataStore.clear();
       await Amplify.DataStore.stop();
       await Amplify.DataStore.start();
-      hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
-        log('hub subscription event status: ${msg.eventName}');
+      hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
         if (msg.eventName == "ready") {
-          log('first');
-          Modular.to.navigate('/onboarding');
+          await _routeViewModel.loadCurrentDriver();
+          String nextPage = _routeViewModel.currentDriver!.onBoard == true
+              ? '/main'
+              : '/onboarding';
+          Modular.to.navigate(nextPage);
           hubSubscription = null;
         }
       });

@@ -9,19 +9,51 @@ part of 'RouteViewModel.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$RouteViewModel on _RouteViewModel, Store {
-  late final _$activeRouteAtom =
-      Atom(name: '_RouteViewModel.activeRoute', context: context);
+  late final _$lastActivedRouteAtom =
+      Atom(name: '_RouteViewModel.lastActivedRoute', context: context);
 
   @override
   MpsRoute? get lastActivedRoute {
-    _$activeRouteAtom.reportRead();
+    _$lastActivedRouteAtom.reportRead();
     return super.lastActivedRoute;
   }
 
   @override
   set lastActivedRoute(MpsRoute? value) {
-    _$activeRouteAtom.reportWrite(value, super.lastActivedRoute, () {
+    _$lastActivedRouteAtom.reportWrite(value, super.lastActivedRoute, () {
       super.lastActivedRoute = value;
+    });
+  }
+
+  late final _$currentDriverAtom =
+      Atom(name: '_RouteViewModel.currentDriver', context: context);
+
+  @override
+  Driver? get currentDriver {
+    _$currentDriverAtom.reportRead();
+    return super.currentDriver;
+  }
+
+  @override
+  set currentDriver(Driver? value) {
+    _$currentDriverAtom.reportWrite(value, super.currentDriver, () {
+      super.currentDriver = value;
+    });
+  }
+
+  late final _$isRouteActivedAtom =
+      Atom(name: '_RouteViewModel.isRouteActived', context: context);
+
+  @override
+  bool get isRouteActived {
+    _$isRouteActivedAtom.reportRead();
+    return super.isRouteActived;
+  }
+
+  @override
+  set isRouteActived(bool value) {
+    _$isRouteActivedAtom.reportWrite(value, super.isRouteActived, () {
+      super.isRouteActived = value;
     });
   }
 
@@ -57,15 +89,43 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     });
   }
 
+  late final _$loadCurrentDriverAsyncAction =
+      AsyncAction('_RouteViewModel.loadCurrentDriver', context: context);
+
+  @override
+  Future loadCurrentDriver() {
+    return _$loadCurrentDriverAsyncAction.run(() => super.loadCurrentDriver());
+  }
+
+  late final _$updateDriverInformationAsyncAction =
+      AsyncAction('_RouteViewModel.updateDriverInformation', context: context);
+
+  @override
+  Future updateDriverInformation(Driver? driver) {
+    return _$updateDriverInformationAsyncAction
+        .run(() => super.updateDriverInformation(driver));
+  }
+
   late final _$_RouteViewModelActionController =
       ActionController(name: '_RouteViewModel', context: context);
 
   @override
   dynamic setlastActivedRoute(MpsRoute? route) {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
-        name: '_RouteViewModel.setActiveRoute');
+        name: '_RouteViewModel.setlastActivedRoute');
     try {
       return super.setlastActivedRoute(route);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setIsRouteActived(bool actived) {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.setIsRouteActived');
+    try {
+      return super.setIsRouteActived(actived);
     } finally {
       _$_RouteViewModelActionController.endAction(_$actionInfo);
     }
@@ -107,7 +167,9 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   @override
   String toString() {
     return '''
-activeRoute: ${lastActivedRoute},
+lastActivedRoute: ${lastActivedRoute},
+currentDriver: ${currentDriver},
+isRouteActived: ${isRouteActived},
 endAddress: ${endAddress},
 predictions: ${predictions}
     ''';

@@ -32,7 +32,6 @@ class RoutePage extends StatefulWidget {
 
 class StateRoutePage extends State<RoutePage> {
   int dotCount = 4;
-  Driver? _currentDriver;
   final _routeViewModel = Modular.get<RouteViewModel>();
 
   StreamSubscription<GraphQLResponse<MpsRoute>>? subscription;
@@ -53,10 +52,7 @@ class StateRoutePage extends State<RoutePage> {
 
   @override
   void initState() {
-    Driver? driver;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      driver = await loadDriverInformation();
-
       var graphQLClient = initGqlClient(
           'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
 
@@ -196,14 +192,6 @@ class StateRoutePage extends State<RoutePage> {
   //   });
   // }
 
-  Future<Driver?> loadDriverInformation() async {
-    Driver? driver = await DriverService.getCurrentDriver();
-    setState(() {
-      _currentDriver = driver;
-    });
-    return driver;
-  }
-
   Future<void> welcomeDialog() {
     return AppDialogs().showDialogJustMsg(context, "Welcome Driver",
         "Make your checkin and start to check bags.");
@@ -220,7 +208,8 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   void sendWelcomeMessages() {
-    TwilioSmsService smsService = TwilioSmsService(_currentDriver!);
+    TwilioSmsService smsService =
+        TwilioSmsService(_routeViewModel.currentDriver!);
     for (var order in _routeViewModel.lastActivedRoute!.orders!) {
       smsService.sendSms(
           order.customer!.name, order.customer!.phone, order.eta);
@@ -440,9 +429,9 @@ class StateRoutePage extends State<RoutePage> {
                                   alignment: Alignment.centerLeft,
                                   child: Row(
                                     children: [
-                                      _currentDriver != null
+                                      _routeViewModel.currentDriver != null
                                           ? Text(
-                                              "${_currentDriver?.name}  ",
+                                              "${_routeViewModel.currentDriver?.name}  ",
                                               style: const TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.w500),
@@ -563,12 +552,12 @@ class StateRoutePage extends State<RoutePage> {
                                       RouteStatus.DONE) {
                                     return routeDone();
                                   }
-                                  if (_currentDriver != null &&
+                                  if (_routeViewModel.currentDriver != null &&
                                       _routeViewModel
                                               .lastActivedRoute!.status !=
                                           RouteStatus.DONE) {
                                     return OrdersListView(
-                                        _currentDriver!,
+                                        _routeViewModel.currentDriver!,
                                         _routeViewModel
                                             .lastActivedRoute!.orders,
                                         this);

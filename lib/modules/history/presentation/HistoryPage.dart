@@ -2,10 +2,12 @@ import 'dart:async';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../models/MpsRoute.dart';
+import '../../route/presentation/RouteViewModel.dart';
 import 'components/HistoryRouteListItem.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -20,15 +22,13 @@ class HistoryPageState extends State<HistoryPage> {
   List<List<MpOrder>> _ordersLists = [];
   bool _isLoading = true;
   bool _emptyList = false;
+  final _routeViewModel = Modular.get<RouteViewModel>();
 
   @override
   void initState() {
     Driver? driver;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Amplify.DataStore.clear();
-      await Amplify.DataStore.stop();
-      await Amplify.DataStore.start();
-      driver = await loadDriverInformation();
+      driver = _routeViewModel.currentDriver;
 
       //Build the list of routes with all the route information ready
       _routesSubscription = Amplify.DataStore.observeQuery(MpsRoute.classType,
@@ -77,14 +77,6 @@ class HistoryPageState extends State<HistoryPage> {
   void dispose() {
     _routesSubscription.cancel();
     super.dispose();
-  }
-
-  Future<Driver?> loadDriverInformation() async {
-    Driver? driver = await DriverService.getCurrentDriver();
-    setState(() {
-      _currentDriver = driver;
-    });
-    return driver;
   }
 
   @override

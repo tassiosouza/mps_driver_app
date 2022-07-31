@@ -12,6 +12,7 @@ import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import '../../route/presentation/RouteViewModel.dart';
 import '../presentation/components/Welcome.dart';
 import 'components/Book.dart';
 import 'components/Video.dart';
@@ -34,6 +35,7 @@ class OnBoardingState extends State<OnBoarding> {
   String _currentMessage = '';
   WhatchingStatus _videoStatus = WhatchingStatus.idle;
   late Video videoStateFullWidget;
+  final _routeViewModel = Modular.get<RouteViewModel>();
 
   void setStatus(WhatchingStatus status) {
     setState(() {
@@ -49,13 +51,7 @@ class OnBoardingState extends State<OnBoarding> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Amplify.DataStore.start();
-      _currentDriver = await DriverService.getCurrentDriver();
-      if (_currentDriver!.onBoard == true) {
-        Modular.to.navigate('/main');
-      }
       setState(() {
-        _currentDriver = _currentDriver;
         _isLoading = false;
         _currentMessage = getCurrentMessage();
       });
@@ -66,7 +62,7 @@ class OnBoardingState extends State<OnBoarding> {
   Widget getCurrentWidget() {
     switch (_currentStep) {
       case 1:
-        return Welcome(_currentDriver!);
+        return Welcome(_routeViewModel.currentDriver);
       case 2:
         return videoStateFullWidget;
       case 3:
@@ -206,7 +202,9 @@ class OnBoardingState extends State<OnBoarding> {
       }
     } else if (_currentStep == 5) {
       Modular.to.navigate('main/route/');
-      Driver updatedDriver = _currentDriver!.copyWith(onBoard: true);
+      Driver updatedDriver =
+          _routeViewModel.currentDriver!.copyWith(onBoard: true);
+      _routeViewModel.updateDriverInformation(updatedDriver);
       Amplify.DataStore.save(updatedDriver);
     } else {
       setState(() {

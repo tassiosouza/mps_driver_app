@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/history/HistoryModule.dart';
+import 'package:mps_driver_app/modules/main/presentation/MainLoading.dart';
 import 'package:mps_driver_app/modules/main/presentation/MainPage.dart';
 import 'package:mps_driver_app/modules/main/presentation/MainViewModel.dart';
 import 'package:mps_driver_app/modules/main/presentation/OnBoarding.dart';
@@ -17,7 +18,7 @@ class AppModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute('/', child: (context, args) => OnBoarding()),
+        ChildRoute('/', child: (context, args) => const MainLoading()),
         ChildRoute('/onboarding', child: (context, args) => OnBoarding()),
         ChildRoute('/main', child: (context, args) => MainPage(), children: [
           ModuleRoute('/prepnews/',

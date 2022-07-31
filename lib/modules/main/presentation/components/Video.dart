@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/modules/main/presentation/OnBoarding.dart';
 import 'package:video_player/video_player.dart';
 
@@ -29,7 +30,7 @@ class VideoState extends State<Video> {
   @override
   void initState() {
     _videoController = VideoPlayerController.network(
-        'https://mps-driver-app-storage-dev50943-dev.s3.us-west-1.amazonaws.com/public/onboarding.mp4?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjENr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMSJHMEUCIQDH191w0PBVMREHhNu0y7SriwOHFMnlzwjwF8uH4mNFgQIgSUS7IIlm4TfFWkvEx2VaJlwkS%2BF6tT9r1kECdS0C13Mq5AIIMhAAGgw4NDYzNDgxODI2NzMiDMrVBx8NmFKWKK7cECrBAlcWD%2FCICS3JLbZAuQbvdi8cxfN1ofkP0pQhVZWwmuktE%2Bhfaf0bWdswDaL6KupdORUEwoIe7Gj2jhdmTtQZ4SM0%2BiAn001Puiv3iWd3tVT62riF3%2BKDbrik76Goteeyxooj8o6rI5ZJpzpOUrL4VBH3QL3ySmCUBv4ZAjH1hV7KWxWPpaijuYRIe7FxYcHOl4QdJ%2BfQTDaPePgc5yrLo1bUbjSFxr3321TPh8CQnX3noHYU4WR42f6jystrTE4mz2jW4pa1746AJequCrnkuHZ52XPd9281KhzpJYxhtuPbYyWk9DAB6YB2Vde5nT2Pe6Zz5yGq%2FEmimCkzUmgp72hRTrsw3yGAJMjIoU7kD2gYGrp4no%2FvhnecjCygj3pKCp9VvRVM4LsXdljNcrrsq%2BudTs6BD47mUi8Wb8wxbIHVaDD50JWXBjqzAnDoyy%2BJvcs9o%2B8NS9xGcDj8%2BXV6qhZfZkkLMXBu%2F2Y49hNWIbMI8mX6Q%2Fg%2Bow8R%2FNqvLPT36g1bPHfMI65cqlNBMqmyeq1mO7YY3AsPrUtDG2wxlTlDjZqZ%2F2LDil5eWB%2B%2FA2iPpSv6pir4%2Fo5OFUlHg%2FtADEc5feY5fMYqfXR9n6DwEUrQ%2BSD6lRKOIAZYzQTEXMXIe%2FbPyXtQBHtbGzXK3jfrvDWnOk1xH7GWkv4M2hXeJxoZnr6zBiB2D%2FtPog717EDCv9nlHpVY9W0AoJ12IqdesY7K6ZjiD3C7Fm23JIJSVXSy3rN520MO0izDlw59aI1x%2BViMgOn8IETGYXGPOk7CwWcJIoXO4yp0Ic70erFWMO5ynK4VmvChOLwXd0p5kPaUsJ44L3SIS6WK0R7pkGg%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20220730T172138Z&X-Amz-SignedHeaders=host&X-Amz-Expires=43200&X-Amz-Credential=ASIA4KDSIMSIX6ENUTLQ%2F20220730%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Signature=ef7309e1f178435c3f27a750e44ff77e627f5c9cccdae09231bf3da2f0f7b446');
+        'https://mps-driver-app-storage-dev50943-dev.s3.us-west-1.amazonaws.com/public/onboarding.mp4?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEO%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMSJHMEUCIAq29YjPUfEDePmhoEtRPVgqYywWdxaov9Q%2BkCAETUtUAiEAn813r%2BznMg8kyYqqSFQo9%2Frtv01F9fvhGTLsp80xkm0q5AIISBAAGgw4NDYzNDgxODI2NzMiDLKWLswIEMe2lp%2F2virBAoXi4J76%2FlpBbWdd2fDbgSR%2FJFb4HWGLsMffiWbWKUqTOWezUIEpl9iJZ7e%2BVon2%2Box%2FRhsVja042qDAggiu8dThYuMrnTO9UVl7pfQXKUANxgSZF5DKf%2BmXZl3Bg8gATw22rPObFprR35fc5cPxdO7Nl8rVq26wfzYPCIdyjTnYYQi6YWCd%2B4%2BgJAryNhVEkHmExHZjAZloSVM%2FBVgSEjpUjftlbiSABHVja5yN%2FIL%2BrcXdmR8Z%2FNoZilUSu6%2F9xs%2BVoqNrGI%2BspXKIb3bJKIPj4URLW2H8w%2FRD5W2Yb4tvQr5HT8tr3KlpXtD50H56GPAb0Bm1sGPlDmxhbQ2Y2gE2bMvphj5wyfQvV7kitYKaBHP9L32P%2FKjefOrfYDugLOTkUNPPoMiDs%2FqSd1w1Z9uy6Fh9ohaxDHuVLv2Ek41gyjDgtJqXBjqzAq%2BJzQM8Q6GUU6diKkxvvuAoMXj3EXRcH8ROeWOpTTyOXNpx9Ww%2FbWA1cIjcY%2FMh%2BPRhzKU19pjetbwhi7E3oGL0gkS4bY9ipITKJzqyeE0%2BbIROLHsGjkNHUMKseJ5s5fiLFyFESwQ0aLhoXlS6SBJDWzkIa4cmedSIhO2rZg%2F9aImxEq2yIjI3dGhxJoOvIR4Pb%2FgKm3YIWNrjTVFX5shsGo4Zp5BCgSLHm3q6W%2BE6c3zS8fviWbLkg%2FcQ1ZXGr3Zx8XMugF%2FGlt8fCplpxQjiR%2BT1fKarBe6gyQg30x8VbdxCD6tQFTvWvL%2FKSy%2FeeL8w4c2eEz71gM6LZvghj4Mk5Lv7rEQVZCUyMm7c83JBR0QkhPglzoX36Eewcy4yazZL0twg2nCt1Zl51L00h2wu0a0%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20220731T150622Z&X-Amz-SignedHeaders=host&X-Amz-Expires=43200&X-Amz-Credential=ASIA4KDSIMSIUNOJW2G5%2F20220731%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Signature=06cc5a428128de3869955060c4c03c167619553b97467c82f43e9dfc211e0e78');
     _initializeVideoPlayerFuture = _videoController.initialize().then((_) {
       setState(() {});
       _timer = Timer.periodic(const Duration(milliseconds: 0), (_) {});
@@ -64,6 +65,14 @@ class VideoState extends State<Video> {
     setState(() {
       _videoController.pause();
     });
+  }
+
+  @override
+  void dispose() {
+    // Ensure disposing of the VideoPlayerController to free up resources.
+    _videoController.dispose();
+
+    super.dispose();
   }
 
   void _swapOrder() {

@@ -58,11 +58,7 @@ class _InitRoutePage extends State<InitRoutePage> {
 
   @override
   void initState() {
-    Driver? driver;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Amplify.DataStore.start();
-      driver = await loadDriverInformation();
-
       if (_routeViewModel.isRouteActived) {
         Modular.to.navigate('./inroute');
       }
@@ -91,16 +87,6 @@ class _InitRoutePage extends State<InitRoutePage> {
     });
 
     super.initState();
-  }
-
-  Future<Driver?> loadDriverInformation() async {
-    Driver? driver = await DriverService.getCurrentDriver();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _currentDriver = driver;
-      });
-    });
-    return driver;
   }
 
   Future<void> uploadRoute() async {

@@ -11,6 +11,8 @@ import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
+import '../../route/presentation/RouteViewModel.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -21,6 +23,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   Driver? _currentDriver;
   final viewModel = Modular.get<ProfileViewModel>();
+  final _routeViewModel = Modular.get<RouteViewModel>();
 
   @override
   void initState() {
@@ -37,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void loadDriverInformation() async {
-    Driver? driver = await DriverService.getCurrentDriver();
+    Driver? driver = _routeViewModel.currentDriver;
     setState(() {
       _currentDriver = driver;
     });
@@ -185,6 +188,8 @@ class _ProfilePageState extends State<ProfilePage> {
   logout() async {
     Amplify.Auth.signOut();
     await Amplify.DataStore.clear();
+    await Amplify.DataStore.stop();
+    _routeViewModel.updateDriverInformation(null);
     DriverService.logout();
     Modular.to.navigate('/');
   }

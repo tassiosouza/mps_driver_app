@@ -1,11 +1,11 @@
-type MpsRoute @model @auth(rules: [{allow: public}]) @mapsTo(name: "Route"){
+type MpsRoute @model @auth(rules: [{allow: public}]) @mapsTo(name: "Route") {
   id: ID!
   cost: Float
   startTime: AWSTimestamp
   endTime: AWSTimestamp
   status: RouteStatus
   name: String!
-  orders: [MpsOrder] @hasMany(indexName: "byRoute", fields: ["id"])
+  orders: [MpOrder] @hasMany(indexName: "byRoute", fields: ["id"])
   driver: Driver @hasOne
   distance: Int
   duration: Int
@@ -35,12 +35,20 @@ enum OrderStatus {
   CHECKED
 }
 
-type MpsOrder @model @auth(rules: [{allow: public}]) {
+enum MpsOrderStatus {
+  RECEIVED
+  IN_TRANSIT
+  DELIVERED
+  CHECKED
+  CANCELED
+}
+
+type MpOrder @model @auth(rules: [{allow: public}]) @mapsTo(name: "MpsOrder") {
   id: ID!
   number: String!
   deliveryInstruction: String
   mealsInstruction: String
-  status: OrderStatus
+  status: MpsOrderStatus
   customer: Customer @hasOne
   eta: Int
   routeID: ID! @index(name: "byRoute")
@@ -73,4 +81,3 @@ type Todo @model @auth(rules: [{allow: public}]) {
   isComplete: Boolean!
   owner: String!
 }
- 

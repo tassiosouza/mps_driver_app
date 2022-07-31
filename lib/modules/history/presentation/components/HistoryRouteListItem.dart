@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 
-import '../../../../models/MpsOrder.dart';
+import '../../../../models/MpOrder.dart';
 import '../../../../models/MpsRoute.dart';
 import '../../../../theme/CustomIcon.dart';
 import '../../../../utils/Utils.dart';
+import 'package:intl/intl.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 // ignore: must_be_immutable
 class HistoryRouteListItem extends StatelessWidget {
@@ -13,7 +16,7 @@ class HistoryRouteListItem extends StatelessWidget {
   HistoryRouteListItem(this.route, {Key? key}) : super(key: key);
 
   String getFormattedAddress() {
-    MpsOrder lastOrder = route.orders![route.orders!.length - 1];
+    MpOrder lastOrder = route.orders![route.orders!.length - 1];
     int zipcodeIndex = lastOrder.customer!.address.split(',').length - 1;
     String street = lastOrder.customer!.address.split(',')[0];
     String zipcode = lastOrder.customer!.address.split(',')[zipcodeIndex];
@@ -22,12 +25,49 @@ class HistoryRouteListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title = "#Route ${route.name}";
+    String title = route.name.split('.')[0];
+
+    String getVerboseDateTimeRepresentation(
+        TemporalTimestamp? temporalTimestamp) {
+      DateTime datetime = DateTime.fromMillisecondsSinceEpoch(
+          temporalTimestamp!.toSeconds() * 1000);
+      DateTime now = DateTime.now();
+      DateTime justNow = now.subtract(Duration(minutes: 1));
+      DateTime localDateTime = datetime.toLocal();
+
+      if (!datetime.difference(justNow).isNegative) {
+        return 'Today';
+      }
+
+      String roughTimeString = DateFormat('jm').format(datetime);
+
+      if (datetime.day == now.day &&
+          datetime.month == now.month &&
+          datetime.year == now.year) {
+        return 'Today';
+      }
+
+      DateTime yesterday = now.subtract(Duration(days: 1));
+
+      if (datetime.day == yesterday.day &&
+          datetime.month == now.month &&
+          datetime.year == now.year) {
+        return 'Yesterday';
+      }
+
+      if (now.difference(datetime).inDays < 4) {
+        String weekday = DateFormat('yyyy-MM-dd hh:mm').format(datetime);
+
+        return '$weekday, $roughTimeString';
+      }
+
+      return '${DateFormat('yyyy-MM-dd hh:mm').format(datetime)}, $roughTimeString';
+    }
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
         padding: const EdgeInsets.only(left: 20),
-        child: Text("Today",
+        child: Text(getVerboseDateTimeRepresentation(route.startTime),
             style: TextStyle(fontSize: 12, color: App_Colors.grey_text.value)),
       ),
       GestureDetector(
@@ -51,7 +91,7 @@ class HistoryRouteListItem extends StatelessWidget {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(title,
+                                  Text(' $title',
                                       style: TextStyle(
                                           fontSize: 14,
                                           color: App_Colors.primary_color.value,
@@ -89,27 +129,32 @@ class HistoryRouteListItem extends StatelessWidget {
                                     ],
                                   ),
                                   const SizedBox(height: 15),
-                                  Row(children: [
-                                    const Icon(Icons.watch_later_outlined,
-                                        size: 18),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                        Utils.getFormattedTime(
-                                            route.startTime, false),
-                                        style: const TextStyle(fontSize: 12)),
-                                    const Text(" - ",
-                                        style: TextStyle(fontSize: 12)),
-                                    Text(
-                                        Utils.getFormattedTime(
-                                            route.endTime, false),
-                                        style: const TextStyle(fontSize: 12)),
-                                    const SizedBox(width: 50),
-                                    const Icon(CustomIcon.bag_driver_icon,
-                                        size: 17),
-                                    const SizedBox(width: 5),
-                                    Text(route.orders!.length.toString(),
-                                        style: const TextStyle(fontSize: 12))
-                                  ])
+                                  Container(
+                                      padding: const EdgeInsets.only(left: 3),
+                                      child: Row(children: [
+                                        const Icon(Icons.watch_later_outlined,
+                                            size: 18),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                            Utils.getFormattedTime(
+                                                route.startTime, false),
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                        const Text(" - ",
+                                            style: TextStyle(fontSize: 12)),
+                                        Text(
+                                            Utils.getFormattedTime(
+                                                route.endTime, false),
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                        const SizedBox(width: 50),
+                                        const Icon(CustomIcon.bag_driver_icon,
+                                            size: 17),
+                                        const SizedBox(width: 5),
+                                        Text(route.orders!.length.toString(),
+                                            style:
+                                                const TextStyle(fontSize: 12))
+                                      ]))
                                 ])),
                         VerticalDivider(
                             thickness: 1, color: App_Colors.grey_dark.value),

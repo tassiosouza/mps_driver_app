@@ -7,7 +7,7 @@ import '../../../../utils/Utils.dart';
 
 // ignore: must_be_immutable
 class ListHistoryOrderItem extends StatelessWidget {
-  MpsOrder order;
+  MpOrder order;
   ListHistoryOrderItem(this.order, {Key? key}) : super(key: key);
 
   String getFormattedAddress() {

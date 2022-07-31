@@ -35,7 +35,7 @@ class MpsRoute extends Model {
   final TemporalTimestamp? _endTime;
   final RouteStatus? _status;
   final String? _name;
-  final List<MpsOrder>? _orders;
+  final List<MpOrder>? _orders;
   final Driver? _driver;
   final int? _distance;
   final int? _duration;
@@ -80,7 +80,7 @@ class MpsRoute extends Model {
     }
   }
   
-  List<MpsOrder>? get orders {
+  List<MpOrder>? get orders {
     return _orders;
   }
   
@@ -110,7 +110,7 @@ class MpsRoute extends Model {
   
   const MpsRoute._internal({required this.id, cost, startTime, endTime, status, required name, orders, driver, distance, duration, createdAt, updatedAt, mpsRouteDriverId}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _name = name, _orders = orders, _driver = driver, _distance = distance, _duration = duration, _createdAt = createdAt, _updatedAt = updatedAt, _mpsRouteDriverId = mpsRouteDriverId;
   
-  factory MpsRoute({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, required String name, List<MpsOrder>? orders, Driver? driver, int? distance, int? duration, String? mpsRouteDriverId}) {
+  factory MpsRoute({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, required String name, List<MpOrder>? orders, Driver? driver, int? distance, int? duration, String? mpsRouteDriverId}) {
     return MpsRoute._internal(
       id: id == null ? UUID.getUUID() : id,
       cost: cost,
@@ -118,7 +118,7 @@ class MpsRoute extends Model {
       endTime: endTime,
       status: status,
       name: name,
-      orders: orders != null ? List<MpsOrder>.unmodifiable(orders) : orders,
+      orders: orders != null ? List<MpOrder>.unmodifiable(orders) : orders,
       driver: driver,
       distance: distance,
       duration: duration,
@@ -170,7 +170,7 @@ class MpsRoute extends Model {
     return buffer.toString();
   }
   
-  MpsRoute copyWith({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, String? name, List<MpsOrder>? orders, Driver? driver, int? distance, int? duration, String? mpsRouteDriverId}) {
+  MpsRoute copyWith({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, String? name, List<MpOrder>? orders, Driver? driver, int? distance, int? duration, String? mpsRouteDriverId}) {
     return MpsRoute._internal(
       id: id ?? this.id,
       cost: cost ?? this.cost,
@@ -195,7 +195,7 @@ class MpsRoute extends Model {
       _orders = json['orders'] is List
         ? (json['orders'] as List)
           .where((e) => e?['serializedData'] != null)
-          .map((e) => MpsOrder.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .map((e) => MpOrder.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
       _driver = json['driver']?['serializedData'] != null
@@ -208,7 +208,7 @@ class MpsRoute extends Model {
       _mpsRouteDriverId = json['mpsRouteDriverId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'cost': _cost, 'startTime': _startTime?.toSeconds(), 'endTime': _endTime?.toSeconds(), 'status': enumToString(_status), 'name': _name, 'orders': _orders?.map((MpsOrder? e) => e?.toJson()).toList(), 'driver': _driver?.toJson(), 'distance': _distance, 'duration': _duration, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mpsRouteDriverId': _mpsRouteDriverId
+    'id': id, 'cost': _cost, 'startTime': _startTime?.toSeconds(), 'endTime': _endTime?.toSeconds(), 'status': enumToString(_status), 'name': _name, 'orders': _orders?.map((MpOrder? e) => e?.toJson()).toList(), 'driver': _driver?.toJson(), 'distance': _distance, 'duration': _duration, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mpsRouteDriverId': _mpsRouteDriverId
   };
 
   static final QueryField ID = QueryField(fieldName: "mpsRoute.id");
@@ -219,7 +219,7 @@ class MpsRoute extends Model {
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField ORDERS = QueryField(
     fieldName: "orders",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (MpsOrder).toString()));
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (MpOrder).toString()));
   static final QueryField DRIVER = QueryField(
     fieldName: "driver",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Driver).toString()));
@@ -276,8 +276,8 @@ class MpsRoute extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
       key: MpsRoute.ORDERS,
       isRequired: false,
-      ofModelName: (MpsOrder).toString(),
-      associatedKey: MpsOrder.ROUTEID
+      ofModelName: (MpOrder).toString(),
+      associatedKey: MpOrder.ROUTEID
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(

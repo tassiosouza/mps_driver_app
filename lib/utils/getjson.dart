@@ -1,10 +1,10 @@
 import '../models/Client.dart';
 import 'dart:convert';
 
-import '../models/MpsOrder.dart';
+import '../models/MpOrder.dart';
 
 class GetJsonBody {
-  static List<Map<String, Object>> getJsonBody(List<MpsOrder> orders) {
+  static List<Map<String, Object>> getJsonBody(List<MpOrder> orders) {
     List<Map<String, Object>> destinationsMap = [];
     for (var i = 0; i < orders.length; i++) {
       Map<String, Object> destinationMap = {

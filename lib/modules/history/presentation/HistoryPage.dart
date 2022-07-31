@@ -17,13 +17,17 @@ class HistoryPageState extends State<HistoryPage> {
   late StreamSubscription<QuerySnapshot<MpsRoute>> _routesSubscription;
   Driver? _currentDriver;
   List<MpsRoute> _routesList = [];
-  List<List<MpsOrder>> _ordersLists = [];
+  List<List<MpOrder>> _ordersLists = [];
   bool _isLoading = true;
+  bool _emptyList = false;
 
   @override
   void initState() {
     Driver? driver;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Amplify.DataStore.clear();
+      await Amplify.DataStore.stop();
+      await Amplify.DataStore.start();
       driver = await loadDriverInformation();
 
       //Build the list of routes with all the route information ready
@@ -32,15 +36,15 @@ class HistoryPageState extends State<HistoryPage> {
           .listen((QuerySnapshot<MpsRoute> snapshot) {
         for (int i = 0; i < snapshot.items.length; i++) {
           MpsRoute currentRoute = snapshot.items[i];
-          List<MpsOrder> currentOrders = [];
-          Amplify.DataStore.query(MpsOrder.classType,
-                  where: MpsOrder.ROUTEID.eq(currentRoute.getId()))
+          List<MpOrder> currentOrders = [];
+          Amplify.DataStore.query(MpOrder.classType,
+                  where: MpOrder.ROUTEID.eq(currentRoute.getId()))
               .then((orders) async => {
                     for (int k = 0; k < orders.length; k++)
                       {
                         await Amplify.DataStore.query(Customer.classType,
-                                where: Customer.ID
-                                    .eq(orders[k].mpsOrderCustomerId))
+                                where:
+                                    Customer.ID.eq(orders[k].mpOrderCustomerId))
                             .then((customer) => {
                                   currentOrders.add(orders[k].copyWith(
                                       customer: customer[0],
@@ -48,13 +52,17 @@ class HistoryPageState extends State<HistoryPage> {
                                           orders[k].updatedAt.toString())),
                                   if (currentOrders.length == orders.length)
                                     {
-                                      _routesList.add(currentRoute.copyWith(
-                                          orders: currentOrders)),
-                                      //set orders state when retrieved the last list of orders from routes
-                                      setState(() {
-                                        _routesList = _routesList;
-                                        _isLoading = false;
-                                      }),
+                                      if (currentRoute.status ==
+                                          RouteStatus.DONE)
+                                        {
+                                          _routesList.add(currentRoute.copyWith(
+                                              orders: currentOrders)),
+                                          //set orders state when retrieved the last list of orders from routes
+                                          setState(() {
+                                            _routesList = _routesList;
+                                            _isLoading = false;
+                                          }),
+                                        }
                                     }
                                 }),
                       },
@@ -83,8 +91,16 @@ class HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Material(
         child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: Colors.green))
+            ? Center(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Image(image: AssetImage('assets/images/no_route.png')),
+                  SizedBox(height: 20),
+                  Text('You have made any routes yet.')
+                ],
+              ))
             : Column(children: [
                 const SizedBox(height: 70),
                 Row(children: const [
@@ -101,9 +117,9 @@ class HistoryPageState extends State<HistoryPage> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w400))
                 ]),
                 const Divider(thickness: 1),
-                const SizedBox(height: 20),
                 Expanded(
                     child: ListView.builder(
+                        padding: const EdgeInsets.only(top: 20, bottom: 20),
                         itemCount: _routesList.length,
                         itemBuilder: (BuildContext context, int index) {
                           return HistoryRouteListItem(_routesList[index]);

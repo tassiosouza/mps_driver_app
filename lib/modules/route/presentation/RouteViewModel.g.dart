@@ -9,6 +9,22 @@ part of 'RouteViewModel.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$RouteViewModel on _RouteViewModel, Store {
+  late final _$activeRouteAtom =
+      Atom(name: '_RouteViewModel.activeRoute', context: context);
+
+  @override
+  MpsRoute? get lastActivedRoute {
+    _$activeRouteAtom.reportRead();
+    return super.lastActivedRoute;
+  }
+
+  @override
+  set lastActivedRoute(MpsRoute? value) {
+    _$activeRouteAtom.reportWrite(value, super.lastActivedRoute, () {
+      super.lastActivedRoute = value;
+    });
+  }
+
   late final _$endAddressAtom =
       Atom(name: '_RouteViewModel.endAddress', context: context);
 
@@ -43,6 +59,17 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
 
   late final _$_RouteViewModelActionController =
       ActionController(name: '_RouteViewModel', context: context);
+
+  @override
+  dynamic setlastActivedRoute(MpsRoute? route) {
+    final _$actionInfo = _$_RouteViewModelActionController.startAction(
+        name: '_RouteViewModel.setActiveRoute');
+    try {
+      return super.setlastActivedRoute(route);
+    } finally {
+      _$_RouteViewModelActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   dynamic addPredictions(List<AutocompletePrediction> predct) {
@@ -80,6 +107,7 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   @override
   String toString() {
     return '''
+activeRoute: ${lastActivedRoute},
 endAddress: ${endAddress},
 predictions: ${predictions}
     ''';

@@ -182,8 +182,9 @@ class _ProfilePageState extends State<ProfilePage> {
             : const Center(child: CircularProgressIndicator()));
   }
 
-  logout() {
+  logout() async {
     Amplify.Auth.signOut();
+    await Amplify.DataStore.clear();
     DriverService.logout();
     Modular.to.navigate('/');
   }

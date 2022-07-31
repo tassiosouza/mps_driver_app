@@ -8,10 +8,10 @@ import 'OrderItem.dart';
 
 class OrdersListView extends StatefulWidget {
   final Driver _currentDriver;
-  final List<MpsOrder> _currentMpsOrders;
+  final List<MpOrder>? _currentMpOrders;
   final StateRoutePage _pageReference;
   const OrdersListView(
-      this._currentDriver, this._currentMpsOrders, this._pageReference,
+      this._currentDriver, this._currentMpOrders, this._pageReference,
       {Key? key})
       : super(key: key);
   @override
@@ -23,10 +23,10 @@ class OrderListState extends State<OrdersListView> {
   Widget build(BuildContext context) {
     return ListView(
         padding: const EdgeInsets.all(8),
-        children: widget._currentMpsOrders
+        children: widget._currentMpOrders!
             .map((order) => OrderItem(
                 order,
-                widget._currentMpsOrders.indexOf(order),
+                widget._currentMpOrders!.indexOf(order),
                 widget._currentDriver,
                 widget._pageReference))
             .toList());

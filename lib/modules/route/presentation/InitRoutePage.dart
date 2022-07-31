@@ -9,14 +9,17 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_place/google_place.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/models/RouteStatus.dart';
+import 'package:mps_driver_app/modules/route/presentation/RouteViewModel.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../../Services/DriverService.dart';
 import '../../../components/AppDialogs.dart';
 import '../../../models/Driver.dart';
-import '../../../models/MpsOrder.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:gql_http_link/gql_http_link.dart';
 import '../services/PickRouteFile.dart';
 
 class InitRoutePage extends StatefulWidget {
@@ -34,6 +37,24 @@ class _InitRoutePage extends State<InitRoutePage> {
   late StreamSubscription<QuerySnapshot<MpsRoute>> _subscription;
   PickRouteFile pickRouteFile = PickRouteFile();
   Timer? _debounce;
+  late MpsRoute? _createdRoute;
+  final _routeViewModel = Modular.get<RouteViewModel>();
+
+  StreamSubscription<GraphQLResponse<MpsRoute>>? subscription;
+
+  GraphQLClient initGqlClient(String url) {
+    final link = HttpLink(
+      url,
+      defaultHeaders: {
+        'x-api-key': 'da2-qhpgfyyngje3tmlbbf5na574sq',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    final client = GraphQLClient(link: link, cache: GraphQLCache());
+
+    return client;
+  }
 
   @override
   void initState() {
@@ -42,17 +63,30 @@ class _InitRoutePage extends State<InitRoutePage> {
       await Amplify.DataStore.start();
       driver = await loadDriverInformation();
 
-      _subscription = Amplify.DataStore.observeQuery(MpsRoute.classType)
-          .listen((QuerySnapshot<MpsRoute> snapshot) {
-        for (MpsRoute route in snapshot.items) {
-          if (route.mpsRouteDriverId == driver!.id &&
-              (route.status != RouteStatus.DONE &&
-                  route.status != RouteStatus.ABORTED)) {
-            Modular.to.navigate('./inroute');
-            _subscription.cancel();
-          }
-        }
-      });
+      if (_routeViewModel.isRouteActived) {
+        Modular.to.navigate('./inroute');
+      }
+
+      var graphQLClient = initGqlClient(
+          'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
+
+      final subscriptionRequest =
+          ModelSubscriptions.onCreate(MpsRoute.classType);
+      final Stream<GraphQLResponse<MpsRoute>> operation = Amplify.API.subscribe(
+        subscriptionRequest,
+        onEstablished: () => print('Subscription established'),
+      );
+
+      subscription = operation.listen(
+        (event) async {
+          print('Subscription event data received: ${event.data}');
+          _routeViewModel.setlastActivedRoute(_createdRoute!);
+          _routeViewModel.setIsRouteActived(true);
+          Modular.to.navigate('./inroute');
+        },
+        onError: (Object e) => print('Error in subscription stream: $e'),
+      );
+
       googlePlace = GooglePlace('AIzaSyBtiYdIofNKeq0cN4gRG7L1ngEgkjDQ0Lo');
     });
 
@@ -85,6 +119,9 @@ class _InitRoutePage extends State<InitRoutePage> {
         distance: pickRouteFile.getLastRouteDistance(),
         duration: pickRouteFile.getLastRouteDuration());
 
+    setState(() {
+      _createdRoute = route;
+    });
     uploadRouteToAmplify(route);
   }
 
@@ -94,7 +131,7 @@ class _InitRoutePage extends State<InitRoutePage> {
   }
 
   Future<void> uploadRouteToAmplify(MpsRoute route) async {
-    for (MpsOrder order in route.orders!) {
+    for (MpOrder order in route.orders!) {
       await Amplify.DataStore.save(order.customer!.coordinates!);
       await Amplify.DataStore.save(order.customer!);
       await Amplify.DataStore.save(order);

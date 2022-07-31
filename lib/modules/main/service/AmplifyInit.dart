@@ -10,7 +10,8 @@ class AmplifyInit {
   final AmplifyDataStore _dataStorePlugin =
       AmplifyDataStore(modelProvider: ModelProvider.instance);
   final AmplifyStorageS3 _storagePlugin = AmplifyStorageS3();
-  final AmplifyAPI _apiPlugin = AmplifyAPI();
+  final AmplifyAPI _apiPlugin =
+      AmplifyAPI(modelProvider: ModelProvider.instance);
   final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
 
   Future<void> configureAmplify() async {

@@ -58,6 +58,7 @@ dependencies:
   flutter_modular: ^5.0.3
   shared_preferences: ^2.0.15
   google_place: ^0.4.7
+  graphql_flutter: ^5.1.0
 
 dev_dependencies:
   flutter_test:

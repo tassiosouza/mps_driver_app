@@ -8,10 +8,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mps_driver_app/models/Coordinates.dart';
 
 import '../../../models/Customer.dart';
-import '../../../models/MpsOrder.dart';
+import '../../../models/MpOrder.dart';
 
 class SecondRoute extends StatefulWidget {
-  final List<MpsOrder> orders;
+  final List<MpOrder> orders;
   const SecondRoute({Key? key, required this.orders}) : super(key: key);
 
   _ExampleState createState() => _ExampleState();
@@ -76,7 +76,7 @@ class _ExampleState extends State<SecondRoute> {
 
   List<LatLng> _createPoints(List orders) {
     final List<LatLng> points = <LatLng>[];
-    for (MpsOrder order in orders) {
+    for (MpOrder order in orders) {
       points.add(LatLng(order.customer!.coordinates!.latitude,
           order.customer!.coordinates!.longitude));
     }
@@ -122,15 +122,15 @@ class _ExampleState extends State<SecondRoute> {
     _getThingsOnStartup().then((value) {
       print('Async done');
     });
-    copyOrderList = List<MpsOrder>.from(widget.orders);
+    copyOrderList = List<MpOrder>.from(widget.orders);
     Customer customer = Customer(
         name: "Meal Prep Sunday",
         address: '',
         phone: '',
         coordinates:
             Coordinates(latitude: 33.1522247, longitude: -117.2310085));
-    MpsOrder order =
-        MpsOrder(number: '#00001', routeID: "routeId", customer: customer);
+    MpOrder order =
+        MpOrder(number: '#00001', routeID: "routeId", customer: customer);
     copyOrderList.insert(0, order);
     var index = 1;
     copyOrderList.forEach((order) => {

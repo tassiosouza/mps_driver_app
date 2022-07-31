@@ -22,7 +22,6 @@ import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:gql_http_link/gql_http_link.dart';
 
 class RoutePage extends StatefulWidget {
   RoutePage({Key? key}) : super(key: key);
@@ -355,7 +354,9 @@ class StateRoutePage extends State<RoutePage> {
         .copyWith(endTime: TemporalTimestamp(DateTime.now()));
     setRouteStatus(RouteStatus.DONE);
     _routeViewModel.setIsRouteActived(false);
-    Modular.to.navigate('./');
+    _routeViewModel.addToRoutesHistory(_routeViewModel.lastActivedRoute!);
+    Modular.to
+        .pushNamed('./details', arguments: _routeViewModel.lastActivedRoute);
   }
 
   Widget routeDone() {

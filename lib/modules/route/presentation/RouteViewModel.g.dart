@@ -41,6 +41,23 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     });
   }
 
+  late final _$finishLoadingHistoryAtom =
+      Atom(name: '_RouteViewModel.finishLoadingHistory', context: context);
+
+  @override
+  bool get finishLoadingHistory {
+    _$finishLoadingHistoryAtom.reportRead();
+    return super.finishLoadingHistory;
+  }
+
+  @override
+  set finishLoadingHistory(bool value) {
+    _$finishLoadingHistoryAtom.reportWrite(value, super.finishLoadingHistory,
+        () {
+      super.finishLoadingHistory = value;
+    });
+  }
+
   late final _$currentDriverAtom =
       Atom(name: '_RouteViewModel.currentDriver', context: context);
 
@@ -149,7 +166,7 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   }
 
   @override
-  dynamic addToRoutesHistory(MpsRoute route) {
+  dynamic addToRoutesHistory(MpsRoute? route) {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
         name: '_RouteViewModel.addToRoutesHistory');
     try {
@@ -219,6 +236,7 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
     return '''
 lastActivedRoute: ${lastActivedRoute},
 routesHistory: ${routesHistory},
+finishLoadingHistory: ${finishLoadingHistory},
 currentDriver: ${currentDriver},
 isRouteActived: ${isRouteActived},
 endAddress: ${endAddress},

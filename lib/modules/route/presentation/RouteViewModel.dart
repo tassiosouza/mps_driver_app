@@ -34,9 +34,16 @@ abstract class _RouteViewModel with Store {
   }
 
   @action
-  addToRoutesHistory(MpsRoute route) {
+  addToRoutesHistory(MpsRoute? route) {
     routesHistory ??= [];
-    routesHistory!.add(route);
+    routesHistory!.add(route!);
+  }
+
+  @observable
+  bool finishLoadingHistory = false;
+
+  setFinishLoadingHistory(bool finish) {
+    finishLoadingHistory = finish;
   }
 
   @action

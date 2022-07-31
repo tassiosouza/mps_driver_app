@@ -35,18 +35,16 @@ class HistoryPageState extends State<HistoryPage> {
     return client;
   }
 
-  processRoutes(List<MpsRoute> routes) {
+  processRoutes(List<MpsRoute> routes) async {
     if (routes.isEmpty) {
       _routeViewModel.setEmptyHistory();
       return;
     }
 
-    MpsRoute routeProcessed;
     List<MpOrder> ordersProcessed = [];
     for (int i = 0; i < routes.length; i++) {
-      routeProcessed = routes[i];
-      Amplify.DataStore.query(MpOrder.classType,
-              where: MpOrder.ROUTEID.eq(routeProcessed.getId()))
+      await Amplify.DataStore.query(MpOrder.classType,
+              where: MpOrder.ROUTEID.eq(routes[i].getId()))
           .then((orders) async => {
                 for (int k = 0; k < orders.length; k++)
                   {
@@ -57,18 +55,18 @@ class HistoryPageState extends State<HistoryPage> {
                                   customer: customer[0],
                                   deliveryInstruction:
                                       orders[k].updatedAt.toString())),
-                              if (ordersProcessed.length == orders.length)
-                                {
-                                  if (routeProcessed.status == RouteStatus.DONE)
-                                    {
-                                      _routeViewModel.addToRoutesHistory(
-                                          routeProcessed.copyWith(
-                                              orders: ordersProcessed)),
-                                    }
-                                }
                             }),
                   },
               });
+      if (routes[i].status == RouteStatus.DONE) {
+        _routeViewModel
+            .addToRoutesHistory(routes[i].copyWith(orders: ordersProcessed));
+        ordersProcessed = [];
+        if (i == routes.length - 1) //last route added
+        {
+          _routeViewModel.setFinishLoadingHistory(true);
+        }
+      }
     }
   }
 
@@ -189,7 +187,7 @@ class HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Observer(
         builder: (_) => Material(
-            child: _routeViewModel.routesHistory == null
+            child: !_routeViewModel.finishLoadingHistory
                 ? const Center(
                     child: CircularProgressIndicator(color: Colors.green))
                 : Column(children: [

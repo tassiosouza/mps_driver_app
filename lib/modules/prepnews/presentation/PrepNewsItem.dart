@@ -30,9 +30,11 @@ class _PrepNewsItemState extends State<PrepNewsItem> {
             ], crossAxisAlignment: CrossAxisAlignment.start)
           ]),
           SizedBox(height: 20),
+          Image.asset('assets/images/prepnewsimagedefault.png'),
+          SizedBox(height: 20),
           Text("Meal Prep Sunday", style: TextStyle(color: App_Colors.primary_color.value,
           fontWeight: FontWeight.w500)),
-          SizedBox(height: 10),
+          SizedBox(height: 7),
           Text("Welcome to our new colaborator! Joseph Allen! Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC"),
           SizedBox(height: 30)
         ]), padding: EdgeInsets.all(15)));

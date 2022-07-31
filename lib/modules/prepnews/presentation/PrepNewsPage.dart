@@ -26,7 +26,7 @@ class PrepNewsPageState extends State<PrepNewsPage>{
       SizedBox(height: 20),
       Divider(thickness: 1, color: App_Colors.grey_light.value),
       Container(child: ListView.builder(itemBuilder: (context, args) => PrepNewsItem(),
-        itemCount: 3, shrinkWrap: true, physics: NeverScrollableScrollPhysics(),), height: 900)
+        itemCount: 3, shrinkWrap: true, physics: NeverScrollableScrollPhysics()))
     ]));
   }
 

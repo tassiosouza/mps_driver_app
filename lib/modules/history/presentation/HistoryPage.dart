@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -38,6 +39,7 @@ class HistoryPageState extends State<HistoryPage> {
   processRoutes(List<MpsRoute> routes) async {
     if (routes.isEmpty) {
       _routeViewModel.setEmptyHistory();
+      _routeViewModel.setFinishLoadingHistory(true);
       return;
     }
 
@@ -70,17 +72,15 @@ class HistoryPageState extends State<HistoryPage> {
     }
   }
 
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // await _routeViewModel.syncAmplifyData();
+  Future<void> fetchRoutes() async {
+    _routeViewModel.setFinishLoadingHistory(false);
+    _routeViewModel.setEmptyHistory();
 
-      if (_routeViewModel.routesHistory == null) {
-        var graphQLClient = initGqlClient(
-            'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
+    var graphQLClient = initGqlClient(
+        'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
 
-        var result = await graphQLClient.query(QueryOptions(
-          document: gql('''query MyQuery {
+    var result = await graphQLClient.query(QueryOptions(
+      document: gql('''query MyQuery {
           listMpsRoutes(filter: {status: {eq: DONE}, mpsRouteDriverId: {eq: "721b705a-5799-4203-b62a-dea2a4b8cf0b"}}) {
             items {
               name
@@ -91,90 +91,26 @@ class HistoryPageState extends State<HistoryPage> {
             }
           }
         }'''),
-        ));
+    ));
 
-        Future.delayed(const Duration(milliseconds: 2000), () async {
+    Future.delayed(const Duration(milliseconds: 2000), () async {
 // Here you can write your code
 
-          await Amplify.DataStore.query(MpsRoute.classType,
-                  where: MpsRoute.MPSROUTEDRIVERID
-                      .eq(_routeViewModel.currentDriver!.id))
-              .then((routes) async => {processRoutes(routes)});
-        });
+      await Amplify.DataStore.query(MpsRoute.classType,
+              where: MpsRoute.MPSROUTEDRIVERID
+                  .eq(_routeViewModel.currentDriver!.id))
+          .then((routes) async => {processRoutes(routes)});
+    });
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // await _routeViewModel.syncAmplifyData();
+
+      if (_routeViewModel.routesHistory == null) {
+        await fetchRoutes();
       }
-
-      // //   //Build the list of routes with all the route information ready
-      // Amplify.DataStore.query(MpsRoute.classType,
-      //         where: MpsRoute.MPSROUTEDRIVERID
-      //             .eq(_routeViewModel.currentDriver?.getId()))
-      //     .the((QuerySnapshot<MpsRoute> snapshot) {
-      //   for (int i = 0; i < snapshot.items.length; i++) {
-      //     MpsRoute currentRoute = snapshot.items[i];
-      //     List<MpOrder> currentOrders = [];
-      //     Amplify.DataStore.query(MpOrder.classType,
-      //             where: MpOrder.ROUTEID.eq(currentRoute.getId()))
-      //         .then((orders) async => {
-      //               for (int k = 0; k < orders.length; k++)
-      //                 {
-      //                   await Amplify.DataStore.query(Customer.classType,
-      //                           where:
-      //                               Customer.ID.eq(orders[k].mpOrderCustomerId))
-      //                       .then((customer) => {
-      //                             currentOrders.add(orders[k].copyWith(
-      //                                 customer: customer[0],
-      //                                 deliveryInstruction:
-      //                                     orders[k].updatedAt.toString())),
-      //                             if (currentOrders.length == orders.length)
-      //                               {
-      //                                 if (currentRoute.status ==
-      //                                     RouteStatus.DONE)
-      //                                   {
-      //                                     _routesList.add(currentRoute.copyWith(
-      //                                         orders: currentOrders)),
-      //                                     //set orders state when retrieved the last list of orders from routes
-      //                                     setState(() {
-      //                                       _routesList = _routesList;
-      //                                       _isLoading = false;
-      //                                     }),
-      //                                   }
-      //                               }
-      //                           }),
-      //                 },
-      //             });
-      //   }
-      // });
-
-//       if (_routeViewModel.routesHistory == null) {
-//         // await _routeViewModel.fetchRoutesHistory();
-//         await _routeViewModel.syncAmplifyData();
-
-//         var graphQLClient = initGqlClient(
-//             'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
-
-//         var result = await graphQLClient.query(QueryOptions(
-//           document: gql('''query MyQuery {
-//   listMpsRoutes(filter: {status: {eq: DONE}, mpsRouteDriverId: {eq: "721b705a-5799-4203-b62a-dea2a4b8cf0b"}}) {
-//     items {
-//       name
-//       distance
-//       mpsRouteDriverId
-//       id
-//       status
-//     }
-//   }
-// }'''),
-//         ));
-
-//         if (!mounted) return;
-//         setStateIfMounted(() {
-//           _isLoading = false;
-//         });
-//       } else {
-//         setStateIfMounted(() {
-//           _isLoading = false;
-//           _routesList = _routeViewModel.routesHistory!;
-//         });
-//       }
     });
     super.initState();
   }
@@ -192,11 +128,17 @@ class HistoryPageState extends State<HistoryPage> {
                     child: CircularProgressIndicator(color: Colors.green))
                 : Column(children: [
                     const SizedBox(height: 70),
-                    Row(children: const [
-                      SizedBox(width: 20),
-                      Text("History",
+                    Row(children: [
+                      const SizedBox(width: 20),
+                      const Text("History",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500))
+                              fontSize: 18, fontWeight: FontWeight.w500)),
+                      const SizedBox(width: 200),
+                      OutlinedButton(
+                          onPressed: () {
+                            fetchRoutes();
+                          },
+                          child: const Icon(Icons.refresh))
                     ]),
                     const SizedBox(height: 20),
                     Row(children: const [
@@ -230,6 +172,7 @@ class HistoryPageState extends State<HistoryPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: const [
+                                      SizedBox(height: 150),
                                       Image(
                                           image: AssetImage(
                                               'assets/images/no_route.png')),

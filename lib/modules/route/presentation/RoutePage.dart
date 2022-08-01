@@ -51,9 +51,9 @@ class StateRoutePage extends State<RoutePage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var graphQLClient = initGqlClient(
-          'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   var graphQLClient = initGqlClient(
+    //       'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
 
 //       var result = await graphQLClient.query(QueryOptions(
 //         document: gql('''query MyQuery {
@@ -99,21 +99,21 @@ class StateRoutePage extends State<RoutePage> {
 
 //       MpsRoute fetchedRoute = mountFechedRoute(result);
 
-      //API Subscribe
-      final subscriptionRequest =
-          ModelSubscriptions.onUpdate(MpsRoute.classType);
-      final Stream<GraphQLResponse<MpsRoute>> operation = Amplify.API.subscribe(
-        subscriptionRequest,
-        onEstablished: () => print('Subscription established'),
-      );
-      String id = '';
-      subscription = operation.listen(
-        (event) async {
-          print('Subscription event data received: ${event.data}');
-        },
-        onError: (Object e) => print('Error in subscription stream: $e'),
-      );
-    });
+    //API Subscribe
+    //   final subscriptionRequest =
+    //       ModelSubscriptions.onUpdate(MpsRoute.classType);
+    //   final Stream<GraphQLResponse<MpsRoute>> operation = Amplify.API.subscribe(
+    //     subscriptionRequest,
+    //     onEstablished: () => print('Subscription established'),
+    //   );
+    //   String id = '';
+    //   subscription = operation.listen(
+    //     (event) async {
+    //       print('Subscription event data received: ${event.data}');
+    //     },
+    //     onError: (Object e) => print('Error in subscription stream: $e'),
+    //   );
+    // });
 
     //   _routesSubscription = Amplify.DataStore.observeQuery(MpsRoute.classType,
     //           where: MpsRoute.MPSROUTEDRIVERID.eq(driver?.getId()))
@@ -355,8 +355,8 @@ class StateRoutePage extends State<RoutePage> {
     setRouteStatus(RouteStatus.DONE);
     _routeViewModel.setIsRouteActived(false);
     _routeViewModel.addToRoutesHistory(_routeViewModel.lastActivedRoute!);
-    Modular.to
-        .pushNamed('./details', arguments: _routeViewModel.lastActivedRoute);
+    Modular.to.pushNamed('/main/history/details',
+        arguments: _routeViewModel.lastActivedRoute);
   }
 
   Widget routeDone() {

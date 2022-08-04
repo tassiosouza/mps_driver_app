@@ -11,17 +11,17 @@
           "EMAIL"
         ],
         "signupAttributes": [
-          "EMAIL",
           "NAME",
+          "EMAIL",
           "PHONE_NUMBER"
         ],
         "passwordProtectionSettings": {
           "passwordPolicyMinLength": 8,
           "passwordPolicyCharacters": [
             "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
             "REQUIRES_NUMBERS",
-            "REQUIRES_SYMBOLS",
-            "REQUIRES_UPPERCASE"
+            "REQUIRES_SYMBOLS"
           ]
         },
         "mfaConfiguration": "OFF",
@@ -63,6 +63,12 @@
           ]
         }
       }
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "service": "amplifyhosting",
+      "type": "cicd"
     }
   }
 }

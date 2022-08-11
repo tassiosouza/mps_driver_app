@@ -10,6 +10,7 @@ import 'package:mps_driver_app/models/ModelProvider.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../models/MpsRoute.dart';
+import '../../../utils/GetListRouteFromQuery.dart';
 import '../../route/presentation/RouteViewModel.dart';
 import 'components/HistoryRouteListItem.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -75,32 +76,46 @@ class HistoryPageState extends State<HistoryPage> {
   Future<void> fetchRoutes() async {
     _routeViewModel.setFinishLoadingHistory(false);
     _routeViewModel.setEmptyHistory();
+    String? driverId = _routeViewModel.currentDriver?.id;
 
     var graphQLClient = initGqlClient(
         'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
 
-    var result = await graphQLClient.query(QueryOptions(
-      document: gql('''query MyQuery {
-          listMpsRoutes(filter: {status: {eq: DONE}, mpsRouteDriverId: {eq: "721b705a-5799-4203-b62a-dea2a4b8cf0b"}}) {
-            items {
+    String readRoute = """
+  query MyQuery {
+    listMpsRoutes(filter: {mpsRouteDriverId: {eq: "$driverId"}}) {
+      items {
+        name
+        startTime
+        status
+        endTime
+        cost
+        id
+        distance
+        duration
+        orders {
+          items {
+            number
+            createdAt
+            customer {
+              address
               name
-              distance
-              mpsRouteDriverId
-              id
-              status
             }
+            id
+            status
           }
-        }'''),
+        }
+      }
+    }
+  }
+    """;
+    var result = await graphQLClient.query(QueryOptions(
+      document: gql(readRoute),
     ));
-
-    Future.delayed(const Duration(milliseconds: 2000), () async {
-// Here you can write your code
-
-      await Amplify.DataStore.query(MpsRoute.classType,
-              where: MpsRoute.MPSROUTEDRIVERID
-                  .eq(_routeViewModel.currentDriver!.id))
-          .then((routes) async => {processRoutes(routes)});
-    });
+    final getListRouteFromQuery = GetListRouteFromQuery();
+    processRoutes(getListRouteFromQuery(result.data?['listMpsRoutes']));
+    print(result.data);
+    print(_routeViewModel.currentDriver!.id);
   }
 
   @override

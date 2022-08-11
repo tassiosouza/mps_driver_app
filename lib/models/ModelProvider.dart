@@ -25,6 +25,7 @@ import 'Customer.dart';
 import 'Driver.dart';
 import 'MpOrder.dart';
 import 'MpsRoute.dart';
+import 'MpsSubscription.dart';
 import 'Todo.dart';
 
 export 'Coordinates.dart';
@@ -33,15 +34,16 @@ export 'Driver.dart';
 export 'MpOrder.dart';
 export 'MpsOrderStatus.dart';
 export 'MpsRoute.dart';
+export 'MpsSubscription.dart';
 export 'OrderStatus.dart';
 export 'RouteStatus.dart';
 export 'Todo.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "639765611fb72f1189a6acb577d66334";
+  String version = "417ba6b7727738995c1a142656317e5b";
   @override
-  List<ModelSchema> modelSchemas = [Coordinates.schema, Customer.schema, Driver.schema, MpOrder.schema, MpsRoute.schema, Todo.schema];
+  List<ModelSchema> modelSchemas = [Coordinates.schema, Customer.schema, Driver.schema, MpOrder.schema, MpsRoute.schema, MpsSubscription.schema, Todo.schema];
   static final ModelProvider _instance = ModelProvider();
   @override
   List<ModelSchema> customTypeSchemas = [];
@@ -60,6 +62,8 @@ class ModelProvider implements ModelProviderInterface {
         return MpOrder.classType;
       case "MpsRoute":
         return MpsRoute.classType;
+      case "MpsSubscription":
+        return MpsSubscription.classType;
       case "Todo":
         return Todo.classType;
       default:

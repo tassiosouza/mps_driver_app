@@ -23,25 +23,26 @@ import 'package:amplify_core/amplify_core.dart';
 import 'Coordinates.dart';
 import 'Customer.dart';
 import 'Driver.dart';
-import 'MpOrder.dart';
-import 'MpsRoute.dart';
+import 'MOrder.dart';
+import 'MRoute.dart';
+import 'MpsSubscription.dart';
 import 'Todo.dart';
 
 export 'Coordinates.dart';
 export 'Customer.dart';
 export 'Driver.dart';
-export 'MpOrder.dart';
-export 'MpsOrderStatus.dart';
-export 'MpsRoute.dart';
+export 'MOrder.dart';
+export 'MRoute.dart';
+export 'MpsSubscription.dart';
 export 'OrderStatus.dart';
 export 'RouteStatus.dart';
 export 'Todo.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "639765611fb72f1189a6acb577d66334";
+  String version = "3393d0f0aeb8587806a75a8214d4467a";
   @override
-  List<ModelSchema> modelSchemas = [Coordinates.schema, Customer.schema, Driver.schema, MpOrder.schema, MpsRoute.schema, Todo.schema];
+  List<ModelSchema> modelSchemas = [Coordinates.schema, Customer.schema, Driver.schema, MOrder.schema, MRoute.schema, MpsSubscription.schema, Todo.schema];
   static final ModelProvider _instance = ModelProvider();
   @override
   List<ModelSchema> customTypeSchemas = [];
@@ -56,10 +57,12 @@ class ModelProvider implements ModelProviderInterface {
         return Customer.classType;
       case "Driver":
         return Driver.classType;
-      case "MpOrder":
-        return MpOrder.classType;
-      case "MpsRoute":
-        return MpsRoute.classType;
+      case "MOrder":
+        return MOrder.classType;
+      case "MRoute":
+        return MRoute.classType;
+      case "MpsSubscription":
+        return MpsSubscription.classType;
       case "Todo":
         return Todo.classType;
       default:

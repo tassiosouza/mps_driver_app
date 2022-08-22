@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 
-import '../../../../models/MpOrder.dart';
-import '../../../../models/MpsRoute.dart';
+import '../../../../models/MOrder.dart';
+import '../../../../models/MRoute.dart';
 import '../../../../theme/CustomIcon.dart';
 import '../../../../utils/Utils.dart';
 import 'package:intl/intl.dart';
@@ -12,25 +15,23 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 
 // ignore: must_be_immutable
 class HistoryRouteListItem extends StatelessWidget {
-  MpsRoute route;
+  MRoute? route;
   HistoryRouteListItem(this.route, {Key? key}) : super(key: key);
 
   String getFormattedAddress() {
-    MpOrder lastOrder = route.orders![route.orders!.length - 1];
-    int zipcodeIndex = lastOrder.customer!.address.split(',').length - 1;
-    String street = lastOrder.customer!.address.split(',')[0];
-    String zipcode = lastOrder.customer!.address.split(',')[zipcodeIndex];
+    MOrder lastOrder = route!.orders![route!.orders!.length - 1];
+    int zipcodeIndex = lastOrder.address!.split(',').length - 1;
+    String street = lastOrder.address!.split(',')[0];
+    String zipcode = lastOrder.address!.split(',')[zipcodeIndex];
     return '$street, $zipcode';
   }
 
   @override
   Widget build(BuildContext context) {
-    String title = route.name.split('.')[0];
+    String title = route!.name.split('.')[0];
 
-    String getVerboseDateTimeRepresentation(
-        TemporalTimestamp? temporalTimestamp) {
-      DateTime datetime = DateTime.fromMillisecondsSinceEpoch(
-          temporalTimestamp!.toSeconds() * 1000);
+    String getVerboseDateTimeRepresentation(double? temporalTimestamp) {
+      DateTime datetime = DateTime.fromMillisecondsSinceEpoch(1000);
       DateTime now = DateTime.now();
       DateTime justNow = now.subtract(Duration(minutes: 1));
       DateTime localDateTime = datetime.toLocal();
@@ -67,7 +68,7 @@ class HistoryRouteListItem extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
         padding: const EdgeInsets.only(left: 20),
-        child: Text(getVerboseDateTimeRepresentation(route.startTime),
+        child: Text(getVerboseDateTimeRepresentation(route!.startTime),
             style: TextStyle(fontSize: 12, color: App_Colors.grey_text.value)),
       ),
       GestureDetector(
@@ -137,21 +138,21 @@ class HistoryRouteListItem extends StatelessWidget {
                                         const SizedBox(width: 5),
                                         Text(
                                             Utils.getFormattedTime(
-                                                route.startTime, false),
+                                                route!.startTime, false),
                                             style:
                                                 const TextStyle(fontSize: 12)),
                                         const Text(" - ",
                                             style: TextStyle(fontSize: 12)),
                                         Text(
                                             Utils.getFormattedTime(
-                                                route.endTime, false),
+                                                route!.endTime, false),
                                             style:
                                                 const TextStyle(fontSize: 12)),
                                         const SizedBox(width: 50),
                                         const Icon(CustomIcon.bag_driver_icon,
                                             size: 17),
                                         const SizedBox(width: 5),
-                                        Text(route.orders!.length.toString(),
+                                        Text(route!.orders!.length.toString(),
                                             style:
                                                 const TextStyle(fontSize: 12))
                                       ]))
@@ -177,7 +178,7 @@ class HistoryRouteListItem extends StatelessWidget {
                                                       .grey_text.value)),
                                           Text(
                                               Utils.getFormattedDistance(
-                                                  route.distance, true),
+                                                  route!.distance, true),
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: App_Colors
@@ -196,7 +197,7 @@ class HistoryRouteListItem extends StatelessWidget {
                                                       .grey_text.value)),
                                           Text(
                                               Utils.getFormattedDuration(
-                                                  route.duration),
+                                                  route!.duration),
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: App_Colors

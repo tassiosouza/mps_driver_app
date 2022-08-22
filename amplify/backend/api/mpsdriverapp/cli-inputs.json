@@ -6,19 +6,15 @@
     "gqlSchemaPath": "/Users/tassiosouza/Projects/mps_driver_app/amplify/backend/api/mpsdriverapp/schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
-      "expirationTime": 30,
-      "apiKeyExpirationDate": "2022-08-29T08:22:18.909Z",
-      "keyDescription": "api key description"
+      "expirationTime": 365,
+      "apiKeyExpirationDate": "2023-08-21T22:37:24.437Z",
+      "keyDescription": "dec"
     },
     "additionalAuthTypes": [
       {
-        "mode": "AWS_IAM"
+        "mode": "AMAZON_COGNITO_USER_POOLS",
+        "cognitoUserPoolId": "authmpsdriverapp"
       }
-    ],
-    "conflictResolution": {
-      "defaultResolutionStrategy": {
-        "type": "AUTOMERGE"
-      }
-    }
+    ]
   }
 }

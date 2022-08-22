@@ -1,32 +1,35 @@
 import 'package:google_place/google_place.dart';
 import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/Services/DriverService.dart';
-import 'package:mps_driver_app/models/MpsRoute.dart';
+import 'package:mps_driver_app/models/MRoute.dart';
 import 'package:mps_driver_app/modules/route/services/ManageEndAddress.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import '../../../models/Customer.dart';
 import '../../../models/Driver.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 
-import '../../../models/MpOrder.dart';
+import '../../../models/MOrder.dart';
 import '../../../models/RouteStatus.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import '../../../store/main/MainStore.dart';
 part 'RouteViewModel.g.dart';
 
 class RouteViewModel = _RouteViewModel with _$RouteViewModel;
 
 abstract class _RouteViewModel with Store {
   ManageEndAddress manageEndAddress = ManageEndAddress();
+  final _mainStore = Modular.get<MainStore>();
 
   @observable
-  MpsRoute? lastActivedRoute = null;
+  MRoute? lastActivedRoute = null;
 
   @action
-  setlastActivedRoute(MpsRoute? route) {
+  setlastActivedRoute(MRoute? route) {
     lastActivedRoute = route;
   }
 
   @observable
-  List<MpsRoute>? routesHistory = null;
+  List<MRoute>? routesHistory = null;
 
   @action
   setEmptyHistory() {
@@ -34,7 +37,7 @@ abstract class _RouteViewModel with Store {
   }
 
   @action
-  addToRoutesHistory(MpsRoute? route) {
+  addToRoutesHistory(MRoute? route) {
     routesHistory ??= [];
     routesHistory!.add(route!);
   }
@@ -53,9 +56,9 @@ abstract class _RouteViewModel with Store {
   }
 
   syncAmplifyData() async {
-    await Amplify.DataStore.clear();
-    await Amplify.DataStore.stop();
-    await Amplify.DataStore.start();
+    // await Amplify.DataStore.clear();
+    // await Amplify.DataStore.stop();
+    // await Amplify.DataStore.start();
   }
 
   @observable
@@ -63,7 +66,7 @@ abstract class _RouteViewModel with Store {
 
   @action
   fetchCurrentDriver() async {
-    currentDriver ??= await DriverService.getCurrentDriver();
+    currentDriver = _mainStore.currentDriver;
     return currentDriver;
   }
 

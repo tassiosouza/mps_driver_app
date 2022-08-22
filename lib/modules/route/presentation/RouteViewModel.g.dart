@@ -13,13 +13,13 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
       Atom(name: '_RouteViewModel.lastActivedRoute', context: context);
 
   @override
-  MpsRoute? get lastActivedRoute {
+  MRoute? get lastActivedRoute {
     _$lastActivedRouteAtom.reportRead();
     return super.lastActivedRoute;
   }
 
   @override
-  set lastActivedRoute(MpsRoute? value) {
+  set lastActivedRoute(MRoute? value) {
     _$lastActivedRouteAtom.reportWrite(value, super.lastActivedRoute, () {
       super.lastActivedRoute = value;
     });
@@ -29,13 +29,13 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
       Atom(name: '_RouteViewModel.routesHistory', context: context);
 
   @override
-  List<MpsRoute>? get routesHistory {
+  List<MRoute>? get routesHistory {
     _$routesHistoryAtom.reportRead();
     return super.routesHistory;
   }
 
   @override
-  set routesHistory(List<MpsRoute>? value) {
+  set routesHistory(List<MRoute>? value) {
     _$routesHistoryAtom.reportWrite(value, super.routesHistory, () {
       super.routesHistory = value;
     });
@@ -144,7 +144,7 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
       ActionController(name: '_RouteViewModel', context: context);
 
   @override
-  dynamic setlastActivedRoute(MpsRoute? route) {
+  dynamic setlastActivedRoute(MRoute? route) {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
         name: '_RouteViewModel.setlastActivedRoute');
     try {
@@ -166,7 +166,7 @@ mixin _$RouteViewModel on _RouteViewModel, Store {
   }
 
   @override
-  dynamic addToRoutesHistory(MpsRoute? route) {
+  dynamic addToRoutesHistory(MRoute? route) {
     final _$actionInfo = _$_RouteViewModelActionController.startAction(
         name: '_RouteViewModel.addToRoutesHistory');
     try {

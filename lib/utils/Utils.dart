@@ -16,11 +16,9 @@ class Utils {
     return timeFormatted;
   }
 
-  static String getFormattedTime(
-      TemporalTimestamp? timestamp, bool withSuffix) {
+  static String getFormattedTime(double? timestamp, bool withSuffix) {
     if (timestamp == null) return '-';
-    DateTime dateTime =
-        DateTime.fromMillisecondsSinceEpoch(timestamp.toSeconds() * 1000);
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(1000);
 
     String timeFormatted =
         DateFormat(withSuffix ? 'kk:mm a' : 'kk:mm').format(dateTime);

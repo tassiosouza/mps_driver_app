@@ -5,9 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mps_driver_app/modules/main/presentation/MainViewModel.dart';
 import 'package:mps_driver_app/modules/main/presentation/components/CheckList.dart';
 import 'package:mps_driver_app/modules/main/presentation/components/Clothes.dart';
+import 'package:mps_driver_app/store/main/MainStore.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
@@ -30,12 +30,11 @@ enum WhatchingStatus {
 
 class OnBoardingState extends State<OnBoarding> {
   bool _isLoading = true;
-  Driver? _currentDriver;
   int _currentStep = 1;
   String _currentMessage = '';
   WhatchingStatus _videoStatus = WhatchingStatus.idle;
   late Video videoStateFullWidget;
-  final _routeViewModel = Modular.get<RouteViewModel>();
+  final _mainStore = Modular.get<MainStore>();
 
   void setStatus(WhatchingStatus status) {
     setState(() {
@@ -62,7 +61,7 @@ class OnBoardingState extends State<OnBoarding> {
   Widget getCurrentWidget() {
     switch (_currentStep) {
       case 1:
-        return Welcome(_routeViewModel.currentDriver);
+        return Welcome(_mainStore.currentDriver);
       case 2:
         return videoStateFullWidget;
       case 3:
@@ -202,10 +201,8 @@ class OnBoardingState extends State<OnBoarding> {
       }
     } else if (_currentStep == 5) {
       Modular.to.navigate('main/route/');
-      Driver updatedDriver =
-          _routeViewModel.currentDriver!.copyWith(onBoard: true);
-      _routeViewModel.updateDriverInformation(updatedDriver);
-      Amplify.DataStore.save(updatedDriver);
+      Driver updatedDriver = _mainStore.currentDriver!.copyWith(onBoard: true);
+      _mainStore.updateDriverInformation(updatedDriver);
     } else {
       setState(() {
         _currentStep = _currentStep + 1;

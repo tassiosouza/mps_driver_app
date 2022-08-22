@@ -25,15 +25,15 @@ class DriverService {
     );
     bool result = false;
     _routeViewModel.updateDriverInformation(updatedDriver);
-    await Amplify.DataStore.save(updatedDriver)
-        .then((driver) => {
-              result = true,
-            })
-        .catchError((Object error) {
-      log('An error occurred trying to update driver name');
-      // ignore: invalid_return_type_for_catch_error
-      return result = false;
-    });
+    // await Amplify.DataStore.save(updatedDriver)
+    //     .then((driver) => {
+    //           result = true,
+    //         })
+    //     .catchError((Object error) {
+    //   log('An error occurred trying to update driver name');
+    //   // ignore: invalid_return_type_for_catch_error
+    //   return result = false;
+    // });
     return result;
   }
 
@@ -43,15 +43,15 @@ class DriverService {
     );
     bool result = false;
     _routeViewModel.updateDriverInformation(updatedDriver);
-    await Amplify.DataStore.save(updatedDriver)
-        .then((driver) => {
-              result = true,
-            })
-        .catchError((Object error) {
-      log('An error occurred trying to update driver phone');
-      // ignore: invalid_return_type_for_catch_error
-      return result = false;
-    });
+    // await Amplify.DataStore.save(updatedDriver)
+    //     .then((driver) => {
+    //           result = true,
+    //         })
+    //     .catchError((Object error) {
+    //   log('An error occurred trying to update driver phone');
+    //   // ignore: invalid_return_type_for_catch_error
+    //   return result = false;
+    // });
     return result;
   }
 
@@ -61,15 +61,15 @@ class DriverService {
     );
     bool result = false;
     _routeViewModel.updateDriverInformation(updatedDriver);
-    await Amplify.DataStore.save(updatedDriver)
-        .then((driver) => {
-              result = true,
-            })
-        .catchError((Object error) {
-      log('An error occurred trying to update driver car capacity');
-      // ignore: invalid_return_type_for_catch_error
-      return result = false;
-    });
+    // await Amplify.DataStore.save(updatedDriver)
+    //     .then((driver) => {
+    //           result = true,
+    //         })
+    //     .catchError((Object error) {
+    //   log('An error occurred trying to update driver car capacity');
+    //   // ignore: invalid_return_type_for_catch_error
+    //   return result = false;
+    // });
     return result;
   }
 
@@ -98,8 +98,8 @@ class DriverService {
         });
 
     try {
-      List<Driver> driversQueryResult =
-          await Amplify.DataStore.query(Driver.classType);
+      List<Driver> driversQueryResult = [];
+      // await Amplify.DataStore.query(Driver.classType);
 
       Driver? registeredDriver;
       for (Driver driver in driversQueryResult) {
@@ -111,7 +111,7 @@ class DriverService {
       if (registeredDriver == null) {
         await createNewAmplifyDriver(amplifyDriverId!, amplifyDriverName,
             amplifyDriverEmail, amplifyPhoneNumber);
-        driversQueryResult = await Amplify.DataStore.query(Driver.classType);
+        // driversQueryResult = await Amplify.DataStore.query(Driver.classType);
         for (Driver driver in driversQueryResult) {
           if (driver.owner == amplifyDriverId) {
             registeredDriver = driver;
@@ -135,6 +135,6 @@ class DriverService {
         phone: phone,
         carCapacity: 22,
         onBoard: false);
-    await Amplify.DataStore.save(item);
+    // await Amplify.DataStore.save(item);
   }
 }

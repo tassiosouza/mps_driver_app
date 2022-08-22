@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mps_driver_app/models/Client.dart';
-import '../../../../models/MpOrder.dart';
+import '../../../../models/MOrder.dart';
 import '../../../../theme/app_colors.dart';
 
 class InstructionsDialog {
-  Future<void> call(BuildContext context, MpOrder order) async {
+  Future<void> call(BuildContext context, MOrder order) async {
     final width = MediaQuery.of(context).size.width;
     showDialog(
         context: context,
@@ -43,7 +43,7 @@ class InstructionsDialog {
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                              text: order.customer!.address,
+                              text: order.address,
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,

@@ -2,16 +2,16 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/history/HistoryModule.dart';
 import 'package:mps_driver_app/modules/main/presentation/MainLoading.dart';
 import 'package:mps_driver_app/modules/main/presentation/MainPage.dart';
-import 'package:mps_driver_app/modules/main/presentation/MainViewModel.dart';
 import 'package:mps_driver_app/modules/main/presentation/OnBoarding.dart';
 import 'package:mps_driver_app/modules/prepnews/PrepNewsModule.dart';
 import 'package:mps_driver_app/modules/profile/ProfileModule.dart';
 import 'package:mps_driver_app/modules/rating/RatingModule.dart';
+import 'package:mps_driver_app/store/main/MainStore.dart';
 import '../route/RouteModule.dart';
 
 class AppModule extends Module {
   @override
-  List<Bind> get binds => [Bind.singleton((i) => MainViewModel())];
+  List<Bind> get binds => [Bind.singleton((i) => MainStore())];
 
   @override
   List<Module> get imports => [RouteModule(), ProfileModule()];

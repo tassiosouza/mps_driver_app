@@ -10,6 +10,7 @@ import 'package:google_place/google_place.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/models/RouteStatus.dart';
 import 'package:mps_driver_app/modules/route/presentation/RouteViewModel.dart';
+import 'package:mps_driver_app/store/route/RouteStore.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../../Services/DriverService.dart';
 import '../../../components/AppDialogs.dart';
@@ -33,54 +34,17 @@ class _InitRoutePage extends State<InitRoutePage> {
   bool _isCustomSelected = false;
   String _customAddress = 'Custom';
   late GooglePlace googlePlace;
-  late StreamSubscription<QuerySnapshot<MpsRoute>> _subscription;
   PickRouteFile pickRouteFile = PickRouteFile();
   Timer? _debounce;
-  late MpsRoute? _createdRoute;
-  final _routeViewModel = Modular.get<RouteViewModel>();
-
-  StreamSubscription<GraphQLResponse<MpsRoute>>? subscription;
-
-  GraphQLClient initGqlClient(String url) {
-    final link = HttpLink(
-      url,
-      defaultHeaders: {
-        'x-api-key': 'da2-qhpgfyyngje3tmlbbf5na574sq',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    final client = GraphQLClient(link: link, cache: GraphQLCache());
-
-    return client;
-  }
+  late MRoute? _createdRoute;
+  final _routeStore = Modular.get<RouteStore>();
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (_routeViewModel.isRouteActived) {
+      if (_routeStore.isRouteActived) {
         Modular.to.navigate('./inroute');
       }
-
-      var graphQLClient = initGqlClient(
-          'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
-
-      final subscriptionRequest =
-          ModelSubscriptions.onCreate(MpsRoute.classType);
-      final Stream<GraphQLResponse<MpsRoute>> operation = Amplify.API.subscribe(
-        subscriptionRequest,
-        onEstablished: () => print('Subscription established'),
-      );
-
-      subscription = operation.listen(
-        (event) async {
-          print('Subscription event data received: ${event.data}');
-          _routeViewModel.setlastActivedRoute(_createdRoute!);
-          _routeViewModel.setIsRouteActived(true);
-          Modular.to.navigate('./inroute');
-        },
-        onError: (Object e) => print('Error in subscription stream: $e'),
-      );
 
       googlePlace = GooglePlace('AIzaSyBtiYdIofNKeq0cN4gRG7L1ngEgkjDQ0Lo');
     });
@@ -90,9 +54,9 @@ class _InitRoutePage extends State<InitRoutePage> {
 
   Future<void> uploadRoute() async {
     Modular.to.pushNamed('./loading');
-    MpsRoute route = MpsRoute(
-        name: "Route - ${_routeViewModel.currentDriver!.name}",
-        mpsRouteDriverId: _routeViewModel.currentDriver!.id,
+    MRoute route = MRoute(
+        name: "Route - ${_routeStore.currentDriver!.name}",
+        mRouteDriverId: _routeStore.currentDriver!.id,
         status: RouteStatus.PLANNED);
 
     var orderList = await pickRouteFile.readOrdersFromFile(
@@ -115,13 +79,11 @@ class _InitRoutePage extends State<InitRoutePage> {
         "Chose a correct address or check Meal Prep Sunday to load your route.");
   }
 
-  Future<void> uploadRouteToAmplify(MpsRoute route) async {
-    for (MpOrder order in route.orders!) {
-      await Amplify.DataStore.save(order.customer!.coordinates!);
-      await Amplify.DataStore.save(order.customer!);
-      await Amplify.DataStore.save(order);
+  Future<void> uploadRouteToAmplify(MRoute route) async {
+    for (MOrder order in route.orders!) {
+      // await Amplify.DataStore.save(order);
     }
-    await Amplify.DataStore.save(route);
+    // await Amplify.DataStore.save(route);
   }
 
   Future<void> getCustomAddress() {

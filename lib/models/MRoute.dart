@@ -25,23 +25,26 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the MpsRoute type in your schema. */
+/** This is an auto generated class representing the MRoute type in your schema. */
 @immutable
-class MpsRoute extends Model {
-  static const classType = const _MpsRouteModelType();
+class MRoute extends Model {
+  static const classType = const _MRouteModelType();
   final String id;
   final double? _cost;
-  final TemporalTimestamp? _startTime;
-  final TemporalTimestamp? _endTime;
+  final double? _startTime;
+  final double? _endTime;
   final RouteStatus? _status;
   final String? _name;
-  final List<MpOrder>? _orders;
+  final List<MOrder>? _orders;
   final Driver? _driver;
   final int? _distance;
   final int? _duration;
+  final String? _location;
+  final String? _routePlanName;
+  final double? _routeDate;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
-  final String? _mpsRouteDriverId;
+  final String? _mRouteDriverId;
 
   @override
   getInstanceType() => classType;
@@ -55,11 +58,11 @@ class MpsRoute extends Model {
     return _cost;
   }
   
-  TemporalTimestamp? get startTime {
+  double? get startTime {
     return _startTime;
   }
   
-  TemporalTimestamp? get endTime {
+  double? get endTime {
     return _endTime;
   }
   
@@ -80,7 +83,7 @@ class MpsRoute extends Model {
     }
   }
   
-  List<MpOrder>? get orders {
+  List<MOrder>? get orders {
     return _orders;
   }
   
@@ -96,6 +99,18 @@ class MpsRoute extends Model {
     return _duration;
   }
   
+  String? get location {
+    return _location;
+  }
+  
+  String? get routePlanName {
+    return _routePlanName;
+  }
+  
+  double? get routeDate {
+    return _routeDate;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -104,25 +119,28 @@ class MpsRoute extends Model {
     return _updatedAt;
   }
   
-  String? get mpsRouteDriverId {
-    return _mpsRouteDriverId;
+  String? get mRouteDriverId {
+    return _mRouteDriverId;
   }
   
-  const MpsRoute._internal({required this.id, cost, startTime, endTime, status, required name, orders, driver, distance, duration, createdAt, updatedAt, mpsRouteDriverId}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _name = name, _orders = orders, _driver = driver, _distance = distance, _duration = duration, _createdAt = createdAt, _updatedAt = updatedAt, _mpsRouteDriverId = mpsRouteDriverId;
+  const MRoute._internal({required this.id, cost, startTime, endTime, status, required name, orders, driver, distance, duration, location, routePlanName, routeDate, createdAt, updatedAt, mRouteDriverId}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _name = name, _orders = orders, _driver = driver, _distance = distance, _duration = duration, _location = location, _routePlanName = routePlanName, _routeDate = routeDate, _createdAt = createdAt, _updatedAt = updatedAt, _mRouteDriverId = mRouteDriverId;
   
-  factory MpsRoute({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, required String name, List<MpOrder>? orders, Driver? driver, int? distance, int? duration, String? mpsRouteDriverId}) {
-    return MpsRoute._internal(
+  factory MRoute({String? id, double? cost, double? startTime, double? endTime, RouteStatus? status, required String name, List<MOrder>? orders, Driver? driver, int? distance, int? duration, String? location, String? routePlanName, double? routeDate, String? mRouteDriverId}) {
+    return MRoute._internal(
       id: id == null ? UUID.getUUID() : id,
       cost: cost,
       startTime: startTime,
       endTime: endTime,
       status: status,
       name: name,
-      orders: orders != null ? List<MpOrder>.unmodifiable(orders) : orders,
+      orders: orders != null ? List<MOrder>.unmodifiable(orders) : orders,
       driver: driver,
       distance: distance,
       duration: duration,
-      mpsRouteDriverId: mpsRouteDriverId);
+      location: location,
+      routePlanName: routePlanName,
+      routeDate: routeDate,
+      mRouteDriverId: mRouteDriverId);
   }
   
   bool equals(Object other) {
@@ -132,7 +150,7 @@ class MpsRoute extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is MpsRoute &&
+    return other is MRoute &&
       id == other.id &&
       _cost == other._cost &&
       _startTime == other._startTime &&
@@ -143,7 +161,10 @@ class MpsRoute extends Model {
       _driver == other._driver &&
       _distance == other._distance &&
       _duration == other._duration &&
-      _mpsRouteDriverId == other._mpsRouteDriverId;
+      _location == other._location &&
+      _routePlanName == other._routePlanName &&
+      _routeDate == other._routeDate &&
+      _mRouteDriverId == other._mRouteDriverId;
   }
   
   @override
@@ -153,7 +174,7 @@ class MpsRoute extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("MpsRoute {");
+    buffer.write("MRoute {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("cost=" + (_cost != null ? _cost!.toString() : "null") + ", ");
     buffer.write("startTime=" + (_startTime != null ? _startTime!.toString() : "null") + ", ");
@@ -162,16 +183,19 @@ class MpsRoute extends Model {
     buffer.write("name=" + "$_name" + ", ");
     buffer.write("distance=" + (_distance != null ? _distance!.toString() : "null") + ", ");
     buffer.write("duration=" + (_duration != null ? _duration!.toString() : "null") + ", ");
+    buffer.write("location=" + "$_location" + ", ");
+    buffer.write("routePlanName=" + "$_routePlanName" + ", ");
+    buffer.write("routeDate=" + (_routeDate != null ? _routeDate!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
-    buffer.write("mpsRouteDriverId=" + "$_mpsRouteDriverId");
+    buffer.write("mRouteDriverId=" + "$_mRouteDriverId");
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  MpsRoute copyWith({String? id, double? cost, TemporalTimestamp? startTime, TemporalTimestamp? endTime, RouteStatus? status, String? name, List<MpOrder>? orders, Driver? driver, int? distance, int? duration, String? mpsRouteDriverId}) {
-    return MpsRoute._internal(
+  MRoute copyWith({String? id, double? cost, double? startTime, double? endTime, RouteStatus? status, String? name, List<MOrder>? orders, Driver? driver, int? distance, int? duration, String? location, String? routePlanName, double? routeDate, String? mRouteDriverId}) {
+    return MRoute._internal(
       id: id ?? this.id,
       cost: cost ?? this.cost,
       startTime: startTime ?? this.startTime,
@@ -182,20 +206,23 @@ class MpsRoute extends Model {
       driver: driver ?? this.driver,
       distance: distance ?? this.distance,
       duration: duration ?? this.duration,
-      mpsRouteDriverId: mpsRouteDriverId ?? this.mpsRouteDriverId);
+      location: location ?? this.location,
+      routePlanName: routePlanName ?? this.routePlanName,
+      routeDate: routeDate ?? this.routeDate,
+      mRouteDriverId: mRouteDriverId ?? this.mRouteDriverId);
   }
   
-  MpsRoute.fromJson(Map<String, dynamic> json)  
+  MRoute.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _cost = (json['cost'] as num?)?.toDouble(),
-      _startTime = json['startTime'] != null ? TemporalTimestamp.fromSeconds(json['startTime']) : null,
-      _endTime = json['endTime'] != null ? TemporalTimestamp.fromSeconds(json['endTime']) : null,
+      _startTime = (json['startTime'] as num?)?.toDouble(),
+      _endTime = (json['endTime'] as num?)?.toDouble(),
       _status = enumFromString<RouteStatus>(json['status'], RouteStatus.values),
       _name = json['name'],
       _orders = json['orders'] is List
         ? (json['orders'] as List)
           .where((e) => e?['serializedData'] != null)
-          .map((e) => MpOrder.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .map((e) => MOrder.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
       _driver = json['driver']?['serializedData'] != null
@@ -203,15 +230,18 @@ class MpsRoute extends Model {
         : null,
       _distance = (json['distance'] as num?)?.toInt(),
       _duration = (json['duration'] as num?)?.toInt(),
+      _location = json['location'],
+      _routePlanName = json['routePlanName'],
+      _routeDate = (json['routeDate'] as num?)?.toDouble(),
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
-      _mpsRouteDriverId = json['mpsRouteDriverId'];
+      _mRouteDriverId = json['mRouteDriverId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'cost': _cost, 'startTime': _startTime?.toSeconds(), 'endTime': _endTime?.toSeconds(), 'status': enumToString(_status), 'name': _name, 'orders': _orders?.map((MpOrder? e) => e?.toJson()).toList(), 'driver': _driver?.toJson(), 'distance': _distance, 'duration': _duration, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mpsRouteDriverId': _mpsRouteDriverId
+    'id': id, 'cost': _cost, 'startTime': _startTime, 'endTime': _endTime, 'status': enumToString(_status), 'name': _name, 'orders': _orders?.map((MOrder? e) => e?.toJson()).toList(), 'driver': _driver?.toJson(), 'distance': _distance, 'duration': _duration, 'location': _location, 'routePlanName': _routePlanName, 'routeDate': _routeDate, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mRouteDriverId': _mRouteDriverId
   };
 
-  static final QueryField ID = QueryField(fieldName: "mpsRoute.id");
+  static final QueryField ID = QueryField(fieldName: "mRoute.id");
   static final QueryField COST = QueryField(fieldName: "cost");
   static final QueryField STARTTIME = QueryField(fieldName: "startTime");
   static final QueryField ENDTIME = QueryField(fieldName: "endTime");
@@ -219,16 +249,19 @@ class MpsRoute extends Model {
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField ORDERS = QueryField(
     fieldName: "orders",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (MpOrder).toString()));
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (MOrder).toString()));
   static final QueryField DRIVER = QueryField(
     fieldName: "driver",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Driver).toString()));
   static final QueryField DISTANCE = QueryField(fieldName: "distance");
   static final QueryField DURATION = QueryField(fieldName: "duration");
-  static final QueryField MPSROUTEDRIVERID = QueryField(fieldName: "mpsRouteDriverId");
+  static final QueryField LOCATION = QueryField(fieldName: "location");
+  static final QueryField ROUTEPLANNAME = QueryField(fieldName: "routePlanName");
+  static final QueryField ROUTEDATE = QueryField(fieldName: "routeDate");
+  static final QueryField MROUTEDRIVERID = QueryField(fieldName: "mRouteDriverId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "MpsRoute";
-    modelSchemaDefinition.pluralName = "MpsRoutes";
+    modelSchemaDefinition.name = "MRoute";
+    modelSchemaDefinition.pluralName = "MRoutes";
     
     modelSchemaDefinition.authRules = [
       AuthRule(
@@ -244,59 +277,77 @@ class MpsRoute extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsRoute.COST,
+      key: MRoute.COST,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsRoute.STARTTIME,
+      key: MRoute.STARTTIME,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.timestamp)
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsRoute.ENDTIME,
+      key: MRoute.ENDTIME,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.timestamp)
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsRoute.STATUS,
+      key: MRoute.STATUS,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsRoute.NAME,
+      key: MRoute.NAME,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-      key: MpsRoute.ORDERS,
+      key: MRoute.ORDERS,
       isRequired: false,
-      ofModelName: (MpOrder).toString(),
-      associatedKey: MpOrder.ROUTEID
+      ofModelName: (MOrder).toString(),
+      associatedKey: MOrder.ROUTEID
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-      key: MpsRoute.DRIVER,
+      key: MRoute.DRIVER,
       isRequired: false,
       ofModelName: (Driver).toString(),
       associatedKey: Driver.ID
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsRoute.DISTANCE,
+      key: MRoute.DISTANCE,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.int)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsRoute.DURATION,
+      key: MRoute.DURATION,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MRoute.LOCATION,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MRoute.ROUTEPLANNAME,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MRoute.ROUTEDATE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -314,18 +365,18 @@ class MpsRoute extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpsRoute.MPSROUTEDRIVERID,
+      key: MRoute.MROUTEDRIVERID,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
   });
 }
 
-class _MpsRouteModelType extends ModelType<MpsRoute> {
-  const _MpsRouteModelType();
+class _MRouteModelType extends ModelType<MRoute> {
+  const _MRouteModelType();
   
   @override
-  MpsRoute fromJson(Map<String, dynamic> jsonData) {
-    return MpsRoute.fromJson(jsonData);
+  MRoute fromJson(Map<String, dynamic> jsonData) {
+    return MRoute.fromJson(jsonData);
   }
 }

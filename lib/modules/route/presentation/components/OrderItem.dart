@@ -15,14 +15,14 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import '../../../../models/Driver.dart';
-import '../../../../models/MpOrder.dart';
+import '../../../../models/MOrder.dart';
 import '../../../../components/AppDialogs.dart';
-import '../../../../models/MpsOrderStatus.dart';
+import '../../../../models/OrderStatus.dart';
 import '../../../profile/presentation/ProfileViewModel.dart';
 import 'InstructionsDialog.dart';
 
 class OrderItem extends StatelessWidget {
-  MpOrder order;
+  MOrder order;
   int orderIndex;
   Driver currentDriver;
   StateRoutePage routePageReference;
@@ -46,10 +46,9 @@ class OrderItem extends StatelessWidget {
       await profileViewModel.setDefaultMap();
     }
     await profileViewModel.chosenMap.value.showMarker(
-      coords: Coords(order.customer!.coordinates!.latitude,
-          order.customer!.coordinates!.longitude),
-      title: order.customer!.name,
-      description: order.customer!.name,
+      coords: Coords(order.latitude!, order.longitude!),
+      title: order.customerName!,
+      description: order.customerName!,
     );
   }
 
@@ -58,10 +57,10 @@ class OrderItem extends StatelessWidget {
     if (url.isEmpty) {
       throw Exception('Photo exception');
     } else {
-      smsService?.sendSmsWithPhoto(order.customer!.phone, url);
-      updateOrderStatusTo(MpsOrderStatus.DELIVERED);
+      smsService?.sendSmsWithPhoto(order.phone!, url);
+      updateOrderStatusTo(OrderStatus.DELIVERED);
       routePageReference.verifyAllOrderStatusChanged(
-          MpsOrderStatus.DELIVERED, MpsOrderStatus.CANCELED);
+          OrderStatus.DELIVERED, OrderStatus.CANCELED);
     }
   }
 
@@ -116,22 +115,22 @@ class OrderItem extends StatelessWidget {
     }
   }
 
-  Future<void> updateOrderStatusTo(MpsOrderStatus newStatus) async {
+  Future<void> updateOrderStatusTo(OrderStatus newStatus) async {
     await routePageReference.setOrderStatus(orderIndex, newStatus);
   }
 
-  void verifyAll(MpsOrderStatus status) {}
+  void verifyAll(OrderStatus status) {}
 
   Future<void> checkBagConfirmDialog(BuildContext context) {
     return AppDialogs().showConfirmDialog(
         context,
         () => {
-              updateOrderStatusTo(MpsOrderStatus.CHECKED),
+              updateOrderStatusTo(OrderStatus.CHECKED),
               routePageReference
-                  .verifyAllOrderStatusChanged(MpsOrderStatus.CHECKED)
+                  .verifyAllOrderStatusChanged(OrderStatus.CHECKED)
             },
         "Meal Instructions",
-        order.mealsInstruction);
+        order.mealPlan);
   }
 
   Future<void> wrongCheckBagClickDialog(BuildContext context) {
@@ -190,13 +189,13 @@ class OrderItem extends StatelessWidget {
                       RichText(
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                              text: order.customer!.name,
+                              text: order.customerName!,
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: App_Colors.black_text.value,
                                   fontFamily: 'Poppins'))),
-                      Text(order.customer!.address,
+                      Text(order.address!,
                           style: TextStyle(
                               color: App_Colors.black_text.value,
                               fontFamily: 'Poppins',
@@ -298,7 +297,7 @@ class OrderItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  order.number,
+                  order.number!,
                   style: TextStyle(
                       color: App_Colors.grey_text.value,
                       fontSize: 14,
@@ -313,9 +312,9 @@ class OrderItem extends StatelessWidget {
     );
   }
 
-  bagIcon(MpsOrderStatus? status, BuildContext context) {
+  bagIcon(OrderStatus? status, BuildContext context) {
     Widget widget;
-    if (order.status != MpsOrderStatus.RECEIVED) {
+    if (order.status != OrderStatus.CREATED) {
       widget = getButtonIcon(Icons.check, order, false);
     } else {
       widget = SizedBox(
@@ -348,14 +347,14 @@ class OrderItem extends StatelessWidget {
     return widget;
   }
 
-  getButtonIcon(IconData icon, MpOrder order, bool isCall) {
+  getButtonIcon(IconData icon, MOrder order, bool isCall) {
     return SizedBox(
         width: 30,
         height: 28,
         child: ElevatedButton(
           onPressed: () => isCall
-              ? _launchCaller(order.customer!.phone.replaceAll(' ', ''))
-              : _sendSMS("", [order.customer!.phone]),
+              ? _launchCaller(order.phone!.replaceAll(' ', ''))
+              : _sendSMS("", [order.phone!]),
           style: ButtonStyle(
             shape: MaterialStateProperty.all(const CircleBorder()),
             padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
@@ -371,11 +370,11 @@ class OrderItem extends StatelessWidget {
         ));
   }
 
-  getCameraIcon(MpOrder order, BuildContext context) {
+  getCameraIcon(MOrder order, BuildContext context) {
     Icon icon;
-    if (order.status == MpsOrderStatus.DELIVERED) {
+    if (order.status == OrderStatus.DELIVERED) {
       icon = Icon(Icons.check, size: 17, color: App_Colors.primary_color.value);
-    } else if (order.status == MpsOrderStatus.CANCELED) {
+    } else if (order.status == OrderStatus.CANCELED) {
       icon =
           Icon(Icons.cancel, size: 17, color: App_Colors.primary_color.value);
     } else {

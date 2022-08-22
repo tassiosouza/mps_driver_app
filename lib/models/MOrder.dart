@@ -24,21 +24,25 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the MpOrder type in your schema. */
+/** This is an auto generated class representing the MOrder type in your schema. */
 @immutable
-class MpOrder extends Model {
-  static const classType = const _MpOrderModelType();
+class MOrder extends Model {
+  static const classType = const _MOrderModelType();
   final String id;
   final String? _number;
   final String? _deliveryInstruction;
-  final String? _mealsInstruction;
-  final MpsOrderStatus? _status;
-  final Customer? _customer;
+  final String? _mealPlan;
+  final OrderStatus? _status;
+  final String? _customerName;
   final int? _eta;
   final String? _routeID;
+  final String? _address;
+  final double? _latitude;
+  final double? _longitude;
+  final double? _orderDate;
+  final String? _phone;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
-  final String? _mpOrderCustomerId;
 
   @override
   getInstanceType() => classType;
@@ -48,33 +52,24 @@ class MpOrder extends Model {
     return id;
   }
   
-  String get number {
-    try {
-      return _number!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get number {
+    return _number;
   }
   
   String? get deliveryInstruction {
     return _deliveryInstruction;
   }
   
-  String? get mealsInstruction {
-    return _mealsInstruction;
+  String? get mealPlan {
+    return _mealPlan;
   }
   
-  MpsOrderStatus? get status {
+  OrderStatus? get status {
     return _status;
   }
   
-  Customer? get customer {
-    return _customer;
+  String? get customerName {
+    return _customerName;
   }
   
   int? get eta {
@@ -94,6 +89,26 @@ class MpOrder extends Model {
     }
   }
   
+  String? get address {
+    return _address;
+  }
+  
+  double? get latitude {
+    return _latitude;
+  }
+  
+  double? get longitude {
+    return _longitude;
+  }
+  
+  double? get orderDate {
+    return _orderDate;
+  }
+  
+  String? get phone {
+    return _phone;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -102,23 +117,23 @@ class MpOrder extends Model {
     return _updatedAt;
   }
   
-  String? get mpOrderCustomerId {
-    return _mpOrderCustomerId;
-  }
+  const MOrder._internal({required this.id, number, deliveryInstruction, mealPlan, status, customerName, eta, required routeID, address, latitude, longitude, orderDate, phone, createdAt, updatedAt}): _number = number, _deliveryInstruction = deliveryInstruction, _mealPlan = mealPlan, _status = status, _customerName = customerName, _eta = eta, _routeID = routeID, _address = address, _latitude = latitude, _longitude = longitude, _orderDate = orderDate, _phone = phone, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  const MpOrder._internal({required this.id, required number, deliveryInstruction, mealsInstruction, status, customer, eta, required routeID, createdAt, updatedAt, mpOrderCustomerId}): _number = number, _deliveryInstruction = deliveryInstruction, _mealsInstruction = mealsInstruction, _status = status, _customer = customer, _eta = eta, _routeID = routeID, _createdAt = createdAt, _updatedAt = updatedAt, _mpOrderCustomerId = mpOrderCustomerId;
-  
-  factory MpOrder({String? id, required String number, String? deliveryInstruction, String? mealsInstruction, MpsOrderStatus? status, Customer? customer, int? eta, required String routeID, String? mpOrderCustomerId}) {
-    return MpOrder._internal(
+  factory MOrder({String? id, String? number, String? deliveryInstruction, String? mealPlan, OrderStatus? status, String? customerName, int? eta, required String routeID, String? address, double? latitude, double? longitude, double? orderDate, String? phone}) {
+    return MOrder._internal(
       id: id == null ? UUID.getUUID() : id,
       number: number,
       deliveryInstruction: deliveryInstruction,
-      mealsInstruction: mealsInstruction,
+      mealPlan: mealPlan,
       status: status,
-      customer: customer,
+      customerName: customerName,
       eta: eta,
       routeID: routeID,
-      mpOrderCustomerId: mpOrderCustomerId);
+      address: address,
+      latitude: latitude,
+      longitude: longitude,
+      orderDate: orderDate,
+      phone: phone);
   }
   
   bool equals(Object other) {
@@ -128,16 +143,20 @@ class MpOrder extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is MpOrder &&
+    return other is MOrder &&
       id == other.id &&
       _number == other._number &&
       _deliveryInstruction == other._deliveryInstruction &&
-      _mealsInstruction == other._mealsInstruction &&
+      _mealPlan == other._mealPlan &&
       _status == other._status &&
-      _customer == other._customer &&
+      _customerName == other._customerName &&
       _eta == other._eta &&
       _routeID == other._routeID &&
-      _mpOrderCustomerId == other._mpOrderCustomerId;
+      _address == other._address &&
+      _latitude == other._latitude &&
+      _longitude == other._longitude &&
+      _orderDate == other._orderDate &&
+      _phone == other._phone;
   }
   
   @override
@@ -147,68 +166,81 @@ class MpOrder extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("MpOrder {");
+    buffer.write("MOrder {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("number=" + "$_number" + ", ");
     buffer.write("deliveryInstruction=" + "$_deliveryInstruction" + ", ");
-    buffer.write("mealsInstruction=" + "$_mealsInstruction" + ", ");
+    buffer.write("mealPlan=" + "$_mealPlan" + ", ");
     buffer.write("status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
+    buffer.write("customerName=" + "$_customerName" + ", ");
     buffer.write("eta=" + (_eta != null ? _eta!.toString() : "null") + ", ");
     buffer.write("routeID=" + "$_routeID" + ", ");
+    buffer.write("address=" + "$_address" + ", ");
+    buffer.write("latitude=" + (_latitude != null ? _latitude!.toString() : "null") + ", ");
+    buffer.write("longitude=" + (_longitude != null ? _longitude!.toString() : "null") + ", ");
+    buffer.write("orderDate=" + (_orderDate != null ? _orderDate!.toString() : "null") + ", ");
+    buffer.write("phone=" + "$_phone" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
-    buffer.write("mpOrderCustomerId=" + "$_mpOrderCustomerId");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  MpOrder copyWith({String? id, String? number, String? deliveryInstruction, String? mealsInstruction, MpsOrderStatus? status, Customer? customer, int? eta, String? routeID, String? mpOrderCustomerId}) {
-    return MpOrder._internal(
+  MOrder copyWith({String? id, String? number, String? deliveryInstruction, String? mealPlan, OrderStatus? status, String? customerName, int? eta, String? routeID, String? address, double? latitude, double? longitude, double? orderDate, String? phone}) {
+    return MOrder._internal(
       id: id ?? this.id,
       number: number ?? this.number,
       deliveryInstruction: deliveryInstruction ?? this.deliveryInstruction,
-      mealsInstruction: mealsInstruction ?? this.mealsInstruction,
+      mealPlan: mealPlan ?? this.mealPlan,
       status: status ?? this.status,
-      customer: customer ?? this.customer,
+      customerName: customerName ?? this.customerName,
       eta: eta ?? this.eta,
       routeID: routeID ?? this.routeID,
-      mpOrderCustomerId: mpOrderCustomerId ?? this.mpOrderCustomerId);
+      address: address ?? this.address,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      orderDate: orderDate ?? this.orderDate,
+      phone: phone ?? this.phone);
   }
   
-  MpOrder.fromJson(Map<String, dynamic> json)  
+  MOrder.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _number = json['number'],
       _deliveryInstruction = json['deliveryInstruction'],
-      _mealsInstruction = json['mealsInstruction'],
-      _status = enumFromString<MpsOrderStatus>(json['status'], MpsOrderStatus.values),
-      _customer = json['customer']?['serializedData'] != null
-        ? Customer.fromJson(new Map<String, dynamic>.from(json['customer']['serializedData']))
-        : null,
+      _mealPlan = json['mealPlan'],
+      _status = enumFromString<OrderStatus>(json['status'], OrderStatus.values),
+      _customerName = json['customerName'],
       _eta = (json['eta'] as num?)?.toInt(),
       _routeID = json['routeID'],
+      _address = json['address'],
+      _latitude = (json['latitude'] as num?)?.toDouble(),
+      _longitude = (json['longitude'] as num?)?.toDouble(),
+      _orderDate = (json['orderDate'] as num?)?.toDouble(),
+      _phone = json['phone'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
-      _mpOrderCustomerId = json['mpOrderCustomerId'];
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'number': _number, 'deliveryInstruction': _deliveryInstruction, 'mealsInstruction': _mealsInstruction, 'status': enumToString(_status), 'customer': _customer?.toJson(), 'eta': _eta, 'routeID': _routeID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mpOrderCustomerId': _mpOrderCustomerId
+    'id': id, 'number': _number, 'deliveryInstruction': _deliveryInstruction, 'mealPlan': _mealPlan, 'status': enumToString(_status), 'customerName': _customerName, 'eta': _eta, 'routeID': _routeID, 'address': _address, 'latitude': _latitude, 'longitude': _longitude, 'orderDate': _orderDate, 'phone': _phone, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
-  static final QueryField ID = QueryField(fieldName: "mpOrder.id");
+  static final QueryField ID = QueryField(fieldName: "mOrder.id");
   static final QueryField NUMBER = QueryField(fieldName: "number");
   static final QueryField DELIVERYINSTRUCTION = QueryField(fieldName: "deliveryInstruction");
-  static final QueryField MEALSINSTRUCTION = QueryField(fieldName: "mealsInstruction");
+  static final QueryField MEALPLAN = QueryField(fieldName: "mealPlan");
   static final QueryField STATUS = QueryField(fieldName: "status");
-  static final QueryField CUSTOMER = QueryField(
-    fieldName: "customer",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Customer).toString()));
+  static final QueryField CUSTOMERNAME = QueryField(fieldName: "customerName");
   static final QueryField ETA = QueryField(fieldName: "eta");
   static final QueryField ROUTEID = QueryField(fieldName: "routeID");
-  static final QueryField MPORDERCUSTOMERID = QueryField(fieldName: "mpOrderCustomerId");
+  static final QueryField ADDRESS = QueryField(fieldName: "address");
+  static final QueryField LATITUDE = QueryField(fieldName: "latitude");
+  static final QueryField LONGITUDE = QueryField(fieldName: "longitude");
+  static final QueryField ORDERDATE = QueryField(fieldName: "orderDate");
+  static final QueryField PHONE = QueryField(fieldName: "phone");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "MpOrder";
-    modelSchemaDefinition.pluralName = "MpOrders";
+    modelSchemaDefinition.name = "MOrder";
+    modelSchemaDefinition.pluralName = "MOrders";
     
     modelSchemaDefinition.authRules = [
       AuthRule(
@@ -224,45 +256,74 @@ class MpOrder extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpOrder.NUMBER,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpOrder.DELIVERYINSTRUCTION,
+      key: MOrder.NUMBER,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpOrder.MEALSINSTRUCTION,
+      key: MOrder.DELIVERYINSTRUCTION,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpOrder.STATUS,
+      key: MOrder.MEALPLAN,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.STATUS,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)
     ));
     
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-      key: MpOrder.CUSTOMER,
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.CUSTOMERNAME,
       isRequired: false,
-      ofModelName: (Customer).toString(),
-      associatedKey: Customer.ID
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpOrder.ETA,
+      key: MOrder.ETA,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.int)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpOrder.ROUTEID,
+      key: MOrder.ROUTEID,
       isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.ADDRESS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.LATITUDE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.LONGITUDE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.ORDERDATE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.PHONE,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
@@ -279,20 +340,14 @@ class MpOrder extends Model {
       isReadOnly: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
     ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MpOrder.MPORDERCUSTOMERID,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
   });
 }
 
-class _MpOrderModelType extends ModelType<MpOrder> {
-  const _MpOrderModelType();
+class _MOrderModelType extends ModelType<MOrder> {
+  const _MOrderModelType();
   
   @override
-  MpOrder fromJson(Map<String, dynamic> jsonData) {
-    return MpOrder.fromJson(jsonData);
+  MOrder fromJson(Map<String, dynamic> jsonData) {
+    return MOrder.fromJson(jsonData);
   }
 }

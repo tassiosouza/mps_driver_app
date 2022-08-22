@@ -33,7 +33,7 @@ class StateRoutePage extends State<RoutePage> {
   int dotCount = 4;
   final _routeViewModel = Modular.get<RouteViewModel>();
 
-  StreamSubscription<GraphQLResponse<MpsRoute>>? subscription;
+  StreamSubscription<GraphQLResponse<MRoute>>? subscription;
 
   GraphQLClient initGqlClient(String url) {
     final link = HttpLink(
@@ -210,8 +210,7 @@ class StateRoutePage extends State<RoutePage> {
     TwilioSmsService smsService =
         TwilioSmsService(_routeViewModel.currentDriver!);
     for (var order in _routeViewModel.lastActivedRoute!.orders!) {
-      smsService.sendSms(
-          order.customer!.name, order.customer!.phone, order.eta);
+      smsService.sendSms(order.customerName!, order.phone!, order.eta);
     }
   }
 
@@ -250,10 +249,10 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   void setRouteStatus(RouteStatus newStatus) {
-    MpsRoute newRoute =
+    MRoute newRoute =
         _routeViewModel.lastActivedRoute!.copyWith(status: newStatus);
     _routeViewModel.setlastActivedRoute(newRoute);
-    Amplify.DataStore.save(newRoute);
+    // Amplify.DataStore.save(newRoute);
   }
 
   RouteStatus? getRouteStatus() {
@@ -267,8 +266,7 @@ class StateRoutePage extends State<RoutePage> {
         setRouteStatus(RouteStatus.CHECKING_BAGS);
       }
 
-      DateTime time = DateTime.fromMillisecondsSinceEpoch(
-          _routeViewModel.lastActivedRoute!.startTime!.toSeconds() * 1000);
+      DateTime time = DateTime.fromMillisecondsSinceEpoch(1000);
       String timeFormatted = DateFormat('kk:mm').format(time);
       return Container(
           padding: const EdgeInsets.only(left: 18, top: 5),
@@ -280,8 +278,8 @@ class StateRoutePage extends State<RoutePage> {
     } else {
       return GestureDetector(
           onTap: () {
-            _routeViewModel.lastActivedRoute = _routeViewModel.lastActivedRoute!
-                .copyWith(startTime: TemporalTimestamp(DateTime.now()));
+            _routeViewModel.lastActivedRoute =
+                _routeViewModel.lastActivedRoute!.copyWith(startTime: 000);
             setRouteStatus(RouteStatus.INITIATED);
           },
           child: Container(
@@ -350,8 +348,8 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   void endRoute() {
-    _routeViewModel.lastActivedRoute = _routeViewModel.lastActivedRoute!
-        .copyWith(endTime: TemporalTimestamp(DateTime.now()));
+    _routeViewModel.lastActivedRoute =
+        _routeViewModel.lastActivedRoute!.copyWith(endTime: 000);
     setRouteStatus(RouteStatus.DONE);
     _routeViewModel.setIsRouteActived(false);
     _routeViewModel.addToRoutesHistory(_routeViewModel.lastActivedRoute!);
@@ -382,7 +380,7 @@ class StateRoutePage extends State<RoutePage> {
           return 2;
         case RouteStatus.DONE:
         case RouteStatus.ON_HOLD:
-        case RouteStatus.ABORTED:
+        case RouteStatus.CANCELED:
           return 3;
         default:
           return 0;
@@ -391,18 +389,18 @@ class StateRoutePage extends State<RoutePage> {
     return 0;
   }
 
-  void verifyAllOrderStatusChanged(MpsOrderStatus status,
-      [MpsOrderStatus? additionalStatus]) {
+  void verifyAllOrderStatusChanged(OrderStatus status,
+      [OrderStatus? additionalStatus]) {
     bool allChanged = true;
-    for (MpOrder order in _routeViewModel.lastActivedRoute!.orders!) {
+    for (MOrder order in _routeViewModel.lastActivedRoute!.orders!) {
       allChanged = (order.status == status || order.status == additionalStatus);
       if (!allChanged) break;
     }
     if (allChanged) {
-      if (status == MpsOrderStatus.CHECKED) {
+      if (status == OrderStatus.CHECKED) {
         Future.delayed(Duration.zero, finishCheckBagDialog);
         setRouteStatus(RouteStatus.SENDING_WELCOME_MESSAGES);
-      } else if (status == MpsOrderStatus.DELIVERED ||
+      } else if (status == OrderStatus.DELIVERED ||
           status == additionalStatus) {
         setRouteStatus(RouteStatus.DONE);
       }
@@ -573,14 +571,14 @@ class StateRoutePage extends State<RoutePage> {
         : const Center();
   }
 
-  Future<void> setOrderStatus(int orderIndex, MpsOrderStatus newStatus) async {
+  Future<void> setOrderStatus(int orderIndex, OrderStatus newStatus) async {
     _routeViewModel.lastActivedRoute!.orders![orderIndex] = _routeViewModel
         .lastActivedRoute!.orders![orderIndex]
         .copyWith(status: newStatus);
     try {
       _routeViewModel.setlastActivedRoute(_routeViewModel.lastActivedRoute!);
-      await Amplify.DataStore.save(
-          _routeViewModel.lastActivedRoute!.orders![orderIndex]);
+      // await Amplify.DataStore.save(
+      //     _routeViewModel.lastActivedRoute!.orders![orderIndex]);
     } catch (e) {
       print('An error occurred while saving Order Status: $e');
     }

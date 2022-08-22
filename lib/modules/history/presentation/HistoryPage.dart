@@ -7,12 +7,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
+import 'package:mps_driver_app/store/history/HistoryStore.dart';
 import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
-import '../../../models/MpsRoute.dart';
+import '../../../models/MRoute.dart';
 import '../../route/presentation/RouteViewModel.dart';
 import 'components/HistoryRouteListItem.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
 class HistoryPage extends StatefulWidget {
   @override
@@ -20,110 +20,31 @@ class HistoryPage extends StatefulWidget {
 }
 
 class HistoryPageState extends State<HistoryPage> {
-  final _routeViewModel = Modular.get<RouteViewModel>();
-
-  GraphQLClient initGqlClient(String url) {
-    final link = HttpLink(
-      url,
-      defaultHeaders: {
-        'x-api-key': 'da2-qhpgfyyngje3tmlbbf5na574sq',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    final client = GraphQLClient(link: link, cache: GraphQLCache());
-
-    return client;
-  }
-
-  processRoutes(List<MpsRoute> routes) async {
-    if (routes.isEmpty) {
-      _routeViewModel.setEmptyHistory();
-      _routeViewModel.setFinishLoadingHistory(true);
-      return;
-    }
-
-    List<MpOrder> ordersProcessed = [];
-    for (int i = 0; i < routes.length; i++) {
-      await Amplify.DataStore.query(MpOrder.classType,
-              where: MpOrder.ROUTEID.eq(routes[i].getId()))
-          .then((orders) async => {
-                for (int k = 0; k < orders.length; k++)
-                  {
-                    await Amplify.DataStore.query(Customer.classType,
-                            where: Customer.ID.eq(orders[k].mpOrderCustomerId))
-                        .then((customer) => {
-                              ordersProcessed.add(orders[k].copyWith(
-                                  customer: customer[0],
-                                  deliveryInstruction:
-                                      orders[k].updatedAt.toString())),
-                            }),
-                  },
-              });
-      if (routes[i].status == RouteStatus.DONE) {
-        _routeViewModel
-            .addToRoutesHistory(routes[i].copyWith(orders: ordersProcessed));
-        ordersProcessed = [];
-        if (i == routes.length - 1) //last route added
-        {
-          _routeViewModel.setFinishLoadingHistory(true);
-        }
-      }
-    }
-  }
+  final _historyStore = Modular.get<HistoryStore>();
 
   Future<void> fetchRoutes() async {
-    _routeViewModel.setFinishLoadingHistory(false);
-    _routeViewModel.setEmptyHistory();
-
-    var graphQLClient = initGqlClient(
-        'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
-
-    var result = await graphQLClient.query(QueryOptions(
-      document: gql('''query MyQuery {
-          listMpsRoutes(filter: {status: {eq: DONE}, mpsRouteDriverId: {eq: "721b705a-5799-4203-b62a-dea2a4b8cf0b"}}) {
-            items {
-              name
-              distance
-              mpsRouteDriverId
-              id
-              status
-            }
-          }
-        }'''),
-    ));
-
-    Future.delayed(const Duration(milliseconds: 2000), () async {
-// Here you can write your code
-
-      await Amplify.DataStore.query(MpsRoute.classType,
-              where: MpsRoute.MPSROUTEDRIVERID
-                  .eq(_routeViewModel.currentDriver!.id))
-          .then((routes) async => {processRoutes(routes)});
-    });
+    _historyStore.setFinishLoadingHistory(false);
+    _historyStore.setEmptyHistory();
+    await _historyStore.fetchRoutes();
+    _historyStore.setFinishLoadingHistory(true);
   }
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // await _routeViewModel.syncAmplifyData();
-
-      if (_routeViewModel.routesHistory == null) {
+      if (_historyStore.routesHistory == null) {
         await fetchRoutes();
+        _historyStore.setFinishLoadingHistory(true);
       }
     });
     super.initState();
-  }
-
-  void setStateIfMounted(f) {
-    if (mounted) setState(f);
   }
 
   @override
   Widget build(BuildContext context) {
     return Observer(
         builder: (_) => Material(
-            child: !_routeViewModel.finishLoadingHistory
+            child: !_historyStore.finishLoadingHistory
                 ? const Center(
                     child: CircularProgressIndicator(color: Colors.green))
                 : Column(children: [
@@ -150,19 +71,19 @@ class HistoryPageState extends State<HistoryPage> {
                     const Divider(thickness: 1),
                     Observer(
                         builder: (_) => Container(
-                            child: _routeViewModel.routesHistory!.isNotEmpty
+                            child: _historyStore.routesHistory!.isNotEmpty
                                 ? Expanded(
                                     child: ListView.builder(
                                         padding: const EdgeInsets.only(
                                             top: 20, bottom: 20),
-                                        itemCount: _routeViewModel
-                                            .routesHistory!.length,
+                                        itemCount:
+                                            _historyStore.routesHistory!.length,
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           return Observer(
                                               builder: (_) =>
                                                   HistoryRouteListItem(
-                                                      _routeViewModel
+                                                      _historyStore
                                                               .routesHistory![
                                                           index]));
                                         }))

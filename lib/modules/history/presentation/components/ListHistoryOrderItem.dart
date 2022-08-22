@@ -7,13 +7,13 @@ import '../../../../utils/Utils.dart';
 
 // ignore: must_be_immutable
 class ListHistoryOrderItem extends StatelessWidget {
-  MpOrder order;
+  MOrder order;
   ListHistoryOrderItem(this.order, {Key? key}) : super(key: key);
 
   String getFormattedAddress() {
-    int zipcodeIndex = order.customer!.address.split(',').length - 1;
-    String street = order.customer!.address.split(',')[0];
-    String zipcode = order.customer!.address.split(',')[zipcodeIndex];
+    int zipcodeIndex = order.address!.split(',').length - 1;
+    String street = order.address!.split(',')[0];
+    String zipcode = order.address!.split(',')[zipcodeIndex];
     return '$street, $zipcode';
   }
 
@@ -31,13 +31,13 @@ class ListHistoryOrderItem extends StatelessWidget {
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Text(
-                  order.number,
+                  order.number!,
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 Text(order.status.toString().split('.')[1])
               ]),
               const SizedBox(height: 10),
-              Text(order.customer!.name),
+              Text(order.customerName!),
               Text(getFormattedAddress())
             ],
           ),

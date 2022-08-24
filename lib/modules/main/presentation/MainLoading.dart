@@ -30,7 +30,8 @@ class MainLoadingState extends State<MainLoading> {
         driver = _mainStore.currentDriver!;
       }
 
-      String nextPage = false ? '/main' : '/onboarding';
+      String nextPage =
+          _mainStore.currentDriver!.onBoard == true ? '/main' : '/onboarding';
       Modular.to.navigate(nextPage);
     });
     super.initState();

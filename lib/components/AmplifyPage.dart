@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
-import 'package:mps_driver_app/Services/DriverService.dart';
 import '../models/Todo.dart';
 
 class MyAppTodos extends StatelessWidget {
@@ -62,14 +60,14 @@ class _TodosPageState extends State<TodosPage> {
     await Amplify.Auth.getCurrentUser()
         .then((value) => driverId = value.userId);
 
-    _subscription = Amplify.DataStore.observeQuery(Todo.classType,
-            where: Todo.OWNER.eq(driverId))
-        .listen((QuerySnapshot<Todo> snapshot) {
-      setState(() {
-        _todos = snapshot.items;
-        if (_isLoading) _isLoading = false;
-      });
-    });
+    // _subscription = Amplify.DataStore.observeQuery(Todo.classType,
+    //         where: Todo.OWNER.eq(driverId))
+    //     .listen((QuerySnapshot<Todo> snapshot) {
+    //   setState(() {
+    //     _todos = snapshot.items;
+    //     if (_isLoading) _isLoading = false;
+    //   });
+    // });
   }
 
   @override
@@ -120,7 +118,7 @@ class TodoItem extends StatelessWidget {
     try {
       // to delete data from DataStore, we pass the model instance to
       // Amplify.DataStore.delete()
-      await Amplify.DataStore.delete(todo);
+      // await Amplify.DataStore.delete(todo);
     } catch (e) {
       print('An error occurred while deleting Todo: $e');
     }
@@ -132,7 +130,7 @@ class TodoItem extends StatelessWidget {
     try {
       // to update data in DataStore, we again pass an instance of a model to
       // Amplify.DataStore.save()
-      await Amplify.DataStore.save(updatedTodo);
+      // await Amplify.DataStore.save(updatedTodo);
     } catch (e) {
       print('An error occurred while saving Todo: $e');
     }
@@ -204,7 +202,7 @@ class _AddTodoFormState extends State<AddTodoForm> {
     try {
       // to write data to DataStore, we simply pass an instance of a model to
       // Amplify.DataStore.save()
-      await Amplify.DataStore.save(newTodo);
+      // await Amplify.DataStore.save(newTodo);
 
       // after creating a new Todo, close the form
       Navigator.of(context).pop();

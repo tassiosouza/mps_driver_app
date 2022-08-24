@@ -5,13 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mps_driver_app/models/Coordinates.dart';
-
-import '../../../models/Customer.dart';
-import '../../../models/MpOrder.dart';
+import '../../../models/MOrder.dart';
 
 class SecondRoute extends StatefulWidget {
-  final List<MpOrder> orders;
+  final List<MOrder> orders;
   const SecondRoute({Key? key, required this.orders}) : super(key: key);
 
   _ExampleState createState() => _ExampleState();
@@ -76,9 +73,8 @@ class _ExampleState extends State<SecondRoute> {
 
   List<LatLng> _createPoints(List orders) {
     final List<LatLng> points = <LatLng>[];
-    for (MpOrder order in orders) {
-      points.add(LatLng(order.customer!.coordinates!.latitude,
-          order.customer!.coordinates!.longitude));
+    for (MOrder order in orders) {
+      points.add(LatLng(order.latitude!, order.longitude!));
     }
     return points;
   }
@@ -122,22 +118,16 @@ class _ExampleState extends State<SecondRoute> {
     _getThingsOnStartup().then((value) {
       print('Async done');
     });
-    copyOrderList = List<MpOrder>.from(widget.orders);
-    Customer customer = Customer(
-        name: "Meal Prep Sunday",
-        address: '',
-        phone: '',
-        coordinates:
-            Coordinates(latitude: 33.1522247, longitude: -117.2310085));
-    MpOrder order =
-        MpOrder(number: '#00001', routeID: "routeId", customer: customer);
+    copyOrderList = List<MOrder>.from(widget.orders);
+    MOrder order = MOrder(
+        number: '#00001',
+        assignedRouteID: "routeId",
+        latitude: 33.1522247,
+        longitude: -117.2310085);
     copyOrderList.insert(0, order);
     var index = 1;
     copyOrderList.forEach((order) => {
-          _add(
-              LatLng(order.customer.coordinates.latitude,
-                  order.customer.coordinates.longitude),
-              index),
+          _add(LatLng(order.latitude, order.longitude), index),
           index += 1,
         });
     _addPolylines();

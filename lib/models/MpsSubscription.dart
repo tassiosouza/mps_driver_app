@@ -23,20 +23,24 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the Driver type in your schema. */
+/** This is an auto generated class representing the MpsSubscription type in your schema. */
 @immutable
-class Driver extends Model {
-  static const classType = const _DriverModelType();
+class MpsSubscription extends Model {
+  static const classType = const _MpsSubscriptionModelType();
   final String id;
+  final String? _number;
+  final String? _deliveryInstruction;
+  final String? _mealPlan;
+  final double? _subscriptionDate;
+  final String? _address;
+  final String? _status;
   final String? _name;
   final String? _email;
   final String? _phone;
-  final int? _carCapacity;
-  final String? _owner;
-  final bool? _onBoard;
-  final bool? _status;
   final double? _latitude;
   final double? _longitude;
+  final String? _avatar;
+  final String? _location;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -48,9 +52,9 @@ class Driver extends Model {
     return id;
   }
   
-  String get name {
+  String get number {
     try {
-      return _name!;
+      return _number!;
     } catch(e) {
       throw new AmplifyCodeGenModelException(
           AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -61,46 +65,36 @@ class Driver extends Model {
     }
   }
   
-  String get email {
-    try {
-      return _email!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get deliveryInstruction {
+    return _deliveryInstruction;
+  }
+  
+  String? get mealPlan {
+    return _mealPlan;
+  }
+  
+  double? get subscriptionDate {
+    return _subscriptionDate;
+  }
+  
+  String? get address {
+    return _address;
+  }
+  
+  String? get status {
+    return _status;
+  }
+  
+  String? get name {
+    return _name;
+  }
+  
+  String? get email {
+    return _email;
   }
   
   String? get phone {
     return _phone;
-  }
-  
-  int? get carCapacity {
-    return _carCapacity;
-  }
-  
-  String get owner {
-    try {
-      return _owner!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
-  }
-  
-  bool? get onBoard {
-    return _onBoard;
-  }
-  
-  bool? get status {
-    return _status;
   }
   
   double? get latitude {
@@ -111,6 +105,14 @@ class Driver extends Model {
     return _longitude;
   }
   
+  String? get avatar {
+    return _avatar;
+  }
+  
+  String? get location {
+    return _location;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -119,20 +121,24 @@ class Driver extends Model {
     return _updatedAt;
   }
   
-  const Driver._internal({required this.id, required name, required email, phone, carCapacity, required owner, onBoard, status, latitude, longitude, createdAt, updatedAt}): _name = name, _email = email, _phone = phone, _carCapacity = carCapacity, _owner = owner, _onBoard = onBoard, _status = status, _latitude = latitude, _longitude = longitude, _createdAt = createdAt, _updatedAt = updatedAt;
+  const MpsSubscription._internal({required this.id, required number, deliveryInstruction, mealPlan, subscriptionDate, address, status, name, email, phone, latitude, longitude, avatar, location, createdAt, updatedAt}): _number = number, _deliveryInstruction = deliveryInstruction, _mealPlan = mealPlan, _subscriptionDate = subscriptionDate, _address = address, _status = status, _name = name, _email = email, _phone = phone, _latitude = latitude, _longitude = longitude, _avatar = avatar, _location = location, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Driver({String? id, required String name, required String email, String? phone, int? carCapacity, required String owner, bool? onBoard, bool? status, double? latitude, double? longitude}) {
-    return Driver._internal(
+  factory MpsSubscription({String? id, required String number, String? deliveryInstruction, String? mealPlan, double? subscriptionDate, String? address, String? status, String? name, String? email, String? phone, double? latitude, double? longitude, String? avatar, String? location}) {
+    return MpsSubscription._internal(
       id: id == null ? UUID.getUUID() : id,
+      number: number,
+      deliveryInstruction: deliveryInstruction,
+      mealPlan: mealPlan,
+      subscriptionDate: subscriptionDate,
+      address: address,
+      status: status,
       name: name,
       email: email,
       phone: phone,
-      carCapacity: carCapacity,
-      owner: owner,
-      onBoard: onBoard,
-      status: status,
       latitude: latitude,
-      longitude: longitude);
+      longitude: longitude,
+      avatar: avatar,
+      location: location);
   }
   
   bool equals(Object other) {
@@ -142,17 +148,21 @@ class Driver extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Driver &&
+    return other is MpsSubscription &&
       id == other.id &&
+      _number == other._number &&
+      _deliveryInstruction == other._deliveryInstruction &&
+      _mealPlan == other._mealPlan &&
+      _subscriptionDate == other._subscriptionDate &&
+      _address == other._address &&
+      _status == other._status &&
       _name == other._name &&
       _email == other._email &&
       _phone == other._phone &&
-      _carCapacity == other._carCapacity &&
-      _owner == other._owner &&
-      _onBoard == other._onBoard &&
-      _status == other._status &&
       _latitude == other._latitude &&
-      _longitude == other._longitude;
+      _longitude == other._longitude &&
+      _avatar == other._avatar &&
+      _location == other._location;
   }
   
   @override
@@ -162,17 +172,21 @@ class Driver extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("Driver {");
+    buffer.write("MpsSubscription {");
     buffer.write("id=" + "$id" + ", ");
+    buffer.write("number=" + "$_number" + ", ");
+    buffer.write("deliveryInstruction=" + "$_deliveryInstruction" + ", ");
+    buffer.write("mealPlan=" + "$_mealPlan" + ", ");
+    buffer.write("subscriptionDate=" + (_subscriptionDate != null ? _subscriptionDate!.toString() : "null") + ", ");
+    buffer.write("address=" + "$_address" + ", ");
+    buffer.write("status=" + "$_status" + ", ");
     buffer.write("name=" + "$_name" + ", ");
     buffer.write("email=" + "$_email" + ", ");
     buffer.write("phone=" + "$_phone" + ", ");
-    buffer.write("carCapacity=" + (_carCapacity != null ? _carCapacity!.toString() : "null") + ", ");
-    buffer.write("owner=" + "$_owner" + ", ");
-    buffer.write("onBoard=" + (_onBoard != null ? _onBoard!.toString() : "null") + ", ");
-    buffer.write("status=" + (_status != null ? _status!.toString() : "null") + ", ");
     buffer.write("latitude=" + (_latitude != null ? _latitude!.toString() : "null") + ", ");
     buffer.write("longitude=" + (_longitude != null ? _longitude!.toString() : "null") + ", ");
+    buffer.write("avatar=" + "$_avatar" + ", ");
+    buffer.write("location=" + "$_location" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -180,51 +194,63 @@ class Driver extends Model {
     return buffer.toString();
   }
   
-  Driver copyWith({String? id, String? name, String? email, String? phone, int? carCapacity, String? owner, bool? onBoard, bool? status, double? latitude, double? longitude}) {
-    return Driver._internal(
+  MpsSubscription copyWith({String? id, String? number, String? deliveryInstruction, String? mealPlan, double? subscriptionDate, String? address, String? status, String? name, String? email, String? phone, double? latitude, double? longitude, String? avatar, String? location}) {
+    return MpsSubscription._internal(
       id: id ?? this.id,
+      number: number ?? this.number,
+      deliveryInstruction: deliveryInstruction ?? this.deliveryInstruction,
+      mealPlan: mealPlan ?? this.mealPlan,
+      subscriptionDate: subscriptionDate ?? this.subscriptionDate,
+      address: address ?? this.address,
+      status: status ?? this.status,
       name: name ?? this.name,
       email: email ?? this.email,
       phone: phone ?? this.phone,
-      carCapacity: carCapacity ?? this.carCapacity,
-      owner: owner ?? this.owner,
-      onBoard: onBoard ?? this.onBoard,
-      status: status ?? this.status,
       latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude);
+      longitude: longitude ?? this.longitude,
+      avatar: avatar ?? this.avatar,
+      location: location ?? this.location);
   }
   
-  Driver.fromJson(Map<String, dynamic> json)  
+  MpsSubscription.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
+      _number = json['number'],
+      _deliveryInstruction = json['deliveryInstruction'],
+      _mealPlan = json['mealPlan'],
+      _subscriptionDate = (json['subscriptionDate'] as num?)?.toDouble(),
+      _address = json['address'],
+      _status = json['status'],
       _name = json['name'],
       _email = json['email'],
       _phone = json['phone'],
-      _carCapacity = (json['carCapacity'] as num?)?.toInt(),
-      _owner = json['owner'],
-      _onBoard = json['onBoard'],
-      _status = json['status'],
       _latitude = (json['latitude'] as num?)?.toDouble(),
       _longitude = (json['longitude'] as num?)?.toDouble(),
+      _avatar = json['avatar'],
+      _location = json['location'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'email': _email, 'phone': _phone, 'carCapacity': _carCapacity, 'owner': _owner, 'onBoard': _onBoard, 'status': _status, 'latitude': _latitude, 'longitude': _longitude, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'number': _number, 'deliveryInstruction': _deliveryInstruction, 'mealPlan': _mealPlan, 'subscriptionDate': _subscriptionDate, 'address': _address, 'status': _status, 'name': _name, 'email': _email, 'phone': _phone, 'latitude': _latitude, 'longitude': _longitude, 'avatar': _avatar, 'location': _location, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
-  static final QueryField ID = QueryField(fieldName: "driver.id");
+  static final QueryField ID = QueryField(fieldName: "mpsSubscription.id");
+  static final QueryField NUMBER = QueryField(fieldName: "number");
+  static final QueryField DELIVERYINSTRUCTION = QueryField(fieldName: "deliveryInstruction");
+  static final QueryField MEALPLAN = QueryField(fieldName: "mealPlan");
+  static final QueryField SUBSCRIPTIONDATE = QueryField(fieldName: "subscriptionDate");
+  static final QueryField ADDRESS = QueryField(fieldName: "address");
+  static final QueryField STATUS = QueryField(fieldName: "status");
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField EMAIL = QueryField(fieldName: "email");
   static final QueryField PHONE = QueryField(fieldName: "phone");
-  static final QueryField CARCAPACITY = QueryField(fieldName: "carCapacity");
-  static final QueryField OWNER = QueryField(fieldName: "owner");
-  static final QueryField ONBOARD = QueryField(fieldName: "onBoard");
-  static final QueryField STATUS = QueryField(fieldName: "status");
   static final QueryField LATITUDE = QueryField(fieldName: "latitude");
   static final QueryField LONGITUDE = QueryField(fieldName: "longitude");
+  static final QueryField AVATAR = QueryField(fieldName: "avatar");
+  static final QueryField LOCATION = QueryField(fieldName: "location");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "Driver";
-    modelSchemaDefinition.pluralName = "Drivers";
+    modelSchemaDefinition.name = "MpsSubscription";
+    modelSchemaDefinition.pluralName = "MpsSubscriptions";
     
     modelSchemaDefinition.authRules = [
       AuthRule(
@@ -240,57 +266,81 @@ class Driver extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.NAME,
+      key: MpsSubscription.NUMBER,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.EMAIL,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.PHONE,
+      key: MpsSubscription.DELIVERYINSTRUCTION,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.CARCAPACITY,
+      key: MpsSubscription.MEALPLAN,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.int)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.OWNER,
-      isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.ONBOARD,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.STATUS,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.LATITUDE,
+      key: MpsSubscription.SUBSCRIPTIONDATE,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Driver.LONGITUDE,
+      key: MpsSubscription.ADDRESS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsSubscription.STATUS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsSubscription.NAME,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsSubscription.EMAIL,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsSubscription.PHONE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsSubscription.LATITUDE,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsSubscription.LONGITUDE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsSubscription.AVATAR,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MpsSubscription.LOCATION,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -309,11 +359,11 @@ class Driver extends Model {
   });
 }
 
-class _DriverModelType extends ModelType<Driver> {
-  const _DriverModelType();
+class _MpsSubscriptionModelType extends ModelType<MpsSubscription> {
+  const _MpsSubscriptionModelType();
   
   @override
-  Driver fromJson(Map<String, dynamic> jsonData) {
-    return Driver.fromJson(jsonData);
+  MpsSubscription fromJson(Map<String, dynamic> jsonData) {
+    return MpsSubscription.fromJson(jsonData);
   }
 }

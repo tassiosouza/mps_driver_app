@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mps_driver_app/modules/main/presentation/MainViewModel.dart';
+import 'package:mps_driver_app/store/main/MainStore.dart';
 import '../../../theme/app_colors.dart';
 
 class MainPage extends StatefulWidget {
@@ -11,7 +11,7 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
-  final viewModel = Modular.get<MainViewModel>();
+  final viewModel = Modular.get<MainStore>();
 
   @override
   Widget build(BuildContext context) {

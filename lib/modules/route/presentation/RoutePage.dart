@@ -9,16 +9,14 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
+import 'package:mps_driver_app/store/route/RouteStore.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
-import '../../../Services/DriverService.dart';
 import '../../../components/AppDialogs.dart';
 import '../services/TwilioService.dart';
-import 'RouteViewModel.dart';
-import 'components/OrdersListView.dart';
+import 'components/OrderItem.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as stepper;
 import 'MapsPage.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -31,165 +29,26 @@ class RoutePage extends StatefulWidget {
 
 class StateRoutePage extends State<RoutePage> {
   int dotCount = 4;
-  final _routeViewModel = Modular.get<RouteViewModel>();
-
-  StreamSubscription<GraphQLResponse<MpsRoute>>? subscription;
-
-  GraphQLClient initGqlClient(String url) {
-    final link = HttpLink(
-      url,
-      defaultHeaders: {
-        'x-api-key': 'da2-qhpgfyyngje3tmlbbf5na574sq',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    final client = GraphQLClient(link: link, cache: GraphQLCache());
-
-    return client;
-  }
+  final _routeStore = Modular.get<RouteStore>();
 
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   var graphQLClient = initGqlClient(
-    //       'https://27e6dnolwrdabfwawi2u5pfe4y.appsync-api.us-west-1.amazonaws.com/graphql');
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (_routeStore.currentDriver == null) {
+        await _routeStore.retrieveDriverInformation();
+      }
 
-//       var result = await graphQLClient.query(QueryOptions(
-//         document: gql('''query MyQuery {
-//   listMpsRoutes(filter: {mpsRouteDriverId: {eq: ${driver!.id}}, status: {ne: DONE}}) {
-//     items {
-//       id
-//       mpsRouteDriverId
-//       _version
-//       name
-//       duration
-//       endTime
-//       distance
-//       startTime
-//       status
-//       orders {
-//         items {
-//           customer {
-//             address
-//             coordinates {
-//               id
-//               latitude
-//               longitude
-//             }
-//             id
-//             name
-//             phone
-//           }
-//           deliveryInstruction
-//           eta
-//           id
-//           mealsInstruction
-//           number
-//           status
-//         }
-//       }
-//     }
-//   }
-// }
+      if (_routeStore.orders == null) {
+        await _routeStore.fetchOrders();
+      }
 
-//               '''),
-//       ));
-//       log(result.toString());
-
-//       MpsRoute fetchedRoute = mountFechedRoute(result);
-
-    //API Subscribe
-    //   final subscriptionRequest =
-    //       ModelSubscriptions.onUpdate(MpsRoute.classType);
-    //   final Stream<GraphQLResponse<MpsRoute>> operation = Amplify.API.subscribe(
-    //     subscriptionRequest,
-    //     onEstablished: () => print('Subscription established'),
-    //   );
-    //   String id = '';
-    //   subscription = operation.listen(
-    //     (event) async {
-    //       print('Subscription event data received: ${event.data}');
-    //     },
-    //     onError: (Object e) => print('Error in subscription stream: $e'),
-    //   );
-    // });
-
-    //   _routesSubscription = Amplify.DataStore.observeQuery(MpsRoute.classType,
-    //           where: MpsRoute.MPSROUTEDRIVERID.eq(driver?.getId()))
-    //       .listen((QuerySnapshot<MpsRoute> snapshot) {
-    //     List<MpsRoute> routes = snapshot.items;
-    //     MpsRoute currentRouteUpdate;
-    //     if (_currentRoute != null) {
-    //       currentRouteUpdate = routes
-    //           .where((route) =>
-    //               route.id == _currentRoute?.id &&
-    //               route.status != RouteStatus.DONE &&
-    //               route.status != RouteStatus.ABORTED)
-    //           .toList()[0];
-
-    //       setState(() {
-    //         _currentRoute = currentRouteUpdate;
-    //       });
-
-    //       log("the current route has been update");
-    //     } else {
-    //       for (MpsRoute route in routes) {
-    //         if (route.status != RouteStatus.DONE &&
-    //             route.status != RouteStatus.ABORTED) {
-    //           setState(() {
-    //             _currentRoute = route;
-    //           });
-    //           configureOrdersSubscription(route);
-    //         }
-    //       }
-    //     }
-    //   });
-    // });
-
-    // if (_currentRoute != null) {
-    //   if (_currentRoute!.status == RouteStatus.PLANNED) {
-    //     Future.delayed(Duration.zero, welcomeDialog);
-    //   }
-    // }
+      if (_routeStore.routeOrders == null) {
+        await _routeStore.retrieveRouteOrders();
+      }
+    });
 
     super.initState();
   }
-
-  // void configureOrdersSubscription(MpsRoute route) {
-  //   _ordersSubscription = Amplify.DataStore.observeQuery(MpOrder.classType,
-  //           where: MpOrder.ROUTEID.eq(route.getId()))
-  //       .listen((QuerySnapshot<MpOrder> snapshot) async {
-  //     List<MpOrder> updatedOrders = snapshot.items;
-  //     _currentOrders ??= updatedOrders;
-  //     for (int i = 0; i < updatedOrders.length; i++) {
-  //       if (updatedOrders[i].mpOrderCustomerId != null) {
-  //         List<Customer> customers = await Amplify.DataStore.query(
-  //             Customer.classType,
-  //             where: Customer.ID.eq(updatedOrders[i].mpOrderCustomerId));
-  //         Customer orderCustomer = customers[0];
-  //         //Add amplify coordinates to customer
-  //         List<Coordinates> coordinates = await Amplify.DataStore.query(
-  //             Coordinates.classType,
-  //             where: Coordinates.ID.eq(customers[0].customerCoordinatesId));
-  //         orderCustomer = orderCustomer.copyWith(coordinates: coordinates[0]);
-
-  //         //Add amplify customer to order
-  //         _currentOrders![i] =
-  //             updatedOrders[i].copyWith(customer: orderCustomer);
-  //       } else {
-  //         _currentOrders![i] =
-  //             _currentOrders![i].copyWith(status: updatedOrders[i].status);
-  //       }
-  //     }
-
-  //     setStateIfMounted(() {
-  //       () {
-  //         _currentOrders = _currentOrders;
-  //       };
-  //     });
-  //   });
-  // }
 
   Future<void> welcomeDialog() {
     return AppDialogs().showDialogJustMsg(context, "Welcome Driver",
@@ -207,11 +66,9 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   void sendWelcomeMessages() {
-    TwilioSmsService smsService =
-        TwilioSmsService(_routeViewModel.currentDriver!);
-    for (var order in _routeViewModel.lastActivedRoute!.orders!) {
-      smsService.sendSms(
-          order.customer!.name, order.customer!.phone, order.eta);
+    TwilioSmsService smsService = TwilioSmsService(_routeStore.currentDriver!);
+    for (var order in _routeStore.routeOrders!) {
+      smsService.sendSms(order!.customerName!, order.phone!, order.eta);
     }
   }
 
@@ -250,25 +107,22 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   void setRouteStatus(RouteStatus newStatus) {
-    MpsRoute newRoute =
-        _routeViewModel.lastActivedRoute!.copyWith(status: newStatus);
-    _routeViewModel.setlastActivedRoute(newRoute);
-    Amplify.DataStore.save(newRoute);
+    MRoute newRoute = _routeStore.assignedRoute!.copyWith(status: newStatus);
+    _routeStore.updateAssignedRoute(newRoute);
   }
 
   RouteStatus? getRouteStatus() {
-    return _routeViewModel.lastActivedRoute!.status;
+    return _routeStore.assignedRoute!.status;
   }
 
   Widget toCheckIn() {
-    if (_routeViewModel.lastActivedRoute != null &&
-        _routeViewModel.lastActivedRoute!.status!.index > 0) {
-      if (_routeViewModel.lastActivedRoute!.status == RouteStatus.INITIATED) {
+    if (_routeStore.assignedRoute != null &&
+        _routeStore.assignedRoute!.status!.index > 1) {
+      if (_routeStore.assignedRoute!.status == RouteStatus.INITIATED) {
         setRouteStatus(RouteStatus.CHECKING_BAGS);
       }
 
-      DateTime time = DateTime.fromMillisecondsSinceEpoch(
-          _routeViewModel.lastActivedRoute!.startTime!.toSeconds() * 1000);
+      DateTime time = DateTime.fromMillisecondsSinceEpoch(1000);
       String timeFormatted = DateFormat('kk:mm').format(time);
       return Container(
           padding: const EdgeInsets.only(left: 18, top: 5),
@@ -280,8 +134,8 @@ class StateRoutePage extends State<RoutePage> {
     } else {
       return GestureDetector(
           onTap: () {
-            _routeViewModel.lastActivedRoute = _routeViewModel.lastActivedRoute!
-                .copyWith(startTime: TemporalTimestamp(DateTime.now()));
+            _routeStore.assignedRoute =
+                _routeStore.assignedRoute!.copyWith(startTime: 000);
             setRouteStatus(RouteStatus.INITIATED);
           },
           child: Container(
@@ -296,11 +150,11 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   Widget getWelcomeMessage() {
-    if (_routeViewModel.lastActivedRoute != null) {
-      if (_routeViewModel.lastActivedRoute!.status == RouteStatus.PLANNED ||
-          _routeViewModel.lastActivedRoute!.status == RouteStatus.INITIATED ||
-          _routeViewModel.lastActivedRoute!.status ==
-              RouteStatus.CHECKING_BAGS) {
+    if (_routeStore.assignedRoute != null) {
+      if (_routeStore.assignedRoute!.status == RouteStatus.PLANNED ||
+          _routeStore.assignedRoute!.status == RouteStatus.ASSIGNED ||
+          _routeStore.assignedRoute!.status == RouteStatus.INITIATED ||
+          _routeStore.assignedRoute!.status == RouteStatus.CHECKING_BAGS) {
         return GestureDetector(
             onTap: clickWrongWelcomeMessageDialog,
             child: Container(
@@ -312,7 +166,7 @@ class StateRoutePage extends State<RoutePage> {
                     fontSize: 14, color: App_Colors.primary_color.value),
               ),
             ));
-      } else if (_routeViewModel.lastActivedRoute!.status ==
+      } else if (_routeStore.assignedRoute!.status ==
           RouteStatus.SENDING_WELCOME_MESSAGES) {
         return GestureDetector(
             onTap: sendingWelcomeMessageDialog,
@@ -344,19 +198,19 @@ class StateRoutePage extends State<RoutePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              SecondRoute(orders: _routeViewModel.lastActivedRoute!.orders!)),
+          builder: (context) => SecondRoute(
+              orders: /*_routeViewModel.lastActivedRoute!.orders!*/ [])),
     );
   }
 
   void endRoute() {
-    _routeViewModel.lastActivedRoute = _routeViewModel.lastActivedRoute!
-        .copyWith(endTime: TemporalTimestamp(DateTime.now()));
+    _routeStore.assignedRoute =
+        _routeStore.assignedRoute!.copyWith(endTime: 000);
     setRouteStatus(RouteStatus.DONE);
-    _routeViewModel.setIsRouteActived(false);
-    _routeViewModel.addToRoutesHistory(_routeViewModel.lastActivedRoute!);
+    // _routeStore.setIsRouteActived(false);
+    // _routeStore.addToRoutesHistory(_routeStore.assignedRoute!);
     Modular.to.pushNamed('/main/history/details',
-        arguments: _routeViewModel.lastActivedRoute);
+        arguments: _routeStore.assignedRoute);
   }
 
   Widget routeDone() {
@@ -370,8 +224,8 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   int getActiveStepperByRouteStatus() {
-    if (_routeViewModel.lastActivedRoute != null) {
-      switch (_routeViewModel.lastActivedRoute!.status) {
+    if (_routeStore.assignedRoute != null) {
+      switch (_routeStore.assignedRoute!.status) {
         case RouteStatus.PLANNED:
           return 0;
         case RouteStatus.INITIATED:
@@ -382,7 +236,7 @@ class StateRoutePage extends State<RoutePage> {
           return 2;
         case RouteStatus.DONE:
         case RouteStatus.ON_HOLD:
-        case RouteStatus.ABORTED:
+        case RouteStatus.CANCELED:
           return 3;
         default:
           return 0;
@@ -391,18 +245,19 @@ class StateRoutePage extends State<RoutePage> {
     return 0;
   }
 
-  void verifyAllOrderStatusChanged(MpsOrderStatus status,
-      [MpsOrderStatus? additionalStatus]) {
+  void verifyAllOrderStatusChanged(OrderStatus status,
+      [OrderStatus? additionalStatus]) {
     bool allChanged = true;
-    for (MpOrder order in _routeViewModel.lastActivedRoute!.orders!) {
-      allChanged = (order.status == status || order.status == additionalStatus);
+    for (MOrder? order in _routeStore.routeOrders!) {
+      allChanged =
+          (order!.status == status || order.status == additionalStatus);
       if (!allChanged) break;
     }
     if (allChanged) {
-      if (status == MpsOrderStatus.CHECKED) {
+      if (status == OrderStatus.CHECKED) {
         Future.delayed(Duration.zero, finishCheckBagDialog);
         setRouteStatus(RouteStatus.SENDING_WELCOME_MESSAGES);
-      } else if (status == MpsOrderStatus.DELIVERED ||
+      } else if (status == OrderStatus.DELIVERED ||
           status == additionalStatus) {
         setRouteStatus(RouteStatus.DONE);
       }
@@ -411,7 +266,7 @@ class StateRoutePage extends State<RoutePage> {
 
   @override
   Widget build(BuildContext context) {
-    return _routeViewModel.lastActivedRoute != null
+    return _routeStore.assignedRoute != null
         ? Observer(
             builder: (_) => Scaffold(
                   backgroundColor: App_Colors.white_background.value,
@@ -430,9 +285,9 @@ class StateRoutePage extends State<RoutePage> {
                                   alignment: Alignment.centerLeft,
                                   child: Row(
                                     children: [
-                                      _routeViewModel.currentDriver != null
+                                      _routeStore.currentDriver != null
                                           ? Text(
-                                              "${_routeViewModel.currentDriver?.name}  ",
+                                              "${_routeStore.currentDriver?.name}  ",
                                               style: const TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.w500),
@@ -548,20 +403,27 @@ class StateRoutePage extends State<RoutePage> {
                                 height:
                                     MediaQuery.of(context).size.height / 2.1,
                                 child: (() {
-                                  if (_routeViewModel
-                                          .lastActivedRoute!.status ==
+                                  if (_routeStore.assignedRoute!.status ==
                                       RouteStatus.DONE) {
                                     return routeDone();
                                   }
-                                  if (_routeViewModel.currentDriver != null &&
-                                      _routeViewModel
-                                              .lastActivedRoute!.status !=
-                                          RouteStatus.DONE) {
-                                    return OrdersListView(
-                                        _routeViewModel.currentDriver!,
-                                        _routeViewModel
-                                            .lastActivedRoute!.orders,
-                                        this);
+                                  if (_routeStore.currentDriver != null &&
+                                      _routeStore.assignedRoute!.status !=
+                                          RouteStatus.DONE &&
+                                      _routeStore.routeOrders != null) {
+                                    return Observer(
+                                        builder: (_) => ListView(
+                                            padding: const EdgeInsets.all(8),
+                                            children: _routeStore.routeOrders!
+                                                .map((order) => Observer(
+                                                    builder: (_) => OrderItem(
+                                                        order,
+                                                        _routeStore.routeOrders!
+                                                            .indexOf(order),
+                                                        _routeStore
+                                                            .currentDriver!,
+                                                        this)))
+                                                .toList()));
                                   } else {
                                     return const Center();
                                   }
@@ -573,16 +435,11 @@ class StateRoutePage extends State<RoutePage> {
         : const Center();
   }
 
-  Future<void> setOrderStatus(int orderIndex, MpsOrderStatus newStatus) async {
-    _routeViewModel.lastActivedRoute!.orders![orderIndex] = _routeViewModel
-        .lastActivedRoute!.orders![orderIndex]
-        .copyWith(status: newStatus);
-    try {
-      _routeViewModel.setlastActivedRoute(_routeViewModel.lastActivedRoute!);
-      await Amplify.DataStore.save(
-          _routeViewModel.lastActivedRoute!.orders![orderIndex]);
-    } catch (e) {
-      print('An error occurred while saving Order Status: $e');
-    }
+  Future<void> setOrderStatus(int orderIndex, OrderStatus newStatus) async {
+    MOrder? order =
+        _routeStore.routeOrders![orderIndex]!.copyWith(status: newStatus);
+    await _routeStore.updateAssignedRouteOrder(orderIndex, order);
+
+    verifyAllOrderStatusChanged(newStatus);
   }
 }

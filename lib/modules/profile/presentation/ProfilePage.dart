@@ -6,12 +6,10 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/profile/presentation/ProfileViewModel.dart';
 import 'package:mps_driver_app/modules/profile/presentation/components/ChooseMapDialog.dart';
-import '../../../Services/DriverService.dart';
+import 'package:mps_driver_app/store/main/MainStore.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-
-import '../../route/presentation/RouteViewModel.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -22,7 +20,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final viewModel = Modular.get<ProfileViewModel>();
-  final _routeViewModel = Modular.get<RouteViewModel>();
+  final _mainStore = Modular.get<MainStore>();
 
   @override
   void initState() {
@@ -38,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: _routeViewModel.currentDriver != null
+        body: _mainStore.currentDriver != null
             ? SingleChildScrollView(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   const SizedBox(height: 15),
                                   Text(
-                                    "${_routeViewModel.currentDriver?.name}",
+                                    "${_mainStore.currentDriver?.name}",
                                     style: const TextStyle(
                                         fontSize: 18, color: Colors.white),
                                   ),
@@ -110,16 +108,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               )
                             ])),
                     const SizedBox(height: 15),
-                    getInfoRow(
-                        "Full Name", _routeViewModel.currentDriver!.name),
+                    getInfoRow("Full Name", _mainStore.currentDriver!.name),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
-                    getInfoRow("Email", _routeViewModel.currentDriver!.email),
+                    getInfoRow("Email", _mainStore.currentDriver!.email),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
-                    getInfoRow(
-                        "Phone number", _routeViewModel.currentDriver?.phone),
+                    getInfoRow("Phone number", _mainStore.currentDriver?.phone),
                     Divider(thickness: 1, color: App_Colors.grey_light.value),
                     getInfoRow("Car capacity",
-                        _routeViewModel.currentDriver?.carCapacity.toString()),
+                        _mainStore.currentDriver?.carCapacity.toString()),
                     const SizedBox(height: 20),
                     Container(
                         color: App_Colors.grey_background.value,
@@ -178,9 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   logout() async {
     Amplify.Auth.signOut();
-    await Amplify.DataStore.clear();
-    await Amplify.DataStore.stop();
-    _routeViewModel.cleanLocalData();
+    _mainStore.clearCurrentDriver();
     Modular.to.navigate('/');
   }
 
@@ -239,14 +233,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       bool result = false;
                       switch (label) {
                         case 'Full Name':
-                          result = await DriverService.setDriverName(value);
+                          // TODO: Update driver information
                           break;
                         case 'Phone number':
-                          result = await DriverService.setDriverPhone(value);
+                          // TODO: Update driver information
                           break;
                         case 'Car capacity':
-                          result = await DriverService.setDriverCapacity(
-                              int.parse(value));
+                          // TODO: Update driver information
                           break;
                       }
 

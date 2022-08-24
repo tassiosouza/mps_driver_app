@@ -10,8 +10,9 @@ import '../../../theme/app_colors.dart';
 
 // ignore: must_be_immutable
 class HistoryRouteDetails extends StatefulWidget {
-  MpsRoute route;
-  HistoryRouteDetails(this.route, {Key? key}) : super(key: key);
+  MRoute route;
+  List<MOrder?>? orders;
+  HistoryRouteDetails(this.route, this.orders, {Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => HistoryRouteDetailsState();
@@ -19,27 +20,24 @@ class HistoryRouteDetails extends StatefulWidget {
 
 class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
   String getFormattedAddress() {
-    MpOrder lastOrder = widget.route.orders![widget.route.orders!.length - 1];
-    int zipcodeIndex = lastOrder.customer!.address.split(',').length - 1;
-    String street = lastOrder.customer!.address.split(',')[0];
-    String zipcode = lastOrder.customer!.address.split(',')[zipcodeIndex];
+    MOrder? lastOrder = widget.orders![widget.orders!.length - 1];
+    int zipcodeIndex = lastOrder!.address!.split(',').length - 1;
+    String street = lastOrder.address!.split(',')[0];
+    String zipcode = lastOrder.address!.split(',')[zipcodeIndex];
     return '$street, $zipcode';
   }
 
   int getBagsDeliveredCount() {
     int result = 0;
-    for (MpOrder order in widget.route.orders ?? []) {
-      result = result + (order.status == MpsOrderStatus.DELIVERED ? 1 : 0);
+    for (MOrder? order in widget.orders ?? []) {
+      result = result + (order!.status == OrderStatus.DELIVERED ? 1 : 0);
     }
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
-    String routeName = "#Route ${widget.route.name}";
-    MpOrder order = MpOrder(number: "5", routeID: "10");
-    if (widget.route.orders == null) {
-    } else {}
+    String routeName = "#Route ${widget.route.id}";
 
     return Scaffold(
         body: SingleChildScrollView(
@@ -129,10 +127,8 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
             child: Column(children: [
           getInfos("Bags delivered", getBagsDeliveredCount().toString()),
           const SizedBox(height: 15),
-          getInfos(
-              "Bags not delivered",
-              (widget.route.orders!.length - getBagsDeliveredCount())
-                  .toString())
+          getInfos("Bags not delivered",
+              (widget.orders!.length - getBagsDeliveredCount()).toString())
         ])),
         const SizedBox(width: 20)
       ]),
@@ -157,9 +153,9 @@ class HistoryRouteDetailsState extends State<HistoryRouteDetails> {
           height: 500,
           child: ListView.builder(
               padding: const EdgeInsets.only(top: 20, bottom: 20),
-              itemCount: widget.route.orders!.length,
+              itemCount: widget.orders!.length,
               itemBuilder: (context, index) {
-                return ListHistoryOrderItem(widget.route.orders![index]);
+                return ListHistoryOrderItem(widget.orders![index]);
               }))
     ])));
   }

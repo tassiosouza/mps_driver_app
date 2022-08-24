@@ -1,8 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
-
-import '../models/Client.dart';
 import 'dart:convert';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:intl/intl.dart';
 
@@ -16,11 +13,9 @@ class Utils {
     return timeFormatted;
   }
 
-  static String getFormattedTime(
-      TemporalTimestamp? timestamp, bool withSuffix) {
+  static String getFormattedTime(double? timestamp, bool withSuffix) {
     if (timestamp == null) return '-';
-    DateTime dateTime =
-        DateTime.fromMillisecondsSinceEpoch(timestamp.toSeconds() * 1000);
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(1000);
 
     String timeFormatted =
         DateFormat(withSuffix ? 'kk:mm a' : 'kk:mm').format(dateTime);

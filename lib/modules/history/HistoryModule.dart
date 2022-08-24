@@ -12,6 +12,7 @@ class HistoryModule extends Module {
         ChildRoute('/', child: (context, args) => HistoryPage()),
         ChildRoute('/details',
             transition: TransitionType.rightToLeft,
-            child: (context, args) => HistoryRouteDetails(args.data))
+            child: (context, args) =>
+                HistoryRouteDetails(args.data.routes, args.data.orders))
       ];
 }

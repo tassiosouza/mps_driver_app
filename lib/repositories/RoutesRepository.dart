@@ -6,24 +6,6 @@ import '../../models/Todo.dart';
 import '../models/Driver.dart';
 
 class RoutesRepository {
-  Future<MRoute?> createRoute(MRoute route) async {
-    try {
-      final request = ModelMutations.create(route);
-      final response = await Amplify.API.mutate(request: request).response;
-
-      final createdRoute = response.data;
-      if (createdRoute == null) {
-        log('errors: ${response.errors}');
-        return createdRoute;
-      }
-      log('Mutation result: ${createdRoute.name}');
-      return createdRoute;
-    } on ApiException catch (e) {
-      log('Mutation failed: $e');
-      return null;
-    }
-  }
-
   Future<Driver?> updateRoute(Driver updatedDriver) async {
     try {
       final request = ModelMutations.update(updatedDriver);
@@ -46,7 +28,7 @@ class RoutesRepository {
   Future<List<MRoute?>> fetchRoutes() async {
     try {
       final user = await Amplify.Auth.getCurrentUser();
-      final queryPredicate = MRoute.MROUTEDRIVERID.eq(user.userId);
+      final queryPredicate = MRoute.DRIVERID.eq(user.userId);
       final request =
           ModelQueries.list(MRoute.classType, where: queryPredicate);
       final response = await Amplify.API.query(request: request).response;

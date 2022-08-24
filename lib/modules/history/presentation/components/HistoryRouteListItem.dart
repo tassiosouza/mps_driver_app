@@ -16,11 +16,12 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 // ignore: must_be_immutable
 class HistoryRouteListItem extends StatelessWidget {
   MRoute? route;
-  HistoryRouteListItem(this.route, {Key? key}) : super(key: key);
+  List<MOrder?>? orders;
+  HistoryRouteListItem(this.route, this.orders, {Key? key}) : super(key: key);
 
   String getFormattedAddress() {
-    MOrder lastOrder = route!.orders![route!.orders!.length - 1];
-    int zipcodeIndex = lastOrder.address!.split(',').length - 1;
+    MOrder? lastOrder = orders![orders!.length - 1];
+    int zipcodeIndex = lastOrder!.address!.split(',').length - 1;
     String street = lastOrder.address!.split(',')[0];
     String zipcode = lastOrder.address!.split(',')[zipcodeIndex];
     return '$street, $zipcode';
@@ -28,7 +29,7 @@ class HistoryRouteListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title = route!.name.split('.')[0];
+    String title = route!.id.split('.')[0];
 
     String getVerboseDateTimeRepresentation(double? temporalTimestamp) {
       DateTime datetime = DateTime.fromMillisecondsSinceEpoch(1000);
@@ -152,7 +153,7 @@ class HistoryRouteListItem extends StatelessWidget {
                                         const Icon(CustomIcon.bag_driver_icon,
                                             size: 17),
                                         const SizedBox(width: 5),
-                                        Text(route!.orders!.length.toString(),
+                                        Text(orders!.length.toString(),
                                             style:
                                                 const TextStyle(fontSize: 12))
                                       ]))
@@ -234,7 +235,7 @@ class HistoryRouteListItem extends StatelessWidget {
                             ]))
                       ]))))),
           onTap: () {
-            Modular.to.pushNamed('./details', arguments: route);
+            Modular.to.pushNamed('./details', arguments: {route, orders});
           })
     ]);
   }

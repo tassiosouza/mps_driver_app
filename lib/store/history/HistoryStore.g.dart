@@ -25,6 +25,22 @@ mixin _$HistoryStore on _HistoryStore, Store {
     });
   }
 
+  late final _$ordersHistoryAtom =
+      Atom(name: '_HistoryStore.ordersHistory', context: context);
+
+  @override
+  List<MOrder?>? get ordersHistory {
+    _$ordersHistoryAtom.reportRead();
+    return super.ordersHistory;
+  }
+
+  @override
+  set ordersHistory(List<MOrder?>? value) {
+    _$ordersHistoryAtom.reportWrite(value, super.ordersHistory, () {
+      super.ordersHistory = value;
+    });
+  }
+
   late final _$finishLoadingHistoryAtom =
       Atom(name: '_HistoryStore.finishLoadingHistory', context: context);
 
@@ -64,6 +80,14 @@ mixin _$HistoryStore on _HistoryStore, Store {
   @override
   Future fetchRoutes() {
     return _$fetchRoutesAsyncAction.run(() => super.fetchRoutes());
+  }
+
+  late final _$fetchOrdersAsyncAction =
+      AsyncAction('_HistoryStore.fetchOrders', context: context);
+
+  @override
+  Future fetchOrders() {
+    return _$fetchOrdersAsyncAction.run(() => super.fetchOrders());
   }
 
   late final _$_HistoryStoreActionController =
@@ -106,6 +130,7 @@ mixin _$HistoryStore on _HistoryStore, Store {
   String toString() {
     return '''
 routesHistory: ${routesHistory},
+ordersHistory: ${ordersHistory},
 finishLoadingHistory: ${finishLoadingHistory},
 isRouteActived: ${isRouteActived}
     ''';

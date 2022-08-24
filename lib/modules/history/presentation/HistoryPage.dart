@@ -22,10 +22,11 @@ class HistoryPage extends StatefulWidget {
 class HistoryPageState extends State<HistoryPage> {
   final _historyStore = Modular.get<HistoryStore>();
 
-  Future<void> fetchRoutes() async {
+  Future<void> fetchRoutesAndOrders() async {
     _historyStore.setFinishLoadingHistory(false);
     _historyStore.setEmptyHistory();
     await _historyStore.fetchRoutes();
+    await _historyStore.fetchOrders();
     _historyStore.setFinishLoadingHistory(true);
   }
 
@@ -33,11 +34,17 @@ class HistoryPageState extends State<HistoryPage> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_historyStore.routesHistory == null) {
-        await fetchRoutes();
+        await fetchRoutesAndOrders();
         _historyStore.setFinishLoadingHistory(true);
       }
     });
     super.initState();
+  }
+
+  List<MOrder?>? getRouteOrders(MRoute? route) {
+    return _historyStore.ordersHistory!
+        .where((order) => order!.assignedRouteID == route!.id)
+        .toList();
   }
 
   @override
@@ -57,7 +64,7 @@ class HistoryPageState extends State<HistoryPage> {
                       const SizedBox(width: 200),
                       OutlinedButton(
                           onPressed: () {
-                            fetchRoutes();
+                            fetchRoutesAndOrders();
                           },
                           child: const Icon(Icons.refresh))
                     ]),
@@ -85,7 +92,10 @@ class HistoryPageState extends State<HistoryPage> {
                                                   HistoryRouteListItem(
                                                       _historyStore
                                                               .routesHistory![
-                                                          index]));
+                                                          index],
+                                                      getRouteOrders(_historyStore
+                                                              .routesHistory![
+                                                          index])));
                                         }))
                                 : Center(
                                     child: Column(

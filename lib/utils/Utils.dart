@@ -1,6 +1,4 @@
 // ignore_for_file: depend_on_referenced_packages
-
-import '../models/Client.dart';
 import 'dart:convert';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';

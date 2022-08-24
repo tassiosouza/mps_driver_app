@@ -35,12 +35,14 @@ class MOrder extends Model {
   final OrderStatus? _status;
   final String? _customerName;
   final int? _eta;
-  final String? _routeID;
+  final String? _assignedRouteID;
   final String? _address;
   final double? _latitude;
   final double? _longitude;
   final double? _orderDate;
   final String? _phone;
+  final String? _location;
+  final int? _sort;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -76,17 +78,8 @@ class MOrder extends Model {
     return _eta;
   }
   
-  String get routeID {
-    try {
-      return _routeID!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get assignedRouteID {
+    return _assignedRouteID;
   }
   
   String? get address {
@@ -109,6 +102,14 @@ class MOrder extends Model {
     return _phone;
   }
   
+  String? get location {
+    return _location;
+  }
+  
+  int? get sort {
+    return _sort;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -117,9 +118,9 @@ class MOrder extends Model {
     return _updatedAt;
   }
   
-  const MOrder._internal({required this.id, number, deliveryInstruction, mealPlan, status, customerName, eta, required routeID, address, latitude, longitude, orderDate, phone, createdAt, updatedAt}): _number = number, _deliveryInstruction = deliveryInstruction, _mealPlan = mealPlan, _status = status, _customerName = customerName, _eta = eta, _routeID = routeID, _address = address, _latitude = latitude, _longitude = longitude, _orderDate = orderDate, _phone = phone, _createdAt = createdAt, _updatedAt = updatedAt;
+  const MOrder._internal({required this.id, number, deliveryInstruction, mealPlan, status, customerName, eta, assignedRouteID, address, latitude, longitude, orderDate, phone, location, sort, createdAt, updatedAt}): _number = number, _deliveryInstruction = deliveryInstruction, _mealPlan = mealPlan, _status = status, _customerName = customerName, _eta = eta, _assignedRouteID = assignedRouteID, _address = address, _latitude = latitude, _longitude = longitude, _orderDate = orderDate, _phone = phone, _location = location, _sort = sort, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory MOrder({String? id, String? number, String? deliveryInstruction, String? mealPlan, OrderStatus? status, String? customerName, int? eta, required String routeID, String? address, double? latitude, double? longitude, double? orderDate, String? phone}) {
+  factory MOrder({String? id, String? number, String? deliveryInstruction, String? mealPlan, OrderStatus? status, String? customerName, int? eta, String? assignedRouteID, String? address, double? latitude, double? longitude, double? orderDate, String? phone, String? location, int? sort}) {
     return MOrder._internal(
       id: id == null ? UUID.getUUID() : id,
       number: number,
@@ -128,12 +129,14 @@ class MOrder extends Model {
       status: status,
       customerName: customerName,
       eta: eta,
-      routeID: routeID,
+      assignedRouteID: assignedRouteID,
       address: address,
       latitude: latitude,
       longitude: longitude,
       orderDate: orderDate,
-      phone: phone);
+      phone: phone,
+      location: location,
+      sort: sort);
   }
   
   bool equals(Object other) {
@@ -151,12 +154,14 @@ class MOrder extends Model {
       _status == other._status &&
       _customerName == other._customerName &&
       _eta == other._eta &&
-      _routeID == other._routeID &&
+      _assignedRouteID == other._assignedRouteID &&
       _address == other._address &&
       _latitude == other._latitude &&
       _longitude == other._longitude &&
       _orderDate == other._orderDate &&
-      _phone == other._phone;
+      _phone == other._phone &&
+      _location == other._location &&
+      _sort == other._sort;
   }
   
   @override
@@ -174,12 +179,14 @@ class MOrder extends Model {
     buffer.write("status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
     buffer.write("customerName=" + "$_customerName" + ", ");
     buffer.write("eta=" + (_eta != null ? _eta!.toString() : "null") + ", ");
-    buffer.write("routeID=" + "$_routeID" + ", ");
+    buffer.write("assignedRouteID=" + "$_assignedRouteID" + ", ");
     buffer.write("address=" + "$_address" + ", ");
     buffer.write("latitude=" + (_latitude != null ? _latitude!.toString() : "null") + ", ");
     buffer.write("longitude=" + (_longitude != null ? _longitude!.toString() : "null") + ", ");
     buffer.write("orderDate=" + (_orderDate != null ? _orderDate!.toString() : "null") + ", ");
     buffer.write("phone=" + "$_phone" + ", ");
+    buffer.write("location=" + "$_location" + ", ");
+    buffer.write("sort=" + (_sort != null ? _sort!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -187,7 +194,7 @@ class MOrder extends Model {
     return buffer.toString();
   }
   
-  MOrder copyWith({String? id, String? number, String? deliveryInstruction, String? mealPlan, OrderStatus? status, String? customerName, int? eta, String? routeID, String? address, double? latitude, double? longitude, double? orderDate, String? phone}) {
+  MOrder copyWith({String? id, String? number, String? deliveryInstruction, String? mealPlan, OrderStatus? status, String? customerName, int? eta, String? assignedRouteID, String? address, double? latitude, double? longitude, double? orderDate, String? phone, String? location, int? sort}) {
     return MOrder._internal(
       id: id ?? this.id,
       number: number ?? this.number,
@@ -196,12 +203,14 @@ class MOrder extends Model {
       status: status ?? this.status,
       customerName: customerName ?? this.customerName,
       eta: eta ?? this.eta,
-      routeID: routeID ?? this.routeID,
+      assignedRouteID: assignedRouteID ?? this.assignedRouteID,
       address: address ?? this.address,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       orderDate: orderDate ?? this.orderDate,
-      phone: phone ?? this.phone);
+      phone: phone ?? this.phone,
+      location: location ?? this.location,
+      sort: sort ?? this.sort);
   }
   
   MOrder.fromJson(Map<String, dynamic> json)  
@@ -212,17 +221,19 @@ class MOrder extends Model {
       _status = enumFromString<OrderStatus>(json['status'], OrderStatus.values),
       _customerName = json['customerName'],
       _eta = (json['eta'] as num?)?.toInt(),
-      _routeID = json['routeID'],
+      _assignedRouteID = json['assignedRouteID'],
       _address = json['address'],
       _latitude = (json['latitude'] as num?)?.toDouble(),
       _longitude = (json['longitude'] as num?)?.toDouble(),
       _orderDate = (json['orderDate'] as num?)?.toDouble(),
       _phone = json['phone'],
+      _location = json['location'],
+      _sort = (json['sort'] as num?)?.toInt(),
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'number': _number, 'deliveryInstruction': _deliveryInstruction, 'mealPlan': _mealPlan, 'status': enumToString(_status), 'customerName': _customerName, 'eta': _eta, 'routeID': _routeID, 'address': _address, 'latitude': _latitude, 'longitude': _longitude, 'orderDate': _orderDate, 'phone': _phone, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'number': _number, 'deliveryInstruction': _deliveryInstruction, 'mealPlan': _mealPlan, 'status': enumToString(_status), 'customerName': _customerName, 'eta': _eta, 'assignedRouteID': _assignedRouteID, 'address': _address, 'latitude': _latitude, 'longitude': _longitude, 'orderDate': _orderDate, 'phone': _phone, 'location': _location, 'sort': _sort, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "mOrder.id");
@@ -232,12 +243,14 @@ class MOrder extends Model {
   static final QueryField STATUS = QueryField(fieldName: "status");
   static final QueryField CUSTOMERNAME = QueryField(fieldName: "customerName");
   static final QueryField ETA = QueryField(fieldName: "eta");
-  static final QueryField ROUTEID = QueryField(fieldName: "routeID");
+  static final QueryField ASSIGNEDROUTEID = QueryField(fieldName: "assignedRouteID");
   static final QueryField ADDRESS = QueryField(fieldName: "address");
   static final QueryField LATITUDE = QueryField(fieldName: "latitude");
   static final QueryField LONGITUDE = QueryField(fieldName: "longitude");
   static final QueryField ORDERDATE = QueryField(fieldName: "orderDate");
   static final QueryField PHONE = QueryField(fieldName: "phone");
+  static final QueryField LOCATION = QueryField(fieldName: "location");
+  static final QueryField SORT = QueryField(fieldName: "sort");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "MOrder";
     modelSchemaDefinition.pluralName = "MOrders";
@@ -292,8 +305,8 @@ class MOrder extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MOrder.ROUTEID,
-      isRequired: true,
+      key: MOrder.ASSIGNEDROUTEID,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
@@ -325,6 +338,18 @@ class MOrder extends Model {
       key: MOrder.PHONE,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.LOCATION,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MOrder.SORT,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.int)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

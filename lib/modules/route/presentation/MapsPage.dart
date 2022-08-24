@@ -5,9 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mps_driver_app/models/Coordinates.dart';
-
-import '../../../models/Customer.dart';
 import '../../../models/MOrder.dart';
 
 class SecondRoute extends StatefulWidget {
@@ -124,16 +121,13 @@ class _ExampleState extends State<SecondRoute> {
     copyOrderList = List<MOrder>.from(widget.orders);
     MOrder order = MOrder(
         number: '#00001',
-        routeID: "routeId",
+        assignedRouteID: "routeId",
         latitude: 33.1522247,
         longitude: -117.2310085);
     copyOrderList.insert(0, order);
     var index = 1;
     copyOrderList.forEach((order) => {
-          _add(
-              LatLng(order.customer.coordinates.latitude,
-                  order.customer.coordinates.longitude),
-              index),
+          _add(LatLng(order.latitude, order.longitude), index),
           index += 1,
         });
     _addPolylines();

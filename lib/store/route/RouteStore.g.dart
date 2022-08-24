@@ -9,79 +9,157 @@ part of 'RouteStore.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$RouteStore on _RouteStore, Store {
-  late final _$lastActivedRouteAtom =
-      Atom(name: '_RouteStore.lastActivedRoute', context: context);
+  late final _$routesHistoryAtom =
+      Atom(name: '_RouteStore.routesHistory', context: context);
 
   @override
-  MRoute? get lastActivedRoute {
-    _$lastActivedRouteAtom.reportRead();
-    return super.lastActivedRoute;
+  List<MRoute?>? get routesHistory {
+    _$routesHistoryAtom.reportRead();
+    return super.routesHistory;
   }
 
   @override
-  set lastActivedRoute(MRoute? value) {
-    _$lastActivedRouteAtom.reportWrite(value, super.lastActivedRoute, () {
-      super.lastActivedRoute = value;
+  set routesHistory(List<MRoute?>? value) {
+    _$routesHistoryAtom.reportWrite(value, super.routesHistory, () {
+      super.routesHistory = value;
     });
   }
 
-  late final _$isRouteActivedAtom =
-      Atom(name: '_RouteStore.isRouteActived', context: context);
+  late final _$ordersHistoryAtom =
+      Atom(name: '_RouteStore.ordersHistory', context: context);
 
   @override
-  bool get isRouteActived {
-    _$isRouteActivedAtom.reportRead();
-    return super.isRouteActived;
+  List<MOrder?>? get ordersHistory {
+    _$ordersHistoryAtom.reportRead();
+    return super.ordersHistory;
   }
 
   @override
-  set isRouteActived(bool value) {
-    _$isRouteActivedAtom.reportWrite(value, super.isRouteActived, () {
-      super.isRouteActived = value;
+  set ordersHistory(List<MOrder?>? value) {
+    _$ordersHistoryAtom.reportWrite(value, super.ordersHistory, () {
+      super.ordersHistory = value;
     });
   }
 
-  late final _$endAddressAtom =
-      Atom(name: '_RouteStore.endAddress', context: context);
+  late final _$currentDriverAtom =
+      Atom(name: '_RouteStore.currentDriver', context: context);
 
   @override
-  Observable<String> get endAddress {
-    _$endAddressAtom.reportRead();
-    return super.endAddress;
+  Driver? get currentDriver {
+    _$currentDriverAtom.reportRead();
+    return super.currentDriver;
   }
 
   @override
-  set endAddress(Observable<String> value) {
-    _$endAddressAtom.reportWrite(value, super.endAddress, () {
-      super.endAddress = value;
+  set currentDriver(Driver? value) {
+    _$currentDriverAtom.reportWrite(value, super.currentDriver, () {
+      super.currentDriver = value;
     });
   }
 
-  late final _$predictionsAtom =
-      Atom(name: '_RouteStore.predictions', context: context);
+  late final _$assignedRouteAtom =
+      Atom(name: '_RouteStore.assignedRoute', context: context);
 
   @override
-  ObservableList<dynamic> get predictions {
-    _$predictionsAtom.reportRead();
-    return super.predictions;
+  MRoute? get assignedRoute {
+    _$assignedRouteAtom.reportRead();
+    return super.assignedRoute;
   }
 
   @override
-  set predictions(ObservableList<dynamic> value) {
-    _$predictionsAtom.reportWrite(value, super.predictions, () {
-      super.predictions = value;
+  set assignedRoute(MRoute? value) {
+    _$assignedRouteAtom.reportWrite(value, super.assignedRoute, () {
+      super.assignedRoute = value;
     });
+  }
+
+  late final _$loadingAtom =
+      Atom(name: '_RouteStore.loading', context: context);
+
+  @override
+  bool get loading {
+    _$loadingAtom.reportRead();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.reportWrite(value, super.loading, () {
+      super.loading = value;
+    });
+  }
+
+  late final _$finishLoadingHistoryAtom =
+      Atom(name: '_RouteStore.finishLoadingHistory', context: context);
+
+  @override
+  bool get finishLoadingHistory {
+    _$finishLoadingHistoryAtom.reportRead();
+    return super.finishLoadingHistory;
+  }
+
+  @override
+  set finishLoadingHistory(bool value) {
+    _$finishLoadingHistoryAtom.reportWrite(value, super.finishLoadingHistory,
+        () {
+      super.finishLoadingHistory = value;
+    });
+  }
+
+  late final _$retrieveDriverInformationAsyncAction =
+      AsyncAction('_RouteStore.retrieveDriverInformation', context: context);
+
+  @override
+  Future retrieveDriverInformation() {
+    return _$retrieveDriverInformationAsyncAction
+        .run(() => super.retrieveDriverInformation());
+  }
+
+  late final _$fetchRoutesAsyncAction =
+      AsyncAction('_RouteStore.fetchRoutes', context: context);
+
+  @override
+  Future fetchRoutes() {
+    return _$fetchRoutesAsyncAction.run(() => super.fetchRoutes());
+  }
+
+  late final _$fetchAssignedRouteAsyncAction =
+      AsyncAction('_RouteStore.fetchAssignedRoute', context: context);
+
+  @override
+  Future fetchAssignedRoute() {
+    return _$fetchAssignedRouteAsyncAction
+        .run(() => super.fetchAssignedRoute());
+  }
+
+  late final _$fetchOrdersAsyncAction =
+      AsyncAction('_RouteStore.fetchOrders', context: context);
+
+  @override
+  Future fetchOrders() {
+    return _$fetchOrdersAsyncAction.run(() => super.fetchOrders());
   }
 
   late final _$_RouteStoreActionController =
       ActionController(name: '_RouteStore', context: context);
 
   @override
-  dynamic setlastActivedRoute(MRoute? route) {
+  dynamic setLoading(bool isLoading) {
     final _$actionInfo = _$_RouteStoreActionController.startAction(
-        name: '_RouteStore.setlastActivedRoute');
+        name: '_RouteStore.setLoading');
     try {
-      return super.setlastActivedRoute(route);
+      return super.setLoading(isLoading);
+    } finally {
+      _$_RouteStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setEmptyHistory() {
+    final _$actionInfo = _$_RouteStoreActionController.startAction(
+        name: '_RouteStore.setEmptyHistory');
+    try {
+      return super.setEmptyHistory();
     } finally {
       _$_RouteStoreActionController.endAction(_$actionInfo);
     }
@@ -99,56 +177,14 @@ mixin _$RouteStore on _RouteStore, Store {
   }
 
   @override
-  dynamic setIsRouteActived(bool actived) {
-    final _$actionInfo = _$_RouteStoreActionController.startAction(
-        name: '_RouteStore.setIsRouteActived');
-    try {
-      return super.setIsRouteActived(actived);
-    } finally {
-      _$_RouteStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic addPredictions(List<AutocompletePrediction> predct) {
-    final _$actionInfo = _$_RouteStoreActionController.startAction(
-        name: '_RouteStore.addPredictions');
-    try {
-      return super.addPredictions(predct);
-    } finally {
-      _$_RouteStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic clearPredictions() {
-    final _$actionInfo = _$_RouteStoreActionController.startAction(
-        name: '_RouteStore.clearPredictions');
-    try {
-      return super.clearPredictions();
-    } finally {
-      _$_RouteStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic setEndAddress(String address) {
-    final _$actionInfo = _$_RouteStoreActionController.startAction(
-        name: '_RouteStore.setEndAddress');
-    try {
-      return super.setEndAddress(address);
-    } finally {
-      _$_RouteStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   String toString() {
     return '''
-lastActivedRoute: ${lastActivedRoute},
-isRouteActived: ${isRouteActived},
-endAddress: ${endAddress},
-predictions: ${predictions}
+routesHistory: ${routesHistory},
+ordersHistory: ${ordersHistory},
+currentDriver: ${currentDriver},
+assignedRoute: ${assignedRoute},
+loading: ${loading},
+finishLoadingHistory: ${finishLoadingHistory}
     ''';
   }
 }

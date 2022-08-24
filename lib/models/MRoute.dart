@@ -21,7 +21,6 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 
@@ -34,17 +33,15 @@ class MRoute extends Model {
   final double? _startTime;
   final double? _endTime;
   final RouteStatus? _status;
-  final String? _name;
-  final List<MOrder>? _orders;
-  final Driver? _driver;
+  final String? _driverID;
   final int? _distance;
   final int? _duration;
   final String? _location;
   final String? _routePlanName;
   final double? _routeDate;
+  final String? _points;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
-  final String? _mRouteDriverId;
 
   @override
   getInstanceType() => classType;
@@ -70,25 +67,8 @@ class MRoute extends Model {
     return _status;
   }
   
-  String get name {
-    try {
-      return _name!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
-  }
-  
-  List<MOrder>? get orders {
-    return _orders;
-  }
-  
-  Driver? get driver {
-    return _driver;
+  String? get driverID {
+    return _driverID;
   }
   
   int? get distance {
@@ -111,6 +91,10 @@ class MRoute extends Model {
     return _routeDate;
   }
   
+  String? get points {
+    return _points;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -119,28 +103,22 @@ class MRoute extends Model {
     return _updatedAt;
   }
   
-  String? get mRouteDriverId {
-    return _mRouteDriverId;
-  }
+  const MRoute._internal({required this.id, cost, startTime, endTime, status, driverID, distance, duration, location, routePlanName, routeDate, points, createdAt, updatedAt}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _driverID = driverID, _distance = distance, _duration = duration, _location = location, _routePlanName = routePlanName, _routeDate = routeDate, _points = points, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  const MRoute._internal({required this.id, cost, startTime, endTime, status, required name, orders, driver, distance, duration, location, routePlanName, routeDate, createdAt, updatedAt, mRouteDriverId}): _cost = cost, _startTime = startTime, _endTime = endTime, _status = status, _name = name, _orders = orders, _driver = driver, _distance = distance, _duration = duration, _location = location, _routePlanName = routePlanName, _routeDate = routeDate, _createdAt = createdAt, _updatedAt = updatedAt, _mRouteDriverId = mRouteDriverId;
-  
-  factory MRoute({String? id, double? cost, double? startTime, double? endTime, RouteStatus? status, required String name, List<MOrder>? orders, Driver? driver, int? distance, int? duration, String? location, String? routePlanName, double? routeDate, String? mRouteDriverId}) {
+  factory MRoute({String? id, double? cost, double? startTime, double? endTime, RouteStatus? status, String? driverID, int? distance, int? duration, String? location, String? routePlanName, double? routeDate, String? points}) {
     return MRoute._internal(
       id: id == null ? UUID.getUUID() : id,
       cost: cost,
       startTime: startTime,
       endTime: endTime,
       status: status,
-      name: name,
-      orders: orders != null ? List<MOrder>.unmodifiable(orders) : orders,
-      driver: driver,
+      driverID: driverID,
       distance: distance,
       duration: duration,
       location: location,
       routePlanName: routePlanName,
       routeDate: routeDate,
-      mRouteDriverId: mRouteDriverId);
+      points: points);
   }
   
   bool equals(Object other) {
@@ -156,15 +134,13 @@ class MRoute extends Model {
       _startTime == other._startTime &&
       _endTime == other._endTime &&
       _status == other._status &&
-      _name == other._name &&
-      DeepCollectionEquality().equals(_orders, other._orders) &&
-      _driver == other._driver &&
+      _driverID == other._driverID &&
       _distance == other._distance &&
       _duration == other._duration &&
       _location == other._location &&
       _routePlanName == other._routePlanName &&
       _routeDate == other._routeDate &&
-      _mRouteDriverId == other._mRouteDriverId;
+      _points == other._points;
   }
   
   @override
@@ -180,36 +156,34 @@ class MRoute extends Model {
     buffer.write("startTime=" + (_startTime != null ? _startTime!.toString() : "null") + ", ");
     buffer.write("endTime=" + (_endTime != null ? _endTime!.toString() : "null") + ", ");
     buffer.write("status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
-    buffer.write("name=" + "$_name" + ", ");
+    buffer.write("driverID=" + "$_driverID" + ", ");
     buffer.write("distance=" + (_distance != null ? _distance!.toString() : "null") + ", ");
     buffer.write("duration=" + (_duration != null ? _duration!.toString() : "null") + ", ");
     buffer.write("location=" + "$_location" + ", ");
     buffer.write("routePlanName=" + "$_routePlanName" + ", ");
     buffer.write("routeDate=" + (_routeDate != null ? _routeDate!.toString() : "null") + ", ");
+    buffer.write("points=" + "$_points" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
-    buffer.write("mRouteDriverId=" + "$_mRouteDriverId");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  MRoute copyWith({String? id, double? cost, double? startTime, double? endTime, RouteStatus? status, String? name, List<MOrder>? orders, Driver? driver, int? distance, int? duration, String? location, String? routePlanName, double? routeDate, String? mRouteDriverId}) {
+  MRoute copyWith({String? id, double? cost, double? startTime, double? endTime, RouteStatus? status, String? driverID, int? distance, int? duration, String? location, String? routePlanName, double? routeDate, String? points}) {
     return MRoute._internal(
       id: id ?? this.id,
       cost: cost ?? this.cost,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       status: status ?? this.status,
-      name: name ?? this.name,
-      orders: orders ?? this.orders,
-      driver: driver ?? this.driver,
+      driverID: driverID ?? this.driverID,
       distance: distance ?? this.distance,
       duration: duration ?? this.duration,
       location: location ?? this.location,
       routePlanName: routePlanName ?? this.routePlanName,
       routeDate: routeDate ?? this.routeDate,
-      mRouteDriverId: mRouteDriverId ?? this.mRouteDriverId);
+      points: points ?? this.points);
   }
   
   MRoute.fromJson(Map<String, dynamic> json)  
@@ -218,27 +192,18 @@ class MRoute extends Model {
       _startTime = (json['startTime'] as num?)?.toDouble(),
       _endTime = (json['endTime'] as num?)?.toDouble(),
       _status = enumFromString<RouteStatus>(json['status'], RouteStatus.values),
-      _name = json['name'],
-      _orders = json['orders'] is List
-        ? (json['orders'] as List)
-          .where((e) => e?['serializedData'] != null)
-          .map((e) => MOrder.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
-          .toList()
-        : null,
-      _driver = json['driver']?['serializedData'] != null
-        ? Driver.fromJson(new Map<String, dynamic>.from(json['driver']['serializedData']))
-        : null,
+      _driverID = json['driverID'],
       _distance = (json['distance'] as num?)?.toInt(),
       _duration = (json['duration'] as num?)?.toInt(),
       _location = json['location'],
       _routePlanName = json['routePlanName'],
       _routeDate = (json['routeDate'] as num?)?.toDouble(),
+      _points = json['points'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
-      _mRouteDriverId = json['mRouteDriverId'];
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'cost': _cost, 'startTime': _startTime, 'endTime': _endTime, 'status': enumToString(_status), 'name': _name, 'orders': _orders?.map((MOrder? e) => e?.toJson()).toList(), 'driver': _driver?.toJson(), 'distance': _distance, 'duration': _duration, 'location': _location, 'routePlanName': _routePlanName, 'routeDate': _routeDate, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'mRouteDriverId': _mRouteDriverId
+    'id': id, 'cost': _cost, 'startTime': _startTime, 'endTime': _endTime, 'status': enumToString(_status), 'driverID': _driverID, 'distance': _distance, 'duration': _duration, 'location': _location, 'routePlanName': _routePlanName, 'routeDate': _routeDate, 'points': _points, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "mRoute.id");
@@ -246,19 +211,13 @@ class MRoute extends Model {
   static final QueryField STARTTIME = QueryField(fieldName: "startTime");
   static final QueryField ENDTIME = QueryField(fieldName: "endTime");
   static final QueryField STATUS = QueryField(fieldName: "status");
-  static final QueryField NAME = QueryField(fieldName: "name");
-  static final QueryField ORDERS = QueryField(
-    fieldName: "orders",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (MOrder).toString()));
-  static final QueryField DRIVER = QueryField(
-    fieldName: "driver",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Driver).toString()));
+  static final QueryField DRIVERID = QueryField(fieldName: "driverID");
   static final QueryField DISTANCE = QueryField(fieldName: "distance");
   static final QueryField DURATION = QueryField(fieldName: "duration");
   static final QueryField LOCATION = QueryField(fieldName: "location");
   static final QueryField ROUTEPLANNAME = QueryField(fieldName: "routePlanName");
   static final QueryField ROUTEDATE = QueryField(fieldName: "routeDate");
-  static final QueryField MROUTEDRIVERID = QueryField(fieldName: "mRouteDriverId");
+  static final QueryField POINTS = QueryField(fieldName: "points");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "MRoute";
     modelSchemaDefinition.pluralName = "MRoutes";
@@ -301,23 +260,9 @@ class MRoute extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MRoute.NAME,
-      isRequired: true,
+      key: MRoute.DRIVERID,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-      key: MRoute.ORDERS,
-      isRequired: false,
-      ofModelName: (MOrder).toString(),
-      associatedKey: MOrder.ROUTEID
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-      key: MRoute.DRIVER,
-      isRequired: false,
-      ofModelName: (Driver).toString(),
-      associatedKey: Driver.ID
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
@@ -350,6 +295,12 @@ class MRoute extends Model {
       ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MRoute.POINTS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
       fieldName: 'createdAt',
       isRequired: false,
@@ -362,12 +313,6 @@ class MRoute extends Model {
       isRequired: false,
       isReadOnly: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: MRoute.MROUTEDRIVERID,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
   });
 }

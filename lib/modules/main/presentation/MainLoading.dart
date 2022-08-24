@@ -1,13 +1,8 @@
 // ignore_for_file: depend_on_referenced_packages, unused_local_variable, prefer_typing_uninitialized_variables
-
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_api/amplify_api.dart';
 
 import '../../../models/Driver.dart';
-import '../../../models/Todo.dart';
 import '../../../store/main/MainStore.dart';
 
 class MainLoading extends StatefulWidget {

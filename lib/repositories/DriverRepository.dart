@@ -48,9 +48,10 @@ class DriverRepository {
         });
 
     return Driver(
+        id: ownerID,
+        owner: ownerID,
         name: amplifyDriverName,
         email: amplifyDriverEmail,
-        owner: ownerID,
         phone: amplifyPhoneNumber,
         carCapacity: 22,
         onBoard: false);

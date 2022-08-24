@@ -4,7 +4,6 @@ import 'package:mps_driver_app/Services/DriverService.dart';
 import 'package:mps_driver_app/models/MRoute.dart';
 import 'package:mps_driver_app/modules/route/services/ManageEndAddress.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import '../../../models/Customer.dart';
 import '../../../models/Driver.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 

@@ -1,6 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:convert';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:intl/intl.dart';
 

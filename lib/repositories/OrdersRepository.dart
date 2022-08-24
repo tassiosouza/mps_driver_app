@@ -27,10 +27,9 @@ class OrdersRepository {
 
   Future<List<MOrder?>> fetchOrders(List<MRoute?>? routes) async {
     try {
-      final user = await Amplify.Auth.getCurrentUser();
       List<MOrder?> resultOrders = <MOrder?>[];
       for (int i = 0; i < routes!.length; i++) {
-        final queryPredicate = MOrder.ASSIGNEDROUTEID.eq(user.userId);
+        final queryPredicate = MOrder.ASSIGNEDROUTEID.eq(routes[i]!.id);
         final request =
             ModelQueries.list(MOrder.classType, where: queryPredicate);
         final response = await Amplify.API.query(request: request).response;

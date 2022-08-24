@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:mps_driver_app/models/RouteStatus.dart';
@@ -22,7 +23,7 @@ import '../../../profile/presentation/ProfileViewModel.dart';
 import 'InstructionsDialog.dart';
 
 class OrderItem extends StatelessWidget {
-  MOrder order;
+  MOrder? order;
   int orderIndex;
   Driver currentDriver;
   StateRoutePage routePageReference;
@@ -46,9 +47,9 @@ class OrderItem extends StatelessWidget {
       await profileViewModel.setDefaultMap();
     }
     await profileViewModel.chosenMap.value.showMarker(
-      coords: Coords(order.latitude!, order.longitude!),
-      title: order.customerName!,
-      description: order.customerName!,
+      coords: Coords(order!.latitude!, order!.longitude!),
+      title: order!.customerName!,
+      description: order!.customerName!,
     );
   }
 
@@ -57,7 +58,7 @@ class OrderItem extends StatelessWidget {
     if (url.isEmpty) {
       throw Exception('Photo exception');
     } else {
-      smsService?.sendSmsWithPhoto(order.phone!, url);
+      smsService?.sendSmsWithPhoto(order!.phone!, url);
       updateOrderStatusTo(OrderStatus.DELIVERED);
       routePageReference.verifyAllOrderStatusChanged(
           OrderStatus.DELIVERED, OrderStatus.CANCELED);
@@ -130,7 +131,7 @@ class OrderItem extends StatelessWidget {
                   .verifyAllOrderStatusChanged(OrderStatus.CHECKED)
             },
         "Meal Instructions",
-        order.mealPlan);
+        order!.mealPlan);
   }
 
   Future<void> wrongCheckBagClickDialog(BuildContext context) {
@@ -158,164 +159,181 @@ class OrderItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.all(5),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(width: 1.0, color: App_Colors.grey_light.value)),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        const SizedBox(width: 15),
-        Expanded(
-          child: IntrinsicWidth(
-            child: Column(
-              children: [
-                Row(children: [
-                  Container(
-                    margin: const EdgeInsets.all(2),
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        border: Border.all(
-                            width: 1, color: App_Colors.grey_light.value)),
-                    child: Icon(Icons.person,
-                        size: 40, color: App_Colors.grey_light.value),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      RichText(
-                          overflow: TextOverflow.ellipsis,
-                          text: TextSpan(
-                              text: order.customerName!,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: App_Colors.black_text.value,
-                                  fontFamily: 'Poppins'))),
-                      Text(order.address!,
-                          style: TextStyle(
-                              color: App_Colors.black_text.value,
-                              fontFamily: 'Poppins',
-                              fontSize: 12)),
-                    ],
-                  )),
-                  Column(
-                    children: [
-                      GestureDetector(
-                          onTap: () =>
-                              InstructionsDialog().call(context, order),
-                          child: Container(
-                              padding: const EdgeInsets.only(right: 15),
-                              child: const Icon(
-                                Icons.info_outline,
-                                color: Colors.green,
-                                size: 20,
-                              ))),
-                      const SizedBox(height: 40)
-                    ],
-                  )
-                ]),
-                Divider(color: App_Colors.grey_light.value, thickness: 1),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Observer(
+        builder: (_) => Card(
+              elevation: 0,
+              margin: const EdgeInsets.all(5),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                      width: 1.0, color: App_Colors.grey_light.value)),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    getButtonIcon(CustomIcon.sms_driver_icon, order, false),
-                    getButtonIcon(CustomIcon.call_driver_icon, order, true),
-                    bagIcon(order.status, context),
-                    const SizedBox(width: 1),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (routePageReference.getRouteStatus() ==
-                            RouteStatus.IN_TRANSIT) {
-                          _launchMapsUrl();
-                        } else {
-                          wrongStartRouteClickDialog(context);
-                        }
-                      },
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              EdgeInsets.only(left: 20, right: 20)),
-                          backgroundColor:
-                              MaterialStateProperty.all(getStartButtonColor()),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18.0),
-                                      side: const BorderSide(
-                                          color: Colors.transparent)))),
-                      child: Row(children: const [
-                        Text("Start",
-                            style:
-                                TextStyle(fontSize: 13, fontFamily: 'Poppins')),
-                        SizedBox(width: 10),
-                        Icon(CustomIcon.start_driver_icon, size: 9)
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: IntrinsicWidth(
+                        child: Column(
+                          children: [
+                            Row(children: [
+                              Container(
+                                margin: const EdgeInsets.all(2),
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(40),
+                                    border: Border.all(
+                                        width: 1,
+                                        color: App_Colors.grey_light.value)),
+                                child: Icon(Icons.person,
+                                    size: 40,
+                                    color: App_Colors.grey_light.value),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  RichText(
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                          text: order!.customerName!,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  App_Colors.black_text.value,
+                                              fontFamily: 'Poppins'))),
+                                  Text(order!.address!,
+                                      style: TextStyle(
+                                          color: App_Colors.black_text.value,
+                                          fontFamily: 'Poppins',
+                                          fontSize: 12)),
+                                ],
+                              )),
+                              Column(
+                                children: [
+                                  GestureDetector(
+                                      onTap: () => InstructionsDialog()
+                                          .call(context, order!),
+                                      child: Container(
+                                          padding:
+                                              const EdgeInsets.only(right: 15),
+                                          child: const Icon(
+                                            Icons.info_outline,
+                                            color: Colors.green,
+                                            size: 20,
+                                          ))),
+                                  const SizedBox(height: 40)
+                                ],
+                              )
+                            ]),
+                            Divider(
+                                color: App_Colors.grey_light.value,
+                                thickness: 1),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                getButtonIcon(
+                                    CustomIcon.sms_driver_icon, order!, false),
+                                getButtonIcon(
+                                    CustomIcon.call_driver_icon, order!, true),
+                                bagIcon(order!.status, context),
+                                const SizedBox(width: 1),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (routePageReference.getRouteStatus() ==
+                                        RouteStatus.IN_TRANSIT) {
+                                      _launchMapsUrl();
+                                    } else {
+                                      wrongStartRouteClickDialog(context);
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(
+                                          EdgeInsets.only(left: 20, right: 20)),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              getStartButtonColor()),
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(18.0),
+                                              side: const BorderSide(
+                                                  color: Colors.transparent)))),
+                                  child: Row(children: const [
+                                    Text("Start",
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontFamily: 'Poppins')),
+                                    SizedBox(width: 10),
+                                    Icon(CustomIcon.start_driver_icon, size: 9)
+                                  ]),
+                                ),
+                                const SizedBox(width: 1),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    IntrinsicHeight(
+                      child: Row(children: [
+                        VerticalDivider(
+                            color: App_Colors.grey_light.value,
+                            thickness: 1,
+                            width: 0),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                                margin: const EdgeInsets.all(0),
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          color: Colors.green,
+                                          width: 1,
+                                          style: BorderStyle.solid)),
+                                ),
+                                child: Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 35, right: 35, top: 8, bottom: 8),
+                                    child: Text(
+                                      "${orderIndex + 1}°",
+                                      style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500),
+                                    ))),
+                            getCameraIcon(order!, context),
+                            const Text(
+                              "Deliver",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                  fontFamily: 'Poppins'),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              order!.number!,
+                              style: TextStyle(
+                                  color: App_Colors.grey_text.value,
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins'),
+                            ),
+                            const SizedBox(height: 5)
+                          ],
+                        )
                       ]),
-                    ),
-                    const SizedBox(width: 1),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        IntrinsicHeight(
-          child: Row(children: [
-            VerticalDivider(
-                color: App_Colors.grey_light.value, thickness: 1, width: 0),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                    margin: const EdgeInsets.all(0),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(
-                              color: Colors.green,
-                              width: 1,
-                              style: BorderStyle.solid)),
-                    ),
-                    child: Container(
-                        padding: const EdgeInsets.only(
-                            left: 35, right: 35, top: 8, bottom: 8),
-                        child: Text(
-                          "${orderIndex + 1}°",
-                          style: const TextStyle(
-                              color: Colors.green,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
-                        ))),
-                getCameraIcon(order, context),
-                const Text(
-                  "Deliver",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      fontFamily: 'Poppins'),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  order.number!,
-                  style: TextStyle(
-                      color: App_Colors.grey_text.value,
-                      fontSize: 14,
-                      fontFamily: 'Poppins'),
-                ),
-                const SizedBox(height: 5)
-              ],
-            )
-          ]),
-        )
-      ]),
-    );
+                    )
+                  ]),
+            ));
   }
 
   bagIcon(OrderStatus? status, BuildContext context) {
     Widget widget;
-    if (order.status != OrderStatus.CREATED) {
-      widget = getButtonIcon(Icons.check, order, false);
+    if (order!.status != OrderStatus.CREATED) {
+      widget = getButtonIcon(Icons.check, order!, false);
     } else {
       widget = SizedBox(
           width: 30,

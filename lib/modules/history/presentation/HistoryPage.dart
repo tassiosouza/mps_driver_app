@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -8,10 +7,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/store/history/HistoryStore.dart';
-import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../models/MRoute.dart';
-import '../../route/presentation/RouteViewModel.dart';
 import 'components/HistoryRouteListItem.dart';
 
 class HistoryPage extends StatefulWidget {

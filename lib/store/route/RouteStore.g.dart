@@ -9,35 +9,49 @@ part of 'RouteStore.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$RouteStore on _RouteStore, Store {
-  late final _$routesHistoryAtom =
-      Atom(name: '_RouteStore.routesHistory', context: context);
+  late final _$routesAtom = Atom(name: '_RouteStore.routes', context: context);
 
   @override
-  List<MRoute?>? get routesHistory {
-    _$routesHistoryAtom.reportRead();
-    return super.routesHistory;
+  List<MRoute?>? get routes {
+    _$routesAtom.reportRead();
+    return super.routes;
   }
 
   @override
-  set routesHistory(List<MRoute?>? value) {
-    _$routesHistoryAtom.reportWrite(value, super.routesHistory, () {
-      super.routesHistory = value;
+  set routes(List<MRoute?>? value) {
+    _$routesAtom.reportWrite(value, super.routes, () {
+      super.routes = value;
     });
   }
 
-  late final _$ordersHistoryAtom =
-      Atom(name: '_RouteStore.ordersHistory', context: context);
+  late final _$ordersAtom = Atom(name: '_RouteStore.orders', context: context);
 
   @override
-  List<MOrder?>? get ordersHistory {
-    _$ordersHistoryAtom.reportRead();
-    return super.ordersHistory;
+  List<MOrder?>? get orders {
+    _$ordersAtom.reportRead();
+    return super.orders;
   }
 
   @override
-  set ordersHistory(List<MOrder?>? value) {
-    _$ordersHistoryAtom.reportWrite(value, super.ordersHistory, () {
-      super.ordersHistory = value;
+  set orders(List<MOrder?>? value) {
+    _$ordersAtom.reportWrite(value, super.orders, () {
+      super.orders = value;
+    });
+  }
+
+  late final _$routeOrdersAtom =
+      Atom(name: '_RouteStore.routeOrders', context: context);
+
+  @override
+  List<MOrder?>? get routeOrders {
+    _$routeOrdersAtom.reportRead();
+    return super.routeOrders;
+  }
+
+  @override
+  set routeOrders(List<MOrder?>? value) {
+    _$routeOrdersAtom.reportWrite(value, super.routeOrders, () {
+      super.routeOrders = value;
     });
   }
 
@@ -106,6 +120,15 @@ mixin _$RouteStore on _RouteStore, Store {
     });
   }
 
+  late final _$retrieveRouteOrdersAsyncAction =
+      AsyncAction('_RouteStore.retrieveRouteOrders', context: context);
+
+  @override
+  Future retrieveRouteOrders() {
+    return _$retrieveRouteOrdersAsyncAction
+        .run(() => super.retrieveRouteOrders());
+  }
+
   late final _$retrieveDriverInformationAsyncAction =
       AsyncAction('_RouteStore.retrieveDriverInformation', context: context);
 
@@ -130,6 +153,24 @@ mixin _$RouteStore on _RouteStore, Store {
   Future fetchAssignedRoute() {
     return _$fetchAssignedRouteAsyncAction
         .run(() => super.fetchAssignedRoute());
+  }
+
+  late final _$updateAssignedRouteAsyncAction =
+      AsyncAction('_RouteStore.updateAssignedRoute', context: context);
+
+  @override
+  Future updateAssignedRoute(MRoute updatedRoute) {
+    return _$updateAssignedRouteAsyncAction
+        .run(() => super.updateAssignedRoute(updatedRoute));
+  }
+
+  late final _$updateAssignedRouteOrderAsyncAction =
+      AsyncAction('_RouteStore.updateAssignedRouteOrder', context: context);
+
+  @override
+  Future updateAssignedRouteOrder(int orderIndex, MOrder? updatedOrder) {
+    return _$updateAssignedRouteOrderAsyncAction
+        .run(() => super.updateAssignedRouteOrder(orderIndex, updatedOrder));
   }
 
   late final _$fetchOrdersAsyncAction =
@@ -179,8 +220,9 @@ mixin _$RouteStore on _RouteStore, Store {
   @override
   String toString() {
     return '''
-routesHistory: ${routesHistory},
-ordersHistory: ${ordersHistory},
+routes: ${routes},
+orders: ${orders},
+routeOrders: ${routeOrders},
 currentDriver: ${currentDriver},
 assignedRoute: ${assignedRoute},
 loading: ${loading},

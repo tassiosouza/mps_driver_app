@@ -10,7 +10,6 @@ import '../../../../models/MRoute.dart';
 import '../../../../theme/CustomIcon.dart';
 import '../../../../utils/Utils.dart';
 import 'package:intl/intl.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
 // ignore: must_be_immutable

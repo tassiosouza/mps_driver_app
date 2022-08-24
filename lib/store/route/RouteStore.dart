@@ -24,10 +24,13 @@ abstract class _RouteStore with Store {
   DriverRepository driverRepository = DriverRepository();
 
   @observable
-  List<MRoute?>? routesHistory;
+  List<MRoute?>? routes;
 
   @observable
-  List<MOrder?>? ordersHistory;
+  List<MOrder?>? orders;
+
+  @observable
+  List<MOrder?>? routeOrders;
 
   @observable
   Driver? currentDriver;
@@ -44,6 +47,17 @@ abstract class _RouteStore with Store {
   }
 
   @action
+  retrieveRouteOrders() async {
+    if (assignedRoute == null) {
+      log('The assigned route is necessary to retrive route orders');
+    }
+
+    // ** Retrive orders from the assigned route
+    routeOrders = await ordersRepository.fetchOrders([assignedRoute]);
+    routeOrders!.sort((a, b) => a!.sort!.compareTo(b!.sort!));
+  }
+
+  @action
   retrieveDriverInformation() async {
     Driver? driver = await driverRepository.retrieveDriver();
     if (driver == null) {
@@ -55,27 +69,50 @@ abstract class _RouteStore with Store {
 
   @action
   setEmptyHistory() {
-    routesHistory = [];
-    ordersHistory = [];
+    routes = [];
+    orders = [];
   }
 
   @action
   fetchRoutes() async {
-    routesHistory = await routesRepository.fetchRoutes();
+    routes = await routesRepository.fetchRoutes();
   }
 
   @action
   fetchAssignedRoute() async {
     List<MRoute?> routes = await routesRepository.fetchRoutes();
     assignedRoute = routes.firstWhere(
-        (route) => route!.status == RouteStatus.ASSIGNED,
+        (route) =>
+            route!.status != RouteStatus.PLANNED &&
+            route.status != RouteStatus.DONE &&
+            route.status != RouteStatus.CANCELED &&
+            route.status != RouteStatus.ON_HOLD,
         orElse: () => null);
   }
 
   @action
+  updateAssignedRoute(MRoute updatedRoute) async {
+    assignedRoute = await routesRepository.updateRoute(updatedRoute);
+  }
+
+  @action
+  updateAssignedRouteOrder(int orderIndex, MOrder? updatedOrder) async {
+    List<MOrder?> updatedList = [];
+    MOrder? serverNewOrder = await ordersRepository.updateOrder(updatedOrder!);
+    for (int i = 0; i < routeOrders!.length; i++) {
+      if (i != orderIndex) {
+        updatedList.add(routeOrders![i]);
+      } else {
+        updatedList.add(serverNewOrder);
+      }
+    }
+    routeOrders = updatedList;
+  }
+
+  @action
   fetchOrders() async {
-    if (routesHistory != null) {
-      ordersHistory = await ordersRepository.fetchOrders(routesHistory);
+    if (routes != null) {
+      orders = await ordersRepository.fetchOrders(routes);
     } else {
       log('Orders can only be fetched after routes fetching');
     }
@@ -90,6 +127,6 @@ abstract class _RouteStore with Store {
 
   @action
   void cleanLocalData() {
-    routesHistory = null;
+    routes = null;
   }
 }

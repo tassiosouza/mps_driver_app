@@ -11,15 +11,12 @@ import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
 import 'package:mps_driver_app/store/route/RouteStore.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
-import '../../../Services/DriverService.dart';
 import '../../../components/AppDialogs.dart';
 import '../services/TwilioService.dart';
-import 'RouteViewModel.dart';
-import 'components/OrdersListView.dart';
+import 'components/OrderItem.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as stepper;
 import 'MapsPage.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -34,24 +31,22 @@ class StateRoutePage extends State<RoutePage> {
   int dotCount = 4;
   final _routeStore = Modular.get<RouteStore>();
 
-  StreamSubscription<GraphQLResponse<MRoute>>? subscription;
-
-  GraphQLClient initGqlClient(String url) {
-    final link = HttpLink(
-      url,
-      defaultHeaders: {
-        'x-api-key': 'da2-qhpgfyyngje3tmlbbf5na574sq',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    final client = GraphQLClient(link: link, cache: GraphQLCache());
-
-    return client;
-  }
-
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (_routeStore.currentDriver == null) {
+        await _routeStore.retrieveDriverInformation();
+      }
+
+      if (_routeStore.orders == null) {
+        await _routeStore.fetchOrders();
+      }
+
+      if (_routeStore.routeOrders == null) {
+        await _routeStore.retrieveRouteOrders();
+      }
+    });
+
     super.initState();
   }
 
@@ -72,9 +67,9 @@ class StateRoutePage extends State<RoutePage> {
 
   void sendWelcomeMessages() {
     TwilioSmsService smsService = TwilioSmsService(_routeStore.currentDriver!);
-    // for (var order in _routeViewModel.lastActivedRoute!.orders!) {
-    //   smsService.sendSms(order.customerName!, order.phone!, order.eta);
-    // }
+    for (var order in _routeStore.routeOrders!) {
+      smsService.sendSms(order!.customerName!, order.phone!, order.eta);
+    }
   }
 
   Future<void> sendingWelcomeMessageDialog() {
@@ -113,18 +108,16 @@ class StateRoutePage extends State<RoutePage> {
 
   void setRouteStatus(RouteStatus newStatus) {
     MRoute newRoute = _routeStore.assignedRoute!.copyWith(status: newStatus);
-    // _routeStore.setlastActivedRoute(newRoute);
-    // Amplify.DataStore.save(newRoute);
+    _routeStore.updateAssignedRoute(newRoute);
   }
 
   RouteStatus? getRouteStatus() {
-    // return _routeStore.lastActivedRoute!.status;
-    return RouteStatus.ASSIGNED;
+    return _routeStore.assignedRoute!.status;
   }
 
   Widget toCheckIn() {
     if (_routeStore.assignedRoute != null &&
-        _routeStore.assignedRoute!.status!.index > 0) {
+        _routeStore.assignedRoute!.status!.index > 1) {
       if (_routeStore.assignedRoute!.status == RouteStatus.INITIATED) {
         setRouteStatus(RouteStatus.CHECKING_BAGS);
       }
@@ -159,6 +152,7 @@ class StateRoutePage extends State<RoutePage> {
   Widget getWelcomeMessage() {
     if (_routeStore.assignedRoute != null) {
       if (_routeStore.assignedRoute!.status == RouteStatus.PLANNED ||
+          _routeStore.assignedRoute!.status == RouteStatus.ASSIGNED ||
           _routeStore.assignedRoute!.status == RouteStatus.INITIATED ||
           _routeStore.assignedRoute!.status == RouteStatus.CHECKING_BAGS) {
         return GestureDetector(
@@ -254,10 +248,11 @@ class StateRoutePage extends State<RoutePage> {
   void verifyAllOrderStatusChanged(OrderStatus status,
       [OrderStatus? additionalStatus]) {
     bool allChanged = true;
-    // for (MOrder order in _routeViewModel.lastActivedRoute!.orders!) {
-    //   allChanged = (order.status == status || order.status == additionalStatus);
-    //   if (!allChanged) break;
-    // }
+    for (MOrder? order in _routeStore.routeOrders!) {
+      allChanged =
+          (order!.status == status || order.status == additionalStatus);
+      if (!allChanged) break;
+    }
     if (allChanged) {
       if (status == OrderStatus.CHECKED) {
         Future.delayed(Duration.zero, finishCheckBagDialog);
@@ -414,13 +409,21 @@ class StateRoutePage extends State<RoutePage> {
                                   }
                                   if (_routeStore.currentDriver != null &&
                                       _routeStore.assignedRoute!.status !=
-                                          RouteStatus.DONE) {
-                                    return OrdersListView(
-                                        _routeStore.currentDriver!,
-                                        [],
-                                        // _routeViewModel
-                                        //     .lastActivedRoute!.orders,
-                                        this);
+                                          RouteStatus.DONE &&
+                                      _routeStore.routeOrders != null) {
+                                    return Observer(
+                                        builder: (_) => ListView(
+                                            padding: const EdgeInsets.all(8),
+                                            children: _routeStore.routeOrders!
+                                                .map((order) => Observer(
+                                                    builder: (_) => OrderItem(
+                                                        order,
+                                                        _routeStore.routeOrders!
+                                                            .indexOf(order),
+                                                        _routeStore
+                                                            .currentDriver!,
+                                                        this)))
+                                                .toList()));
                                   } else {
                                     return const Center();
                                   }
@@ -433,15 +436,10 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   Future<void> setOrderStatus(int orderIndex, OrderStatus newStatus) async {
-    // _routeViewModel.lastActivedRoute!.orders![orderIndex] = _routeViewModel
-    //     .lastActivedRoute!.orders![orderIndex]
-    //     .copyWith(status: newStatus);
-    // try {
-    //   _routeViewModel.setlastActivedRoute(_routeViewModel.lastActivedRoute!);
-    //   // await Amplify.DataStore.save(
-    //   //     _routeViewModel.lastActivedRoute!.orders![orderIndex]);
-    // } catch (e) {
-    //   print('An error occurred while saving Order Status: $e');
-    // }
+    MOrder? order =
+        _routeStore.routeOrders![orderIndex]!.copyWith(status: newStatus);
+    await _routeStore.updateAssignedRouteOrder(orderIndex, order);
+
+    verifyAllOrderStatusChanged(newStatus);
   }
 }

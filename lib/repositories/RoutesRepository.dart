@@ -6,19 +6,19 @@ import '../../models/Todo.dart';
 import '../models/Driver.dart';
 
 class RoutesRepository {
-  Future<Driver?> updateRoute(Driver updatedDriver) async {
+  Future<MRoute?> updateRoute(MRoute updatedRoute) async {
     try {
-      final request = ModelMutations.update(updatedDriver);
+      final request = ModelMutations.update(updatedRoute);
       final response = await Amplify.API.mutate(request: request).response;
 
-      final driver = response.data;
-      if (driver == null) {
+      final route = response.data;
+      if (route == null) {
         if (response.errors.isNotEmpty) {
           log('errors: ${response.errors}');
           return null;
         }
       }
-      return driver;
+      return route;
     } on ApiException catch (e) {
       log('Mutation failed: $e');
     }

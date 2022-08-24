@@ -7,12 +7,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/profile/presentation/ProfileViewModel.dart';
 import 'package:mps_driver_app/modules/profile/presentation/components/ChooseMapDialog.dart';
 import 'package:mps_driver_app/store/main/MainStore.dart';
-import '../../../Services/DriverService.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-
-import '../../route/presentation/RouteViewModel.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -236,14 +233,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       bool result = false;
                       switch (label) {
                         case 'Full Name':
-                          result = await DriverService.setDriverName(value);
+                          // TODO: Update driver information
                           break;
                         case 'Phone number':
-                          result = await DriverService.setDriverPhone(value);
+                          // TODO: Update driver information
                           break;
                         case 'Car capacity':
-                          result = await DriverService.setDriverCapacity(
-                              int.parse(value));
+                          // TODO: Update driver information
                           break;
                       }
 

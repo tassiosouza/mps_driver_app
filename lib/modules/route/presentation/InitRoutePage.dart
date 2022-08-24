@@ -83,7 +83,7 @@ class _InitRoutePage extends State<InitRoutePage> {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          "Upload your route",
+                          "No route assigned yet",
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 25,
@@ -98,7 +98,7 @@ class _InitRoutePage extends State<InitRoutePage> {
                         child: Container(
                             padding: const EdgeInsets.only(left: 30, right: 30),
                             child: Text(
-                              "Please select your final destination and upload the route file.",
+                              "Please ask the logistic team to assign a route for you and refresh this page.",
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontFamily: 'Poppins',
@@ -108,63 +108,63 @@ class _InitRoutePage extends State<InitRoutePage> {
                               textAlign: TextAlign.center,
                             )),
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Checkbox(
-                                  activeColor: App_Colors.primary_color.value,
-                                  value: !_isCustomSelected,
-                                  shape: const CircleBorder(),
-                                  checkColor: App_Colors.primary_color.value,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _isCustomSelected = false;
-                                      _customAddress = 'Custom';
-                                    });
-                                  }),
-                              GestureDetector(
-                                  child: SizedBox(
-                                      width: 150,
-                                      child: Text('Meal Prep Sunday',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'Poppins',
-                                              fontWeight: FontWeight.w500,
-                                              color:
-                                                  App_Colors.grey_dark.value))),
-                                  onTap: () => {})
-                            ]),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Checkbox(
-                                  activeColor: App_Colors.primary_color.value,
-                                  value: _isCustomSelected,
-                                  shape: const CircleBorder(),
-                                  checkColor: App_Colors.primary_color.value,
-                                  onChanged: (bool? value) {
-                                    if (value!) {
-                                      getCustomAddress();
-                                    }
-                                  }),
-                              GestureDetector(
-                                  child: SizedBox(
-                                      width: 150,
-                                      child: Text(_customAddress,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'Poppins',
-                                              fontWeight: FontWeight.w500,
-                                              color:
-                                                  App_Colors.grey_dark.value))),
-                                  onTap: () => {})
-                            ]),
-                      ),
+                      // Expanded(
+                      //   flex: 1,
+                      //   child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: [
+                      //         Checkbox(
+                      //             activeColor: App_Colors.primary_color.value,
+                      //             value: !_isCustomSelected,
+                      //             shape: const CircleBorder(),
+                      //             checkColor: App_Colors.primary_color.value,
+                      //             onChanged: (bool? value) {
+                      //               setState(() {
+                      //                 _isCustomSelected = false;
+                      //                 _customAddress = 'Custom';
+                      //               });
+                      //             }),
+                      //         GestureDetector(
+                      //             child: SizedBox(
+                      //                 width: 150,
+                      //                 child: Text('Meal Prep Sunday',
+                      //                     style: TextStyle(
+                      //                         fontSize: 14,
+                      //                         fontFamily: 'Poppins',
+                      //                         fontWeight: FontWeight.w500,
+                      //                         color:
+                      //                             App_Colors.grey_dark.value))),
+                      //             onTap: () => {})
+                      //       ]),
+                      // ),
+                      // Expanded(
+                      //   flex: 1,
+                      //   child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: [
+                      //         Checkbox(
+                      //             activeColor: App_Colors.primary_color.value,
+                      //             value: _isCustomSelected,
+                      //             shape: const CircleBorder(),
+                      //             checkColor: App_Colors.primary_color.value,
+                      //             onChanged: (bool? value) {
+                      //               if (value!) {
+                      //                 getCustomAddress();
+                      //               }
+                      //             }),
+                      //         GestureDetector(
+                      //             child: SizedBox(
+                      //                 width: 150,
+                      //                 child: Text(_customAddress,
+                      //                     style: TextStyle(
+                      //                         fontSize: 14,
+                      //                         fontFamily: 'Poppins',
+                      //                         fontWeight: FontWeight.w500,
+                      //                         color:
+                      //                             App_Colors.grey_dark.value))),
+                      //             onTap: () => {})
+                      //       ]),
+                      // ),
                       const SizedBox(height: 30),
                       Expanded(
                           flex: 2,
@@ -186,9 +186,9 @@ class _InitRoutePage extends State<InitRoutePage> {
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: const [
-                                      Icon(CustomIcon.upload_icon, size: 20),
+                                      Icon(Icons.refresh, size: 20),
                                       SizedBox(width: 20),
-                                      Text("Upload route",
+                                      Text("Refresh",
                                           style: TextStyle(
                                               fontSize: 20,
                                               fontFamily: 'Poppins')),

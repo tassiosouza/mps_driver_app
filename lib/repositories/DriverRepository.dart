@@ -1,31 +1,11 @@
 import 'dart:developer';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_api/amplify_api.dart';
-import '../../models/Todo.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:workmanager/workmanager.dart';
 import '../models/Driver.dart';
 
 class DriverRepository {
-  Future<Todo?> createTodo() async {
-    try {
-      final todo = Todo(
-          name: 'my first todo',
-          description: 'todo description',
-          isComplete: true,
-          owner: '');
-      final request = ModelMutations.create(todo);
-      final response = await Amplify.API.mutate(request: request).response;
-
-      final createdTodo = response.data;
-      if (createdTodo == null) {
-        log('errors: ${response.errors}');
-        return createdTodo;
-      }
-      log('Mutation result: ${createdTodo.name}');
-    } on ApiException catch (e) {
-      log('Mutation failed: $e');
-      return null;
-    }
-  }
 
   Future<Driver> createDriver(String ownerID) async {
     String amplifyDriverName = '';
@@ -106,4 +86,37 @@ class DriverRepository {
     }
     return null;
   }
+
+  Future<void> initBackgroundUpdateDriveLocation(Driver? driver) async {
+    // LocationService locationService = LocationService();
+    // locationService.initLocation();
+    print("initBackgroundUpdateDriveLocation");
+    WidgetsFlutterBinding.ensureInitialized();
+    await Workmanager().initialize(initBackgroundTask,
+    isInDebugMode: true);
+    await Workmanager().registerPeriodicTask("updateDriveLocation", "updateDriveLocation",
+    frequency: Duration(seconds: 900));
+    print("initBackgroundUpdateDriveLocationFINISH######");
+  }
+}
+
+void updateDriveLocation() async {
+  // LocationService locationService = LocationService();
+  // List<double?> location = await locationService.getLocation();
+  // if(location.isNotEmpty && location[0] != null && location[1] != null){
+  //   updateDriver(driver.copyWith(
+  //       latitude: location[0], longitude: location[1]));
+  // }
+  print("TESTING BACKGROUND TASK");
+}
+
+void initBackgroundTask(){
+  Workmanager().executeTask((task, inputData) async {
+    switch (task) {
+      case "updateDriveLocation":
+        updateDriveLocation();
+        break;
+    }
+    return Future.value(true);
+  });
 }

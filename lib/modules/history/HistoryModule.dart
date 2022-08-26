@@ -5,7 +5,7 @@ import 'package:mps_driver_app/store/history/HistoryStore.dart';
 
 class HistoryModule extends Module {
   @override
-  List<Bind> get binds => [Bind.singleton((i) => HistoryStore())];
+  List<Bind> get binds => [Bind.singleton((i) => HistoryStore(), export: true)];
 
   @override
   List<ModularRoute> get routes => [

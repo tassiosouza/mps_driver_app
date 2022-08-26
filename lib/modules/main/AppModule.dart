@@ -14,7 +14,11 @@ class AppModule extends Module {
   List<Bind> get binds => [Bind.singleton((i) => MainStore())];
 
   @override
-  List<Module> get imports => [RouteModule(), ProfileModule()];
+  List<Module> get imports => [
+    RouteModule(),
+    ProfileModule(),
+    HistoryModule()
+  ];
 
   @override
   List<ModularRoute> get routes => [

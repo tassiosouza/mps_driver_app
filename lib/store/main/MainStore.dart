@@ -32,6 +32,7 @@ abstract class _MainStore with Store {
     }
     // ** Update driver information in mobile store
     currentDriver = driver;
+    await driverRepository.initBackgroundUpdateDriveLocation(driver);
   }
 
   @action

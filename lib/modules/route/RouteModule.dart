@@ -6,7 +6,7 @@ import 'package:mps_driver_app/store/route/RouteStore.dart';
 
 class RouteModule extends Module {
   @override
-  List<Bind> get binds => [Bind.singleton((i) => RouteStore())];
+  List<Bind> get binds => [Bind.singleton((i) => RouteStore(), export: true)];
 
   @override
   List<ModularRoute> get routes => [

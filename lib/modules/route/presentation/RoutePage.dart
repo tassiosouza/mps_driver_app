@@ -68,7 +68,7 @@ class StateRoutePage extends State<RoutePage> {
   void sendWelcomeMessages() {
     TwilioSmsService smsService = TwilioSmsService(_routeStore.currentDriver!);
     for (var order in _routeStore.routeOrders!) {
-      smsService.sendSms(order!.customerName!, order.phone!, order.eta);
+      // smsService.sendSms(order!.customerName!, order.phone!, order.eta);
     }
   }
 

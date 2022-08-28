@@ -58,7 +58,7 @@ class OrderItem extends StatelessWidget {
     if (url.isEmpty) {
       throw Exception('Photo exception');
     } else {
-      smsService?.sendSmsWithPhoto(order!.phone!, url);
+      // smsService?.sendSmsWithPhoto(order!.phone!, url);
       updateOrderStatusTo(OrderStatus.DELIVERED);
       routePageReference.verifyAllOrderStatusChanged(
           OrderStatus.DELIVERED, OrderStatus.CANCELED);

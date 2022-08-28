@@ -20,7 +20,6 @@ class MainLoadingState extends State<MainLoading> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // ** Load Driver Information
-      // await Amplify.Auth.signOut();
       if (_mainStore.currentDriver == null) {
         await _mainStore.retrieveDriverInformation();
       }

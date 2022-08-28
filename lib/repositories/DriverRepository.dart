@@ -1,10 +1,11 @@
 import 'dart:developer';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_api/amplify_api.dart';
+import '../../models/Todo.dart';
+import '../models/AssignStatus.dart';
 import '../models/Driver.dart';
 
 class DriverRepository {
-
   Future<Driver> createDriver(String ownerID) async {
     String amplifyDriverName = '';
     String amplifyDriverEmail = '';
@@ -32,6 +33,7 @@ class DriverRepository {
         email: amplifyDriverEmail,
         phone: amplifyPhoneNumber,
         carCapacity: 22,
+        assignStatus: AssignStatus.UNASSIGNED,
         onBoard: false);
   }
 
@@ -85,4 +87,3 @@ class DriverRepository {
     return null;
   }
 }
-

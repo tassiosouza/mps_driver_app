@@ -19,6 +19,7 @@
 
 // ignore_for_file: public_member_api_docs, annotate_overrides, dead_code, dead_codepublic_member_api_docs, depend_on_referenced_packages, file_names, library_private_types_in_public_api, no_leading_underscores_for_library_prefixes, no_leading_underscores_for_local_identifiers, non_constant_identifier_names, null_check_on_nullable_type_parameter, prefer_adjacent_string_concatenation, prefer_const_constructors, prefer_if_null_operators, prefer_interpolation_to_compose_strings, slash_for_doc_comments, sort_child_properties_last, unnecessary_const, unnecessary_constructor_name, unnecessary_late, unnecessary_new, unnecessary_null_aware_assignments, unnecessary_nullable_for_final_variable_declarations, unnecessary_string_interpolations, use_build_context_synchronously
 
+import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
@@ -37,6 +38,7 @@ class Driver extends Model {
   final bool? _status;
   final double? _latitude;
   final double? _longitude;
+  final AssignStatus? _assignStatus;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -111,6 +113,10 @@ class Driver extends Model {
     return _longitude;
   }
   
+  AssignStatus? get assignStatus {
+    return _assignStatus;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -119,9 +125,9 @@ class Driver extends Model {
     return _updatedAt;
   }
   
-  const Driver._internal({required this.id, required name, required email, phone, carCapacity, required owner, onBoard, status, latitude, longitude, createdAt, updatedAt}): _name = name, _email = email, _phone = phone, _carCapacity = carCapacity, _owner = owner, _onBoard = onBoard, _status = status, _latitude = latitude, _longitude = longitude, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Driver._internal({required this.id, required name, required email, phone, carCapacity, required owner, onBoard, status, latitude, longitude, assignStatus, createdAt, updatedAt}): _name = name, _email = email, _phone = phone, _carCapacity = carCapacity, _owner = owner, _onBoard = onBoard, _status = status, _latitude = latitude, _longitude = longitude, _assignStatus = assignStatus, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Driver({String? id, required String name, required String email, String? phone, int? carCapacity, required String owner, bool? onBoard, bool? status, double? latitude, double? longitude}) {
+  factory Driver({String? id, required String name, required String email, String? phone, int? carCapacity, required String owner, bool? onBoard, bool? status, double? latitude, double? longitude, AssignStatus? assignStatus}) {
     return Driver._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
@@ -132,7 +138,8 @@ class Driver extends Model {
       onBoard: onBoard,
       status: status,
       latitude: latitude,
-      longitude: longitude);
+      longitude: longitude,
+      assignStatus: assignStatus);
   }
   
   bool equals(Object other) {
@@ -152,7 +159,8 @@ class Driver extends Model {
       _onBoard == other._onBoard &&
       _status == other._status &&
       _latitude == other._latitude &&
-      _longitude == other._longitude;
+      _longitude == other._longitude &&
+      _assignStatus == other._assignStatus;
   }
   
   @override
@@ -173,6 +181,7 @@ class Driver extends Model {
     buffer.write("status=" + (_status != null ? _status!.toString() : "null") + ", ");
     buffer.write("latitude=" + (_latitude != null ? _latitude!.toString() : "null") + ", ");
     buffer.write("longitude=" + (_longitude != null ? _longitude!.toString() : "null") + ", ");
+    buffer.write("assignStatus=" + (_assignStatus != null ? enumToString(_assignStatus)! : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -180,7 +189,7 @@ class Driver extends Model {
     return buffer.toString();
   }
   
-  Driver copyWith({String? id, String? name, String? email, String? phone, int? carCapacity, String? owner, bool? onBoard, bool? status, double? latitude, double? longitude}) {
+  Driver copyWith({String? id, String? name, String? email, String? phone, int? carCapacity, String? owner, bool? onBoard, bool? status, double? latitude, double? longitude, AssignStatus? assignStatus}) {
     return Driver._internal(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -191,7 +200,8 @@ class Driver extends Model {
       onBoard: onBoard ?? this.onBoard,
       status: status ?? this.status,
       latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude);
+      longitude: longitude ?? this.longitude,
+      assignStatus: assignStatus ?? this.assignStatus);
   }
   
   Driver.fromJson(Map<String, dynamic> json)  
@@ -205,11 +215,12 @@ class Driver extends Model {
       _status = json['status'],
       _latitude = (json['latitude'] as num?)?.toDouble(),
       _longitude = (json['longitude'] as num?)?.toDouble(),
+      _assignStatus = enumFromString<AssignStatus>(json['assignStatus'], AssignStatus.values),
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'email': _email, 'phone': _phone, 'carCapacity': _carCapacity, 'owner': _owner, 'onBoard': _onBoard, 'status': _status, 'latitude': _latitude, 'longitude': _longitude, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'email': _email, 'phone': _phone, 'carCapacity': _carCapacity, 'owner': _owner, 'onBoard': _onBoard, 'status': _status, 'latitude': _latitude, 'longitude': _longitude, 'assignStatus': enumToString(_assignStatus), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "driver.id");
@@ -222,6 +233,7 @@ class Driver extends Model {
   static final QueryField STATUS = QueryField(fieldName: "status");
   static final QueryField LATITUDE = QueryField(fieldName: "latitude");
   static final QueryField LONGITUDE = QueryField(fieldName: "longitude");
+  static final QueryField ASSIGNSTATUS = QueryField(fieldName: "assignStatus");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Driver";
     modelSchemaDefinition.pluralName = "Drivers";
@@ -291,6 +303,12 @@ class Driver extends Model {
       key: Driver.LONGITUDE,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Driver.ASSIGNSTATUS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

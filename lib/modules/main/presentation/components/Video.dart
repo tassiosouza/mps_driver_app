@@ -8,6 +8,8 @@ import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/modules/main/presentation/OnBoarding.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../../components/AppLoading.dart';
+
 class Video extends StatefulWidget {
   final OnBoardingState stateReference;
   const Video({required this.stateReference, Key? key}) : super(key: key);
@@ -180,7 +182,7 @@ class VideoState extends State<Video> {
                         ]);
                       } else {
                         return const Center(
-                          child: CircularProgressIndicator(),
+                          child: AppLoading(),
                         );
                       }
                     },

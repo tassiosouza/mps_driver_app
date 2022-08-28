@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import '../models/Todo.dart';
+import 'AppLoading.dart';
 
 class MyAppTodos extends StatelessWidget {
   const MyAppTodos();
@@ -74,7 +75,7 @@ class _TodosPageState extends State<TodosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: AppLoading())
           : TodosList(todos: _todos),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {

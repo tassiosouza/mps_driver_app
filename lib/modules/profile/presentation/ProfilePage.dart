@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mps_driver_app/components/AppLoading.dart';
 import 'package:mps_driver_app/modules/profile/presentation/ProfileViewModel.dart';
 import 'package:mps_driver_app/modules/profile/presentation/components/ChooseMapDialog.dart';
 import 'package:mps_driver_app/store/main/MainStore.dart';
@@ -169,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ])),
                     ),
                   ]))
-            : const Center(child: CircularProgressIndicator()));
+            : const Center(child: AppLoading()));
   }
 
   logout() async {

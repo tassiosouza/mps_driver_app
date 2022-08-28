@@ -61,6 +61,9 @@ dependencies:
   graphql_flutter: ^5.1.0
   location: ^4.4.0
   workmanager: ^0.5.0
+  flutter_downloader: ^1.8.3
+  permission_handler: ^10.0.0
+  path_provider: ^2.0.11
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../components/AppLoading.dart';
 import '../../../models/Driver.dart';
 import '../../../store/main/MainStore.dart';
 
@@ -39,6 +40,6 @@ class MainLoadingState extends State<MainLoading> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return const Scaffold(body: Center(child: AppLoading()));
   }
 }

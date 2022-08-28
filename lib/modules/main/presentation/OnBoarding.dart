@@ -8,6 +8,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/main/presentation/components/CheckList.dart';
 import 'package:mps_driver_app/modules/main/presentation/components/Clothes.dart';
 import 'package:mps_driver_app/store/main/MainStore.dart';
+import '../../../components/AppLoading.dart';
 import '../../../models/Driver.dart';
 import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -96,7 +97,7 @@ class OnBoardingState extends State<OnBoarding> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: AppLoading())
             : Container(
                 padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height / 11),
@@ -199,7 +200,7 @@ class OnBoardingState extends State<OnBoarding> {
       }
     } else if (_currentStep == 5) {
       Modular.to.navigate('main/route/');
-      Driver updatedDriver = _mainStore.currentDriver!.copyWith(onBoard: true);
+      Driver updatedDriver = _mainStore.currentDriver!.copyWith(onBoard: false);
       _mainStore.updateDriverInformation(updatedDriver);
     } else {
       setState(() {

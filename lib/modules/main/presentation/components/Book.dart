@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:mps_driver_app/Services/download_service.dart';
 
 class Book extends StatelessWidget {
   const Book({Key? key}) : super(key: key);
@@ -34,23 +35,25 @@ class Book extends StatelessWidget {
                   image: AssetImage('assets/images/book_onboarding.png'))),
           const SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            RichText(
-              text: const TextSpan(
-                children: [
-                  WidgetSpan(
-                      child: Icon(
-                    Icons.download,
-                    size: 15,
-                    color: Colors.green,
-                  )),
-                  TextSpan(
-                    style: TextStyle(
-                        color: Colors.green,
-                        fontFamily: 'Poopings',
-                        fontSize: 17),
-                    text: "  Download complete manual",
-                  ),
-                ],
+            GestureDetector(onTap: () => DownloadService().getDocument(),
+              child: RichText(
+                text: const TextSpan(
+                  children: [
+                    WidgetSpan(
+                        child: Icon(
+                      Icons.download,
+                      size: 15,
+                      color: Colors.green,
+                    )),
+                    TextSpan(
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontFamily: 'Poopings',
+                          fontSize: 17),
+                      text: "  Download complete manual",
+                    ),
+                  ],
+                ),
               ),
             )
           ]),

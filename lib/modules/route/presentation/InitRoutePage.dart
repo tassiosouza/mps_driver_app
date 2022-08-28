@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_place/google_place.dart';
+import 'package:mps_driver_app/components/AppLoading.dart';
 import 'package:mps_driver_app/store/route/RouteStore.dart';
 import 'package:mps_driver_app/theme/CustomIcon.dart';
 import '../../../components/AppDialogs.dart';
@@ -69,7 +70,7 @@ class _InitRoutePage extends State<InitRoutePage> {
         builder: (_) => Material(
             child: _routeStore.loading
                 ? const Center(
-                    child: CircularProgressIndicator(color: Colors.green))
+                    child: AppLoading())
                 : Column(
                     children: [
                       const SizedBox(height: 60),

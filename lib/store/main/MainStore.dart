@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:mobx/mobx.dart';
+import 'package:mps_driver_app/Services/background_service.dart';
+import 'package:mps_driver_app/Services/location_service.dart';
 import 'package:mps_driver_app/models/Todo.dart';
 import 'package:mps_driver_app/modules/route/services/ManageEndAddress.dart';
 import '../../../models/Driver.dart';
@@ -12,6 +14,7 @@ class MainStore = _MainStore with _$MainStore;
 
 abstract class _MainStore with Store {
   DriverRepository driverRepository = DriverRepository();
+  BackgroundService backgroundService = BackgroundService();
 
   // ** Main Store Observables
   @observable
@@ -32,7 +35,7 @@ abstract class _MainStore with Store {
     }
     // ** Update driver information in mobile store
     currentDriver = driver;
-    await driverRepository.initBackgroundUpdateDriveLocation(driver);
+    //await backgroundService.initBackgroundUpdateDriveLocation(driver);
   }
 
   @action

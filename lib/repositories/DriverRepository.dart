@@ -1,8 +1,6 @@
 import 'dart:developer';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_api/amplify_api.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:workmanager/workmanager.dart';
 import '../models/Driver.dart';
 
 class DriverRepository {
@@ -86,37 +84,5 @@ class DriverRepository {
     }
     return null;
   }
-
-  Future<void> initBackgroundUpdateDriveLocation(Driver? driver) async {
-    // LocationService locationService = LocationService();
-    // locationService.initLocation();
-    print("initBackgroundUpdateDriveLocation");
-    WidgetsFlutterBinding.ensureInitialized();
-    await Workmanager().initialize(initBackgroundTask,
-    isInDebugMode: true);
-    await Workmanager().registerPeriodicTask("updateDriveLocation", "updateDriveLocation",
-    frequency: Duration(seconds: 900));
-    print("initBackgroundUpdateDriveLocationFINISH######");
-  }
 }
 
-void updateDriveLocation() async {
-  // LocationService locationService = LocationService();
-  // List<double?> location = await locationService.getLocation();
-  // if(location.isNotEmpty && location[0] != null && location[1] != null){
-  //   updateDriver(driver.copyWith(
-  //       latitude: location[0], longitude: location[1]));
-  // }
-  print("TESTING BACKGROUND TASK");
-}
-
-void initBackgroundTask(){
-  Workmanager().executeTask((task, inputData) async {
-    switch (task) {
-      case "updateDriveLocation":
-        updateDriveLocation();
-        break;
-    }
-    return Future.value(true);
-  });
-}

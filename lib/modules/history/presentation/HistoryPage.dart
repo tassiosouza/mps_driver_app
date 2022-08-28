@@ -5,6 +5,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:mps_driver_app/components/AppLoading.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/store/history/HistoryStore.dart';
 import '../../../models/Driver.dart';
@@ -50,7 +51,7 @@ class HistoryPageState extends State<HistoryPage> {
         builder: (_) => Material(
             child: !_historyStore.finishLoadingHistory
                 ? const Center(
-                    child: CircularProgressIndicator(color: Colors.green))
+                    child: AppLoading())
                 : Column(children: [
                     const SizedBox(height: 70),
                     Row(children: [

@@ -65,10 +65,13 @@ class StateRoutePage extends State<RoutePage> {
         "Now, send welcome message to start delivering.");
   }
 
-  void sendWelcomeMessages() {
+  Future<void> sendWelcomeMessages() async {
     TwilioSmsService smsService = TwilioSmsService(_routeStore.currentDriver!);
+    int index = 0;
     for (var order in _routeStore.routeOrders!) {
       // smsService.sendSms(order!.customerName!, order.phone!, order.eta);
+      await setOrderStatus(index, OrderStatus.IN_TRANSIT);
+      index += 1;
     }
   }
 

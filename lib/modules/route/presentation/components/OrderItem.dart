@@ -78,7 +78,9 @@ class OrderItem extends StatelessWidget {
           });
       print('Successfully uploaded image: ${result.key}');
       GetUrlResult urlResult = await Amplify.Storage.getUrl(key: result.key);
-      return urlResult.url.replaceAll(' ', '');
+      String finalURL = urlResult.url.replaceAll(' ', '');
+      await registerDeliveryURL(finalURL);
+      return finalURL;
     } on StorageException catch (e) {
       print('Error uploading image: $e');
       return '';
@@ -118,6 +120,10 @@ class OrderItem extends StatelessWidget {
 
   Future<void> updateOrderStatusTo(OrderStatus newStatus) async {
     await routePageReference.setOrderStatus(orderIndex, newStatus);
+  }
+
+  Future<void> registerDeliveryURL(String url) async {
+    await routePageReference.registerDeliveryURL(orderIndex, url);
   }
 
   void verifyAll(OrderStatus status) {}

@@ -4,6 +4,7 @@ import 'dart:core';
 import 'dart:developer';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mps_driver_app/modules/main/AppModule.dart';
 import 'package:mps_driver_app/modules/main/service/AmplifyInit.dart';
@@ -14,9 +15,10 @@ import 'modules/main/presentation/SingUpPage.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
-void main() {
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await FlutterDownloader.initialize(debug: true);
   runApp(ModularApp(module: AppModule(), child: MainWidget()));
 }
 

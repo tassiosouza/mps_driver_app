@@ -471,8 +471,8 @@ class StateRoutePage extends State<RoutePage> {
     verifyAllOrderStatusChanged(newStatus);
   }
 
-  Future<void> registerDeliveryURL(int index, String url) async {
-    MOrder? order = _routeStore.routeOrders![index]!.copyWith(deliveryURL: url);
+  Future<void> registerDeliveryURL(int index, String key) async {
+    MOrder? order = _routeStore.routeOrders![index]!.copyWith(deliveryKey: key);
     await _routeStore.updateAssignedRouteOrder(index, order);
   }
 }

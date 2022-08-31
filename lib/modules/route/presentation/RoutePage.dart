@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
+import 'package:mobx/mobx.dart';
+import 'package:mps_driver_app/components/AppLoading.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
 import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
 import 'package:mps_driver_app/store/route/RouteStore.dart';
@@ -47,6 +49,22 @@ class StateRoutePage extends State<RoutePage> {
       }
     });
 
+    final overlayLoading = OverlayEntry(builder: (_){
+      return Container(
+        color: Colors.white,
+        alignment: Alignment.center,
+        child: AppLoading(),
+      );
+    });
+
+    reaction((_) => _routeStore.loading, (isLoading) {
+      if(isLoading == true){
+        Overlay.of(context)?.insert(overlayLoading);
+      } else {
+        overlayLoading.remove();
+      }
+    });
+
     super.initState();
   }
 
@@ -55,9 +73,14 @@ class StateRoutePage extends State<RoutePage> {
         "Make your checkin and start to check bags.");
   }
 
-  Future<void> clickWrongWelcomeMessageDialog() {
+  Future<void> clickWrongWelcomeMessageDialogBefore() {
     return AppDialogs().showDialogJustMsg(context, "Attention",
         "You need to check bags first to send welcome message.");
+  }
+
+  Future<void> clickWrongWelcomeMessageDialogAfter() {
+    return AppDialogs().showDialogJustMsg(context, "Attention",
+        "You already send the welcome message.");
   }
 
   Future<void> finishCheckBagDialog() {
@@ -158,39 +181,30 @@ class StateRoutePage extends State<RoutePage> {
           _routeStore.assignedRoute!.status == RouteStatus.ASSIGNED ||
           _routeStore.assignedRoute!.status == RouteStatus.INITIATED ||
           _routeStore.assignedRoute!.status == RouteStatus.CHECKING_BAGS) {
-        return GestureDetector(
-            onTap: clickWrongWelcomeMessageDialog,
-            child: Container(
-              padding: const EdgeInsets.only(right: 25, top: 5),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Welcome messages",
-                style: TextStyle(
-                    fontSize: 14, color: App_Colors.primary_color.value),
-              ),
-            ));
+        return Container(
+          alignment: Alignment.centerLeft,
+          child: OutlinedButton(
+              onPressed: () {
+                clickWrongWelcomeMessageDialogBefore();
+              },
+              child: Icon(Icons.send, color: App_Colors.grey_text.value)),
+        );
       } else if (_routeStore.assignedRoute!.status ==
           RouteStatus.SENDING_WELCOME_MESSAGES) {
-        return GestureDetector(
-            onTap: sendingWelcomeMessageDialog,
-            child: Container(
-              padding: const EdgeInsets.only(right: 25, top: 5),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Welcome messages",
-                style: TextStyle(
-                    fontSize: 14, color: App_Colors.primary_color.value),
-              ),
-            ));
-      } else {
         return Container(
-          padding: const EdgeInsets.only(right: 25, top: 5),
           alignment: Alignment.centerLeft,
-          child: Text(
-            "Messages sent",
-            style: TextStyle(fontSize: 14, color: App_Colors.grey_text.value),
-          ),
+          child: OutlinedButton(
+              onPressed: () {
+                sendingWelcomeMessageDialog();
+              },
+              child: Icon(Icons.send, color: App_Colors.primary_color.value)),
         );
+      } else {
+        return OutlinedButton(
+            onPressed: () {
+              clickWrongWelcomeMessageDialogAfter();
+            },
+            child: Icon(Icons.send, color: App_Colors.grey_text.value));
       }
     } else {
       return const Center();
@@ -302,10 +316,21 @@ class StateRoutePage extends State<RoutePage> {
                                       )
                                     ],
                                   )),
-                              Row(
+                              Row(crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: [toCheckIn(), getWelcomeMessage()],
+                                children: [toCheckIn(), Row(children: [
+                                  OutlinedButton(
+                                      onPressed: () async {
+                                        _routeStore.setLoading(true);
+                                        await _routeStore.fetchAssignedRoute();
+                                        _routeStore.setLoading(false);
+                                      },
+                                      child: const Icon(Icons.refresh)),
+                                  SizedBox(width: 10),
+                                  getWelcomeMessage(),
+                                  SizedBox(width: 20)
+                                ],)],
                               ),
                               const SizedBox(height: 15),
                               const Divider(thickness: 1),

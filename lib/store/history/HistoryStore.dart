@@ -9,6 +9,7 @@ import 'package:mps_driver_app/modules/route/services/ManageEndAddress.dart';
 import 'package:mps_driver_app/repositories/RoutesRepository.dart';
 import '../../../models/Driver.dart';
 import '../../models/MRoute.dart';
+import '../../models/RouteStatus.dart';
 import '../../repositories/DriverRepository.dart';
 import '../../repositories/OrdersRepository.dart';
 import '../main/MainStore.dart';
@@ -35,7 +36,10 @@ abstract class _HistoryStore with Store {
 
   @action
   fetchRoutes() async {
-    routesHistory = await routesRepository.fetchRoutes();
+    var routesList = [];
+    routesList = await routesRepository.fetchRoutes();
+    routesList.removeWhere((element) => element.status == RouteStatus.DONE);
+    routesHistory = routesList as List<MRoute?>?;
   }
 
   @action

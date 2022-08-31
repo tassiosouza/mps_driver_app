@@ -68,6 +68,11 @@ abstract class _RouteStore with Store {
   }
 
   @action
+  updateDriver(Driver driver) async {
+    currentDriver = await driverRepository.updateDriver(driver);
+  }
+
+  @action
   setEmptyHistory() {
     routes = [];
     orders = [];

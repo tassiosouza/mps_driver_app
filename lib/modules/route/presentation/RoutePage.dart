@@ -224,6 +224,9 @@ class StateRoutePage extends State<RoutePage> {
     _routeStore.assignedRoute =
         _routeStore.assignedRoute!.copyWith(endTime: 000);
     setRouteStatus(RouteStatus.DONE);
+    _routeStore.updateDriver(_routeStore.currentDriver!.copyWith(
+      assignStatus: AssignStatus.UNASSIGNED
+    ));
     // _routeStore.setIsRouteActived(false);
     // _routeStore.addToRoutesHistory(_routeStore.assignedRoute!);
     Modular.to.pushNamed('/main/history/details',

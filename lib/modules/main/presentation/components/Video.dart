@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/modules/main/presentation/OnBoarding.dart';
 import 'package:video_player/video_player.dart';
-
+import 'package:amplify_flutter/amplify_flutter.dart';
 import '../../../../components/AppLoading.dart';
 
 class Video extends StatefulWidget {
@@ -23,19 +23,23 @@ class Video extends StatefulWidget {
 class VideoState extends State<Video> {
   late VideoPlayerController _videoController;
   bool _onTouch = true;
-  late Future<void> _initializeVideoPlayerFuture;
+  Future<void>? _initializeVideoPlayerFuture;
   late Timer _timer;
   late Timer _statusTimer;
   List<Widget> _videoStack = [];
   bool _firstPlay = true;
+  late String _videoUrl;
 
   @override
   void initState() {
-    _videoController = VideoPlayerController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
-    _initializeVideoPlayerFuture = _videoController.initialize().then((_) {
-      setState(() {});
-      _timer = Timer.periodic(const Duration(milliseconds: 0), (_) {});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      GetUrlResult urlResult = await Amplify.Storage.getUrl(key: "onboarding.mp4");
+      _videoUrl = urlResult.url.replaceAll(' ', '');
+      _videoController = VideoPlayerController.network(_videoUrl);
+      _initializeVideoPlayerFuture = _videoController.initialize().then((_) {
+        setState(() {});
+        _timer = Timer.periodic(const Duration(milliseconds: 0), (_) {});
+      });
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       widget.stateReference.setStatus(WhatchingStatus.idle);
@@ -119,77 +123,88 @@ class VideoState extends State<Video> {
                       fit: BoxFit.fitHeight,
                     ),
                   ),
-                  child: FutureBuilder(
-                    future: _initializeVideoPlayerFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return Stack(children: [
-                          Center(
-                            child: Container(
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      blurRadius: 8.0,
-                                      spreadRadius: 1.0,
-                                    )
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: AspectRatio(
-                                      aspectRatio:
-                                          _videoController.value.aspectRatio,
-                                      child: VideoPlayer(_videoController),
-                                    ))),
-                          ),
-                          GestureDetector(
-                              onTap: () => {setTimeToDismissButton()},
-                              child: Container(
-                                color: _videoController.value.isPlaying
-                                    ? Colors.transparent
-                                    : Color.fromARGB(1, 255, 255, 255)
-                                        .withOpacity(0.5),
-                                alignment: Alignment.center,
-                                child: FlatButton(
-                                  shape: CircleBorder(
-                                      side: BorderSide(
-                                          color:
-                                              _videoController.value.isPlaying
-                                                  ? Colors.transparent
-                                                  : Colors.white)),
-                                  child: Icon(
-                                    _videoController.value.isPlaying
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-                                    color: _videoController.value.isPlaying
-                                        ? Colors.transparent
-                                        : Colors.white,
-                                  ),
-                                  onPressed: () => {
-                                    _timer.cancel(),
-                                    if (!_videoController.value.isPlaying)
-                                      {playVideo()},
-                                    setState(() {
-                                      _videoController.value.isPlaying
-                                          ? _videoController.pause()
-                                          : _videoController.play();
-                                    })
-                                  },
-                                ),
-                              ))
-                        ]);
-                      } else {
-                        return const Center(
-                          child: AppLoading(),
-                        );
-                      }
-                    },
-                  ))),
+                  child: getFutureBuilder())),
           const SizedBox(height: 20),
         ],
       ),
+    );
+  }
+
+  FutureBuilder getFutureBuilder(){
+
+    if(_initializeVideoPlayerFuture == null){
+      return FutureBuilder(builder: (context, snapshot){
+        return AppLoading();
+      });
+    }
+
+    return FutureBuilder(
+      future: _initializeVideoPlayerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Stack(children: [
+            Center(
+              child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 8.0,
+                        spreadRadius: 1.0,
+                      )
+                    ],
+                  ),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: AspectRatio(
+                        aspectRatio:
+                        _videoController.value.aspectRatio,
+                        child: VideoPlayer(_videoController),
+                      ))),
+            ),
+            GestureDetector(
+                onTap: () => {setTimeToDismissButton()},
+                child: Container(
+                  color: _videoController.value.isPlaying
+                      ? Colors.transparent
+                      : Color.fromARGB(1, 255, 255, 255)
+                      .withOpacity(0.5),
+                  alignment: Alignment.center,
+                  child: FlatButton(
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            color:
+                            _videoController.value.isPlaying
+                                ? Colors.transparent
+                                : Colors.white)),
+                    child: Icon(
+                      _videoController.value.isPlaying
+                          ? Icons.pause
+                          : Icons.play_arrow,
+                      color: _videoController.value.isPlaying
+                          ? Colors.transparent
+                          : Colors.white,
+                    ),
+                    onPressed: () => {
+                      _timer.cancel(),
+                      if (!_videoController.value.isPlaying)
+                        {playVideo()},
+                      setState(() {
+                        _videoController.value.isPlaying
+                            ? _videoController.pause()
+                            : _videoController.play();
+                      })
+                    },
+                  ),
+                ))
+          ]);
+        } else {
+          return const Center(
+            child: AppLoading(),
+          );
+        }
+      },
     );
   }
 }

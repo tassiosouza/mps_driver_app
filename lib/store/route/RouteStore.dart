@@ -41,6 +41,14 @@ abstract class _RouteStore with Store {
   @observable
   bool loading = false;
 
+  @observable
+  String? checkIn;
+
+  @action
+  setCheckIn(String checkInTime){
+    checkIn = checkInTime;
+  }
+
   @action
   setLoading(bool isLoading) {
     loading = isLoading;

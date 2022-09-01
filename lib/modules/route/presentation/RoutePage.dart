@@ -73,6 +73,11 @@ class StateRoutePage extends State<RoutePage> {
         "Make your checkin and start to check bags.");
   }
 
+  Future<void> cantCheckInAtThisTime() {
+    return AppDialogs().showDialogJustMsg(context, "Attention",
+        "You cant make checkin in this time.");
+  }
+
   Future<void> clickWrongWelcomeMessageDialogBefore() {
     return AppDialogs().showDialogJustMsg(context, "Attention",
         "You need to check bags first to send welcome message.");
@@ -142,27 +147,30 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   Widget toCheckIn() {
-    if (_routeStore.assignedRoute != null &&
-        _routeStore.assignedRoute!.status!.index > 1) {
+    if (_routeStore.checkIn != null) {
       if (_routeStore.assignedRoute!.status == RouteStatus.INITIATED) {
         setRouteStatus(RouteStatus.CHECKING_BAGS);
       }
 
-      DateTime time = DateTime.fromMillisecondsSinceEpoch(1000);
-      String timeFormatted = DateFormat('kk:mm').format(time);
       return Container(
           padding: const EdgeInsets.only(left: 18, top: 5),
           alignment: Alignment.centerLeft,
-          child: Text(
-            "Initiated at: $timeFormatted",
-            style: TextStyle(fontSize: 14, color: App_Colors.grey_dark.value),
+          child: Observer(
+            builder: (context) {
+              return Text(
+                "Initiated at: ${_routeStore.checkIn}",
+                style: TextStyle(fontSize: 14, color: App_Colors.grey_dark.value),
+              );
+            }
           ));
     } else {
       return GestureDetector(
           onTap: () {
-            _routeStore.assignedRoute =
-                _routeStore.assignedRoute!.copyWith(startTime: 000);
-            setRouteStatus(RouteStatus.INITIATED);
+            if(verifyTimeToDoCheckIn()){
+              checkIn();
+            } else {
+              cantCheckInAtThisTime();
+            }
           },
           child: Container(
               padding: const EdgeInsets.only(left: 18, top: 5),
@@ -172,6 +180,26 @@ class StateRoutePage extends State<RoutePage> {
                 style: TextStyle(
                     fontSize: 14, color: App_Colors.primary_color.value),
               )));
+    }
+  }
+
+  void checkIn(){
+    DateTime time = DateTime.now();
+    _routeStore.setCheckIn(DateFormat('kk:mm').format(time));
+    _routeStore.assignedRoute =
+        _routeStore.assignedRoute!.copyWith(startTime: 000);
+    setRouteStatus(RouteStatus.INITIATED);
+  }
+
+  bool verifyTimeToDoCheckIn(){
+    DateTime time = DateTime.now();
+    int earlyTime = 00;
+    int lateTime = 24;
+    String currentHr = DateFormat('kk').format(time);
+    if(earlyTime <= int.parse(currentHr) && int.parse(currentHr) <= lateTime){
+      return true;
+    } else {
+      return false;
     }
   }
 

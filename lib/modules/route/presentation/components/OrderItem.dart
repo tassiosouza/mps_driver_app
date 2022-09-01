@@ -67,7 +67,7 @@ class OrderItem extends StatelessWidget {
 
   Future<String> createAndUploadFile(XFile pickedFile) async {
     // Upload image with the current time as the key
-    final key = DateTime.now().toString();
+    final key = '${order!.assignedRouteID!}-${DateTime.now()}';
     final file = File(pickedFile.path);
     try {
       final UploadFileResult result = await Amplify.Storage.uploadFile(
@@ -79,7 +79,7 @@ class OrderItem extends StatelessWidget {
       print('Successfully uploaded image: ${result.key}');
       GetUrlResult urlResult = await Amplify.Storage.getUrl(key: result.key);
       String finalURL = urlResult.url.replaceAll(' ', '');
-      await registerDeliveryURL(finalURL);
+      await registerDeliveryURL(key);
       return finalURL;
     } on StorageException catch (e) {
       print('Error uploading image: $e');
@@ -122,8 +122,8 @@ class OrderItem extends StatelessWidget {
     await routePageReference.setOrderStatus(orderIndex, newStatus);
   }
 
-  Future<void> registerDeliveryURL(String url) async {
-    await routePageReference.registerDeliveryURL(orderIndex, url);
+  Future<void> registerDeliveryURL(String key) async {
+    await routePageReference.registerDeliveryURL(orderIndex, key);
   }
 
   void verifyAll(OrderStatus status) {}

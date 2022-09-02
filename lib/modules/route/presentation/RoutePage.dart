@@ -249,16 +249,14 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   void endRoute() {
-    _routeStore.assignedRoute =
-        _routeStore.assignedRoute!.copyWith(endTime: 000);
     setRouteStatus(RouteStatus.DONE);
     _routeStore.updateDriver(_routeStore.currentDriver!.copyWith(
       assignStatus: AssignStatus.UNASSIGNED
     ));
+    _routeStore.cleanLocalData();
     // _routeStore.setIsRouteActived(false);
     // _routeStore.addToRoutesHistory(_routeStore.assignedRoute!);
-    Modular.to.pushNamed('/main/history/details',
-        arguments: _routeStore.assignedRoute);
+    Modular.to.navigate("./");
   }
 
   Widget routeDone() {

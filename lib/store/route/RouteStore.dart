@@ -141,5 +141,9 @@ abstract class _RouteStore with Store {
   @action
   void cleanLocalData() {
     routes = null;
+    assignedRoute = null;
+    checkIn = null;
+    orders = null;
+    routeOrders = null;
   }
 }

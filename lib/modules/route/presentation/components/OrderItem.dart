@@ -140,7 +140,7 @@ class OrderItem extends StatelessWidget {
         order!.mealPlan);
   }
 
-  Future<void> wrongCheckBagClickDialog(BuildContext context) {
+  Future<void> needCheckInFirst(BuildContext context) {
     return AppDialogs()
         .showDialogJustMsg(context, "Attention", "Make checkin first.");
   }
@@ -240,9 +240,9 @@ class OrderItem extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 getButtonIcon(
-                                    CustomIcon.sms_driver_icon, order!, false),
+                                    CustomIcon.sms_driver_icon, order!, false, context),
                                 getButtonIcon(
-                                    CustomIcon.call_driver_icon, order!, true),
+                                    CustomIcon.call_driver_icon, order!, true, context),
                                 bagIcon(order!.status, context),
                                 const SizedBox(width: 1),
                                 ElevatedButton(
@@ -339,7 +339,7 @@ class OrderItem extends StatelessWidget {
   bagIcon(OrderStatus? status, BuildContext context) {
     Widget widget;
     if (order!.status != OrderStatus.CREATED) {
-      widget = getButtonIcon(Icons.check, order!, false);
+      widget = getButtonIcon(Icons.check, order!, null, context);
     } else {
       widget = SizedBox(
           width: 30,
@@ -350,7 +350,7 @@ class OrderItem extends StatelessWidget {
                   RouteStatus.CHECKING_BAGS) {
                 checkBagConfirmDialog(context);
               } else {
-                wrongCheckBagClickDialog(context);
+                needCheckInFirst(context);
               }
             },
             style: ButtonStyle(
@@ -371,14 +371,24 @@ class OrderItem extends StatelessWidget {
     return widget;
   }
 
-  getButtonIcon(IconData icon, MOrder order, bool isCall) {
+  getButtonIcon(IconData icon, MOrder order, bool? isCall, BuildContext context) {
     return SizedBox(
         width: 30,
         height: 28,
         child: ElevatedButton(
-          onPressed: () => isCall
-              ? _launchCaller(order.phone!.replaceAll(' ', ''))
-              : _sendSMS("", [order.phone!]),
+          onPressed: (){
+            if(routePageReference.getRouteStatus() ==
+                RouteStatus.PLANNED){
+              needCheckInFirst(context);
+            } else {
+              if(isCall == null){
+              } else {
+                isCall
+                    ? _launchCaller(order.phone!.replaceAll(' ', ''))
+                    : _sendSMS("", [order.phone!]);
+              }
+            }
+          },
           style: ButtonStyle(
             shape: MaterialStateProperty.all(const CircleBorder()),
             padding: MaterialStateProperty.all(const EdgeInsets.all(0)),

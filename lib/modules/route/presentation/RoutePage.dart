@@ -312,184 +312,194 @@ class StateRoutePage extends State<RoutePage> {
 
   @override
   Widget build(BuildContext context) {
-    return _routeStore.assignedRoute != null
-        ? Observer(
-            builder: (_) => Scaffold(
-                  backgroundColor: App_Colors.white_background.value,
-                  body: Center(
-                    child: SingleChildScrollView(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: 60,
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.only(left: 18),
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
+
+    if(_routeStore.assignedRoute == null){
+      return Center();
+    }
+
+    return Observer(
+      builder: (context) {
+        return Scaffold(
+                      backgroundColor: App_Colors.white_background.value,
+                      body: Center(
+                        child: SingleChildScrollView(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                              Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 60,
+                                  ),
+                                  Container(
+                                      padding: const EdgeInsets.only(left: 18),
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          _routeStore.currentDriver != null
+                                              ? Text(
+                                                  "${_routeStore.currentDriver?.name}  ",
+                                                  style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.w500),
+                                                )
+                                              : const Text(""),
+                                          DotIndicator(
+                                            color: App_Colors.primary_color.value,
+                                            size: 8,
+                                          )
+                                        ],
+                                      )),
+                                  Row(crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [toCheckIn(), Row(children: [
+                                      OutlinedButton(
+                                          onPressed: () async {
+                                            _routeStore.setLoading(true);
+                                            await _routeStore.fetchAssignedRoute();
+                                            _routeStore.setLoading(false);
+                                            if(_routeStore.assignedRoute == null){
+                                              Modular.to.navigate('./');
+                                            }
+                                          },
+                                          child: const Icon(Icons.refresh)),
+                                      SizedBox(width: 10),
+                                      getWelcomeMessage(),
+                                      SizedBox(width: 20)
+                                    ],)],
+                                  ),
+                                  const SizedBox(height: 15),
+                                  const Divider(thickness: 1),
+                                  const SizedBox(height: 10),
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 20),
+                                    child: Row(children: const [
+                                      Text("Route Status",
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontFamily: "Poppins", fontSize: 16))
+                                    ]),
+                                  ),
+                                  const SizedBox(height: 15),
+                                  stepper.IconStepper(
+                                    scrollingDisabled: true,
+                                    enableNextPreviousButtons: false,
+                                    icons: const [
+                                      Icon(
+                                        Icons.supervised_user_circle,
+                                        color: Colors.green,
+                                      ),
+                                      Icon(
+                                        Icons.supervised_user_circle,
+                                        color: Colors.green,
+                                      ),
+                                      Icon(
+                                        Icons.supervised_user_circle,
+                                        color: Colors.green,
+                                      ),
+                                      Icon(
+                                        Icons.supervised_user_circle,
+                                        color: Colors.green,
+                                      ),
+                                    ],
+                                    activeStepBorderColor: Colors.green,
+                                    activeStepBorderWidth: 1,
+                                    stepRadius: 3,
+                                    lineColor: Colors.green,
+                                    lineLength: 85,
+                                    activeStepBorderPadding: 2,
+                                    // activeStep property set to activeStep variable defined above.
+                                    activeStep: getActiveStepperByRouteStatus(),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
                                     children: [
-                                      _routeStore.currentDriver != null
-                                          ? Text(
-                                              "${_routeStore.currentDriver?.name}  ",
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w500),
-                                            )
-                                          : const Text(""),
-                                      DotIndicator(
-                                        color: App_Colors.primary_color.value,
-                                        size: 8,
+                                      expandedStatusBar("Route plan", 0),
+                                      expandedStatusBar("Bags checking", 1),
+                                      expandedStatusBar("In transit", 2),
+                                      expandedStatusBar(
+                                        "Route done",
+                                        3,
                                       )
                                     ],
-                                  )),
-                              Row(crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [toCheckIn(), Row(children: [
-                                  OutlinedButton(
-                                      onPressed: () async {
-                                        _routeStore.setLoading(true);
-                                        await _routeStore.fetchAssignedRoute();
-                                        _routeStore.setLoading(false);
-                                      },
-                                      child: const Icon(Icons.refresh)),
-                                  SizedBox(width: 10),
-                                  getWelcomeMessage(),
-                                  SizedBox(width: 20)
-                                ],)],
-                              ),
-                              const SizedBox(height: 15),
-                              const Divider(thickness: 1),
-                              const SizedBox(height: 10),
-                              Container(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Row(children: const [
-                                  Text("Route Status",
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                          fontFamily: "Poppins", fontSize: 16))
-                                ]),
-                              ),
-                              const SizedBox(height: 15),
-                              stepper.IconStepper(
-                                scrollingDisabled: true,
-                                enableNextPreviousButtons: false,
-                                icons: const [
-                                  Icon(
-                                    Icons.supervised_user_circle,
-                                    color: Colors.green,
                                   ),
-                                  Icon(
-                                    Icons.supervised_user_circle,
-                                    color: Colors.green,
-                                  ),
-                                  Icon(
-                                    Icons.supervised_user_circle,
-                                    color: Colors.green,
-                                  ),
-                                  Icon(
-                                    Icons.supervised_user_circle,
-                                    color: Colors.green,
-                                  ),
-                                ],
-                                activeStepBorderColor: Colors.green,
-                                activeStepBorderWidth: 1,
-                                stepRadius: 3,
-                                lineColor: Colors.green,
-                                lineLength: 85,
-                                activeStepBorderPadding: 2,
-                                // activeStep property set to activeStep variable defined above.
-                                activeStep: getActiveStepperByRouteStatus(),
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  expandedStatusBar("Route plan", 0),
-                                  expandedStatusBar("Bags checking", 1),
-                                  expandedStatusBar("In transit", 2),
-                                  expandedStatusBar(
-                                    "Route done",
-                                    3,
-                                  )
+                                  const SizedBox(height: 15),
+                                  const Divider(thickness: 1),
                                 ],
                               ),
-                              const SizedBox(height: 15),
-                              const Divider(thickness: 1),
-                            ],
-                          ),
-                          Column(children: [
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.only(left: 18),
-                                    child: const Text(
-                                      "Deliveries",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                      onTap: goToViewOnMap,
-                                      child: Container(
-                                          padding:
-                                              const EdgeInsets.only(right: 25),
-                                          child: Column(children: [
-                                            Icon(
-                                              Icons.location_on_outlined,
-                                              color: App_Colors
-                                                  .primary_color.value,
-                                            ),
-                                            Text(
-                                              "Route map",
-                                              style: TextStyle(
+                              Column(children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 18),
+                                        child: const Text(
+                                          "Deliveries",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                          onTap: goToViewOnMap,
+                                          child: Container(
+                                              padding:
+                                                  const EdgeInsets.only(right: 25),
+                                              child: Column(children: [
+                                                Icon(
+                                                  Icons.location_on_outlined,
                                                   color: App_Colors
-                                                      .primary_color.value),
-                                            )
-                                          ])))
-                                ]),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 2.1,
-                                child: (() {
-                                  if (_routeStore.assignedRoute!.status ==
-                                      RouteStatus.DONE) {
-                                    return routeDone();
-                                  }
-                                  if (_routeStore.currentDriver != null &&
-                                      _routeStore.assignedRoute!.status !=
-                                          RouteStatus.DONE &&
-                                      _routeStore.routeOrders != null) {
-                                    return Observer(
-                                        builder: (_) => ListView(
-                                            padding: const EdgeInsets.all(8),
-                                            children: _routeStore.routeOrders!
-                                                .map((order) => Observer(
-                                                    builder: (_) => OrderItem(
-                                                        order,
-                                                        _routeStore.routeOrders!
-                                                            .indexOf(order),
-                                                        _routeStore
-                                                            .currentDriver!,
-                                                        this)))
-                                                .toList()));
-                                  } else {
-                                    return const Center();
-                                  }
-                                }()))
-                          ]),
-                        ])),
-                  ),
-                ))
-        : const Center();
+                                                      .primary_color.value,
+                                                ),
+                                                Text(
+                                                  "Route map",
+                                                  style: TextStyle(
+                                                      color: App_Colors
+                                                          .primary_color.value),
+                                                )
+                                              ])))
+                                    ]),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 2.1,
+                                    child: (() {
+                                      if (_routeStore.assignedRoute != null &&
+                                      _routeStore.assignedRoute!.status ==
+                                          RouteStatus.DONE) {
+                                        return routeDone();
+                                      }
+                                      if (_routeStore.assignedRoute != null &&
+                                      _routeStore.currentDriver != null &&
+                                          _routeStore.assignedRoute!.status !=
+                                              RouteStatus.DONE &&
+                                          _routeStore.routeOrders != null) {
+                                        return Observer(
+                                            builder: (_) => ListView(
+                                                padding: const EdgeInsets.all(8),
+                                                children: _routeStore.routeOrders!
+                                                    .map((order) => Observer(
+                                                        builder: (_) => OrderItem(
+                                                            order,
+                                                            _routeStore.routeOrders!
+                                                                .indexOf(order),
+                                                            _routeStore
+                                                                .currentDriver!,
+                                                            this)))
+                                                    .toList()));
+                                      } else {
+                                        return const Center();
+                                      }
+                                    }()))
+                              ]),
+                            ])),
+                      ));
+      }
+    );
   }
 
   Future<void> setOrderStatus(int orderIndex, OrderStatus newStatus) async {

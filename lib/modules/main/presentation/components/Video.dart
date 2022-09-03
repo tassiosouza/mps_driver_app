@@ -33,7 +33,8 @@ class VideoState extends State<Video> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      GetUrlResult urlResult = await Amplify.Storage.getUrl(key: "onboarding.mp4");
+      GetUrlResult urlResult =
+          await Amplify.Storage.getUrl(key: "onboarding.mp4");
       _videoUrl = urlResult.url.replaceAll(' ', '');
       _videoController = VideoPlayerController.network(_videoUrl);
       _initializeVideoPlayerFuture = _videoController.initialize().then((_) {
@@ -57,7 +58,7 @@ class VideoState extends State<Video> {
       _timer.cancel();
     });
     if (_firstPlay) {
-      _statusTimer = Timer.periodic(const Duration(milliseconds: 3000), (_) {
+      _statusTimer = Timer.periodic(const Duration(milliseconds: 30000), (_) {
         widget.stateReference.setStatus(WhatchingStatus.done);
         setState(() {
           _firstPlay = false;
@@ -130,10 +131,9 @@ class VideoState extends State<Video> {
     );
   }
 
-  FutureBuilder getFutureBuilder(){
-
-    if(_initializeVideoPlayerFuture == null){
-      return FutureBuilder(builder: (context, snapshot){
+  FutureBuilder getFutureBuilder() {
+    if (_initializeVideoPlayerFuture == null) {
+      return FutureBuilder(builder: (context, snapshot) {
         return AppLoading();
       });
     }
@@ -158,8 +158,7 @@ class VideoState extends State<Video> {
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: AspectRatio(
-                        aspectRatio:
-                        _videoController.value.aspectRatio,
+                        aspectRatio: _videoController.value.aspectRatio,
                         child: VideoPlayer(_videoController),
                       ))),
             ),
@@ -168,14 +167,12 @@ class VideoState extends State<Video> {
                 child: Container(
                   color: _videoController.value.isPlaying
                       ? Colors.transparent
-                      : Color.fromARGB(1, 255, 255, 255)
-                      .withOpacity(0.5),
+                      : Color.fromARGB(1, 255, 255, 255).withOpacity(0.5),
                   alignment: Alignment.center,
                   child: FlatButton(
                     shape: CircleBorder(
                         side: BorderSide(
-                            color:
-                            _videoController.value.isPlaying
+                            color: _videoController.value.isPlaying
                                 ? Colors.transparent
                                 : Colors.white)),
                     child: Icon(
@@ -188,8 +185,7 @@ class VideoState extends State<Video> {
                     ),
                     onPressed: () => {
                       _timer.cancel(),
-                      if (!_videoController.value.isPlaying)
-                        {playVideo()},
+                      if (!_videoController.value.isPlaying) {playVideo()},
                       setState(() {
                         _videoController.value.isPlaying
                             ? _videoController.pause()

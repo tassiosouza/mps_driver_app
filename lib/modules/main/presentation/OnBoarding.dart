@@ -200,7 +200,7 @@ class OnBoardingState extends State<OnBoarding> {
       }
     } else if (_currentStep == 5) {
       Modular.to.navigate('main/route/');
-      Driver updatedDriver = _mainStore.currentDriver!.copyWith(onBoard: false);
+      Driver updatedDriver = _mainStore.currentDriver!.copyWith(onBoard: true);
       _mainStore.updateDriverInformation(updatedDriver);
     } else {
       setState(() {

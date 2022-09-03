@@ -378,7 +378,7 @@ class OrderItem extends StatelessWidget {
         child: ElevatedButton(
           onPressed: (){
             if(routePageReference.getRouteStatus() ==
-                RouteStatus.PLANNED){
+                RouteStatus.ASSIGNED){
               needCheckInFirst(context);
             } else {
               if(isCall == null){

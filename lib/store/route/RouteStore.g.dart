@@ -103,6 +103,22 @@ mixin _$RouteStore on _RouteStore, Store {
     });
   }
 
+  late final _$checkInAtom =
+      Atom(name: '_RouteStore.checkIn', context: context);
+
+  @override
+  String? get checkIn {
+    _$checkInAtom.reportRead();
+    return super.checkIn;
+  }
+
+  @override
+  set checkIn(String? value) {
+    _$checkInAtom.reportWrite(value, super.checkIn, () {
+      super.checkIn = value;
+    });
+  }
+
   late final _$finishLoadingHistoryAtom =
       Atom(name: '_RouteStore.finishLoadingHistory', context: context);
 
@@ -136,6 +152,14 @@ mixin _$RouteStore on _RouteStore, Store {
   Future retrieveDriverInformation() {
     return _$retrieveDriverInformationAsyncAction
         .run(() => super.retrieveDriverInformation());
+  }
+
+  late final _$updateDriverAsyncAction =
+      AsyncAction('_RouteStore.updateDriver', context: context);
+
+  @override
+  Future updateDriver(Driver driver) {
+    return _$updateDriverAsyncAction.run(() => super.updateDriver(driver));
   }
 
   late final _$fetchRoutesAsyncAction =
@@ -185,6 +209,17 @@ mixin _$RouteStore on _RouteStore, Store {
       ActionController(name: '_RouteStore', context: context);
 
   @override
+  dynamic setCheckIn(String checkInTime) {
+    final _$actionInfo = _$_RouteStoreActionController.startAction(
+        name: '_RouteStore.setCheckIn');
+    try {
+      return super.setCheckIn(checkInTime);
+    } finally {
+      _$_RouteStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic setLoading(bool isLoading) {
     final _$actionInfo = _$_RouteStoreActionController.startAction(
         name: '_RouteStore.setLoading');
@@ -226,6 +261,7 @@ routeOrders: ${routeOrders},
 currentDriver: ${currentDriver},
 assignedRoute: ${assignedRoute},
 loading: ${loading},
+checkIn: ${checkIn},
 finishLoadingHistory: ${finishLoadingHistory}
     ''';
   }

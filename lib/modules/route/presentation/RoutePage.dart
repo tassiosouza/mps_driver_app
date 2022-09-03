@@ -1,7 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
-
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -10,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:mps_driver_app/components/AppLoading.dart';
 import 'package:mps_driver_app/models/ModelProvider.dart';
-import 'package:mps_driver_app/modules/route/utils/RoutePageState.dart';
 import 'package:mps_driver_app/store/route/RouteStore.dart';
 import 'package:mps_driver_app/theme/app_colors.dart';
 import '../../../components/AppDialogs.dart';
@@ -19,12 +16,9 @@ import 'components/OrderItem.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as stepper;
 import 'MapsPage.dart';
-import 'package:amplify_api/amplify_api.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
 class RoutePage extends StatefulWidget {
-  RoutePage({Key? key}) : super(key: key);
+  const RoutePage({Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() => StateRoutePage();
 }
@@ -49,16 +43,16 @@ class StateRoutePage extends State<RoutePage> {
       }
     });
 
-    final overlayLoading = OverlayEntry(builder: (_){
+    final overlayLoading = OverlayEntry(builder: (_) {
       return Container(
         color: Colors.white,
         alignment: Alignment.center,
-        child: AppLoading(),
+        child: const AppLoading(),
       );
     });
 
     reaction((_) => _routeStore.loading, (isLoading) {
-      if(isLoading == true){
+      if (isLoading == true) {
         Overlay.of(context)?.insert(overlayLoading);
       } else {
         overlayLoading.remove();
@@ -74,8 +68,8 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   Future<void> cantCheckInAtThisTime() {
-    return AppDialogs().showDialogJustMsg(context, "Attention",
-        "You cant make checkin in this time.");
+    return AppDialogs().showDialogJustMsg(
+        context, "Attention", "You cant make checkin in this time.");
   }
 
   Future<void> clickWrongWelcomeMessageDialogBefore() {
@@ -84,8 +78,8 @@ class StateRoutePage extends State<RoutePage> {
   }
 
   Future<void> clickWrongWelcomeMessageDialogAfter() {
-    return AppDialogs().showDialogJustMsg(context, "Attention",
-        "You already send the welcome message.");
+    return AppDialogs().showDialogJustMsg(
+        context, "Attention", "You already send the welcome message.");
   }
 
   Future<void> finishCheckBagDialog() {
@@ -155,18 +149,16 @@ class StateRoutePage extends State<RoutePage> {
       return Container(
           padding: const EdgeInsets.only(left: 18, top: 5),
           alignment: Alignment.centerLeft,
-          child: Observer(
-            builder: (context) {
-              return Text(
-                "Initiated at: ${_routeStore.checkIn}",
-                style: TextStyle(fontSize: 14, color: App_Colors.grey_dark.value),
-              );
-            }
-          ));
+          child: Observer(builder: (context) {
+            return Text(
+              "Initiated at: ${_routeStore.checkIn}",
+              style: TextStyle(fontSize: 14, color: App_Colors.grey_dark.value),
+            );
+          }));
     } else {
       return GestureDetector(
           onTap: () {
-            if(verifyTimeToDoCheckIn()){
+            if (verifyTimeToDoCheckIn()) {
               checkIn();
             } else {
               cantCheckInAtThisTime();
@@ -183,20 +175,20 @@ class StateRoutePage extends State<RoutePage> {
     }
   }
 
-  void checkIn(){
+  void checkIn() {
     DateTime time = DateTime.now();
     _routeStore.setCheckIn(DateFormat('kk:mm').format(time));
-    _routeStore.assignedRoute =
-        _routeStore.assignedRoute!.copyWith(startTime: 000);
+    _routeStore.assignedRoute = _routeStore.assignedRoute!
+        .copyWith(startTime: time.millisecondsSinceEpoch.toDouble());
     setRouteStatus(RouteStatus.INITIATED);
   }
 
-  bool verifyTimeToDoCheckIn(){
+  bool verifyTimeToDoCheckIn() {
     DateTime time = DateTime.now();
     int earlyTime = 00;
     int lateTime = 24;
     String currentHr = DateFormat('kk').format(time);
-    if(earlyTime <= int.parse(currentHr) && int.parse(currentHr) <= lateTime){
+    if (earlyTime <= int.parse(currentHr) && int.parse(currentHr) <= lateTime) {
       return true;
     } else {
       return false;
@@ -243,19 +235,18 @@ class StateRoutePage extends State<RoutePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SecondRoute(
-              orders: /*_routeViewModel.lastActivedRoute!.orders!*/ [])),
+          builder: (context) => SecondRoute(orders: _routeStore.routeOrders)),
     );
   }
 
   void endRoute() {
+    DateTime time = DateTime.now();
+    _routeStore.assignedRoute = _routeStore.assignedRoute!
+        .copyWith(endTime: time.millisecondsSinceEpoch.toDouble());
     setRouteStatus(RouteStatus.DONE);
-    _routeStore.updateDriver(_routeStore.currentDriver!.copyWith(
-      assignStatus: AssignStatus.UNASSIGNED
-    ));
+    _routeStore.updateDriver(_routeStore.currentDriver!
+        .copyWith(assignStatus: AssignStatus.UNASSIGNED));
     _routeStore.cleanLocalData();
-    // _routeStore.setIsRouteActived(false);
-    // _routeStore.addToRoutesHistory(_routeStore.assignedRoute!);
     Modular.to.navigate("./");
   }
 
@@ -312,194 +303,191 @@ class StateRoutePage extends State<RoutePage> {
 
   @override
   Widget build(BuildContext context) {
-
-    if(_routeStore.assignedRoute == null){
-      return Center();
-    }
-
-    return Observer(
-      builder: (context) {
-        return Scaffold(
-                      backgroundColor: App_Colors.white_background.value,
-                      body: Center(
-                        child: SingleChildScrollView(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                              Column(
+    return _routeStore.assignedRoute != null
+        ? Observer(
+            builder: (_) => Scaffold(
+                  backgroundColor: App_Colors.white_background.value,
+                  body: Center(
+                    child: SingleChildScrollView(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 60,
+                              ),
+                              Container(
+                                  padding: const EdgeInsets.only(left: 18),
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      _routeStore.currentDriver != null
+                                          ? Text(
+                                              "${_routeStore.currentDriver?.name}  ",
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500),
+                                            )
+                                          : const Text(""),
+                                      DotIndicator(
+                                        color: App_Colors.primary_color.value,
+                                        size: 8,
+                                      )
+                                    ],
+                                  )),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const SizedBox(
-                                    height: 60,
-                                  ),
-                                  Container(
-                                      padding: const EdgeInsets.only(left: 18),
-                                      alignment: Alignment.centerLeft,
-                                      child: Row(
-                                        children: [
-                                          _routeStore.currentDriver != null
-                                              ? Text(
-                                                  "${_routeStore.currentDriver?.name}  ",
-                                                  style: const TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.w500),
-                                                )
-                                              : const Text(""),
-                                          DotIndicator(
-                                            color: App_Colors.primary_color.value,
-                                            size: 8,
-                                          )
-                                        ],
-                                      )),
-                                  Row(crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [toCheckIn(), Row(children: [
+                                  toCheckIn(),
+                                  Row(
+                                    children: [
                                       OutlinedButton(
                                           onPressed: () async {
                                             _routeStore.setLoading(true);
-                                            await _routeStore.fetchAssignedRoute();
+                                            await _routeStore
+                                                .fetchAssignedRoute();
                                             _routeStore.setLoading(false);
-                                            if(_routeStore.assignedRoute == null){
-                                              Modular.to.navigate('./');
-                                            }
                                           },
                                           child: const Icon(Icons.refresh)),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       getWelcomeMessage(),
-                                      SizedBox(width: 20)
-                                    ],)],
-                                  ),
-                                  const SizedBox(height: 15),
-                                  const Divider(thickness: 1),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    padding: const EdgeInsets.only(left: 20),
-                                    child: Row(children: const [
-                                      Text("Route Status",
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                              fontFamily: "Poppins", fontSize: 16))
-                                    ]),
-                                  ),
-                                  const SizedBox(height: 15),
-                                  stepper.IconStepper(
-                                    scrollingDisabled: true,
-                                    enableNextPreviousButtons: false,
-                                    icons: const [
-                                      Icon(
-                                        Icons.supervised_user_circle,
-                                        color: Colors.green,
-                                      ),
-                                      Icon(
-                                        Icons.supervised_user_circle,
-                                        color: Colors.green,
-                                      ),
-                                      Icon(
-                                        Icons.supervised_user_circle,
-                                        color: Colors.green,
-                                      ),
-                                      Icon(
-                                        Icons.supervised_user_circle,
-                                        color: Colors.green,
-                                      ),
+                                      const SizedBox(width: 20)
                                     ],
-                                    activeStepBorderColor: Colors.green,
-                                    activeStepBorderWidth: 1,
-                                    stepRadius: 3,
-                                    lineColor: Colors.green,
-                                    lineLength: 85,
-                                    activeStepBorderPadding: 2,
-                                    // activeStep property set to activeStep variable defined above.
-                                    activeStep: getActiveStepperByRouteStatus(),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      expandedStatusBar("Route plan", 0),
-                                      expandedStatusBar("Bags checking", 1),
-                                      expandedStatusBar("In transit", 2),
-                                      expandedStatusBar(
-                                        "Route done",
-                                        3,
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 15),
-                                  const Divider(thickness: 1),
+                                  )
                                 ],
                               ),
-                              Column(children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.only(left: 18),
-                                        child: const Text(
-                                          "Deliveries",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                          onTap: goToViewOnMap,
-                                          child: Container(
-                                              padding:
-                                                  const EdgeInsets.only(right: 25),
-                                              child: Column(children: [
-                                                Icon(
-                                                  Icons.location_on_outlined,
+                              const SizedBox(height: 15),
+                              const Divider(thickness: 1),
+                              const SizedBox(height: 10),
+                              Container(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Row(children: const [
+                                  Text("Route Status",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                          fontFamily: "Poppins", fontSize: 16))
+                                ]),
+                              ),
+                              const SizedBox(height: 15),
+                              stepper.IconStepper(
+                                scrollingDisabled: true,
+                                enableNextPreviousButtons: false,
+                                icons: const [
+                                  Icon(
+                                    Icons.supervised_user_circle,
+                                    color: Colors.green,
+                                  ),
+                                  Icon(
+                                    Icons.supervised_user_circle,
+                                    color: Colors.green,
+                                  ),
+                                  Icon(
+                                    Icons.supervised_user_circle,
+                                    color: Colors.green,
+                                  ),
+                                  Icon(
+                                    Icons.supervised_user_circle,
+                                    color: Colors.green,
+                                  ),
+                                ],
+                                activeStepBorderColor: Colors.green,
+                                activeStepBorderWidth: 1,
+                                stepRadius: 3,
+                                lineColor: Colors.green,
+                                lineLength: 85,
+                                activeStepBorderPadding: 2,
+                                // activeStep property set to activeStep variable defined above.
+                                activeStep: getActiveStepperByRouteStatus(),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  expandedStatusBar("Route plan", 0),
+                                  expandedStatusBar("Bags checking", 1),
+                                  expandedStatusBar("In transit", 2),
+                                  expandedStatusBar(
+                                    "Route done",
+                                    3,
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 15),
+                              const Divider(thickness: 1),
+                            ],
+                          ),
+                          Column(children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 18),
+                                    child: const Text(
+                                      "Deliveries",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                      onTap: goToViewOnMap,
+                                      child: Container(
+                                          padding:
+                                              const EdgeInsets.only(right: 25),
+                                          child: Column(children: [
+                                            Icon(
+                                              Icons.location_on_outlined,
+                                              color: App_Colors
+                                                  .primary_color.value,
+                                            ),
+                                            Text(
+                                              "Route map",
+                                              style: TextStyle(
                                                   color: App_Colors
-                                                      .primary_color.value,
-                                                ),
-                                                Text(
-                                                  "Route map",
-                                                  style: TextStyle(
-                                                      color: App_Colors
-                                                          .primary_color.value),
-                                                )
-                                              ])))
-                                    ]),
-                                SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height / 2.1,
-                                    child: (() {
-                                      if (_routeStore.assignedRoute != null &&
-                                      _routeStore.assignedRoute!.status ==
-                                          RouteStatus.DONE) {
-                                        return routeDone();
-                                      }
-                                      if (_routeStore.assignedRoute != null &&
-                                      _routeStore.currentDriver != null &&
-                                          _routeStore.assignedRoute!.status !=
-                                              RouteStatus.DONE &&
-                                          _routeStore.routeOrders != null) {
-                                        return Observer(
-                                            builder: (_) => ListView(
-                                                padding: const EdgeInsets.all(8),
-                                                children: _routeStore.routeOrders!
-                                                    .map((order) => Observer(
-                                                        builder: (_) => OrderItem(
-                                                            order,
-                                                            _routeStore.routeOrders!
-                                                                .indexOf(order),
-                                                            _routeStore
-                                                                .currentDriver!,
-                                                            this)))
-                                                    .toList()));
-                                      } else {
-                                        return const Center();
-                                      }
-                                    }()))
-                              ]),
-                            ])),
-                      ));
-      }
-    );
+                                                      .primary_color.value),
+                                            )
+                                          ])))
+                                ]),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height / 2.1,
+                                child: (() {
+                                  if (_routeStore.assignedRoute!.status ==
+                                      RouteStatus.DONE) {
+                                    return routeDone();
+                                  }
+                                  if (_routeStore.currentDriver != null &&
+                                      _routeStore.assignedRoute!.status !=
+                                          RouteStatus.DONE &&
+                                      _routeStore.routeOrders != null) {
+                                    return Observer(
+                                        builder: (_) => ListView(
+                                            padding: const EdgeInsets.all(8),
+                                            children: _routeStore.routeOrders!
+                                                .map((order) => Observer(
+                                                    builder: (_) => OrderItem(
+                                                        order,
+                                                        _routeStore.routeOrders!
+                                                            .indexOf(order),
+                                                        _routeStore
+                                                            .currentDriver!,
+                                                        this)))
+                                                .toList()));
+                                  } else {
+                                    return const Center();
+                                  }
+                                }()))
+                          ]),
+                        ])),
+                  ),
+                ))
+        : const Center();
   }
 
   Future<void> setOrderStatus(int orderIndex, OrderStatus newStatus) async {

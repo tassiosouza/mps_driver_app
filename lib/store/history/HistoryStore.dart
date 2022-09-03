@@ -38,7 +38,7 @@ abstract class _HistoryStore with Store {
   fetchRoutes() async {
     var routesList = [];
     routesList = await routesRepository.fetchRoutes();
-    routesList.removeWhere((element) => element.status == RouteStatus.DONE);
+    routesList.removeWhere((element) => element.status != RouteStatus.DONE);
     routesHistory = routesList as List<MRoute?>?;
   }
 

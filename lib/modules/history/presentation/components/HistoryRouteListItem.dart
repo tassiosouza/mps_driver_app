@@ -234,7 +234,7 @@ class HistoryRouteListItem extends StatelessWidget {
                             ]))
                       ]))))),
           onTap: () {
-            Modular.to.pushNamed('./details', arguments: {route, orders});
+            Modular.to.pushNamed('./details', arguments: [route, orders]);
           })
     ]);
   }

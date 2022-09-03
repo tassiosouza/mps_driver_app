@@ -8,37 +8,32 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../models/MOrder.dart';
 
 class SecondRoute extends StatefulWidget {
-  final List<MOrder> orders;
+  final List<MOrder?>? orders;
   const SecondRoute({Key? key, required this.orders}) : super(key: key);
 
   _ExampleState createState() => _ExampleState();
 }
 
 class _ExampleState extends State<SecondRoute> {
-  Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
-  int _markerIdCounter = 1;
   MarkerId? selectedMarker;
   LatLng? markerPosition;
   late List copyOrderList;
-  static const LatLng center = LatLng(-33.86711, 151.1947171);
   Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
+  static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(33.1522247, -117.2310085),
     zoom: 11.4746,
   );
 
   Future<void> _add(LatLng latlng, int index) async {
-    final int markerCount = markers.length;
-
     final String markerIdVal = 'marker_id_$index';
-    _markerIdCounter++;
     final MarkerId markerId = MarkerId(markerIdVal);
 
     final Uint8List customMarker = await getBytesFromAsset(
-        path: 'assets/images/marker' + index.toString() + '.png',
+        path: 'assets/images/marker$index.png',
         width: 40 // size of custom image as marker
         );
 
@@ -56,7 +51,7 @@ class _ExampleState extends State<SecondRoute> {
   }
 
   void _addPolylines() {
-    const PolylineId polylineId = const PolylineId('1');
+    const PolylineId polylineId = PolylineId('1');
 
     final Polyline polyline = Polyline(
       polylineId: polylineId,
@@ -118,7 +113,7 @@ class _ExampleState extends State<SecondRoute> {
     _getThingsOnStartup().then((value) {
       print('Async done');
     });
-    copyOrderList = List<MOrder>.from(widget.orders);
+    copyOrderList = List<MOrder>.from(widget.orders!);
     MOrder order = MOrder(
         number: '#00001',
         assignedRouteID: "routeId",
@@ -150,17 +145,17 @@ class _ExampleState extends State<SecondRoute> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.pop(context),
         tooltip: 'Add Todo',
+        backgroundColor: Colors.white,
         child: const Icon(
           Icons.arrow_back,
           color: Colors.black,
         ),
-        backgroundColor: Colors.white,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
     );
   }
 
   Future _getThingsOnStartup() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
   }
 }

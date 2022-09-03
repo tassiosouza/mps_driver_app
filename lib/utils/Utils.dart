@@ -15,7 +15,7 @@ class Utils {
 
   static String getFormattedTime(double? timestamp, bool withSuffix) {
     if (timestamp == null) return '-';
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(1000);
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp.toInt());
 
     String timeFormatted =
         DateFormat(withSuffix ? 'kk:mm a' : 'kk:mm').format(dateTime);

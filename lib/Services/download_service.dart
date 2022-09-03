@@ -20,7 +20,7 @@ class DownloadService {
       }
       final path =
           Platform.isAndroid ? baseStorageAndroid!.path : baseStorageIOS.path;
-      if (baseStorageAndroid != null) {
+      if (baseStorageAndroid != null || baseStorageIOS != null) {
         await FlutterDownloader.enqueue(
             url: url,
             savedDir: path,

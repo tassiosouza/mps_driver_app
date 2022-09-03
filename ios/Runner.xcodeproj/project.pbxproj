@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DD8F81C28C02A6D00092C85 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD8F81B28C02A4E00092C85 /* libsqlite3.tbd */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		66ED19A01526C9A24CB9C897 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A68F8EC895E2E9D4DF0DF32E /* Pods_Runner.framework */; };
@@ -31,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		0216B71891A27A9D2FB7CB61 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		0DD8F81B28C02A4E00092C85 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		0E94A23C2A5ABAD9A63266AF /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -54,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DD8F81C28C02A6D00092C85 /* libsqlite3.tbd in Frameworks */,
 				66ED19A01526C9A24CB9C897 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,6 +77,7 @@
 		7FF977C0A9D064CC0CA0B6CD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0DD8F81B28C02A4E00092C85 /* libsqlite3.tbd */,
 				A68F8EC895E2E9D4DF0DF32E /* Pods_Runner.framework */,
 			);
 			name = Frameworks;

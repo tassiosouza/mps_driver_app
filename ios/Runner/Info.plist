@@ -37,6 +37,15 @@
 	<string>This app uses the location information to show the user current location on map</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app uses photo library for retrieve the user photo library if it wants instead of camera</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

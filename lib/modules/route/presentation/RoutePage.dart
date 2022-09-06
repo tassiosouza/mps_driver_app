@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -16,6 +17,8 @@ import 'components/OrderItem.dart';
 import 'package:status_change/status_change.dart';
 import 'package:im_stepper/stepper.dart' as stepper;
 import 'MapsPage.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
+    as bg;
 
 class RoutePage extends StatefulWidget {
   const RoutePage({Key? key}) : super(key: key);
@@ -56,6 +59,49 @@ class StateRoutePage extends State<RoutePage> {
         Overlay.of(context)?.insert(overlayLoading);
       } else {
         overlayLoading.remove();
+      }
+    });
+
+    // Fired whenever a location is recorded
+    bg.BackgroundGeolocation.onLocation((bg.Location location) async {
+      log('[location] result MPS - $location');
+      await _routeStore.updateDriver(_routeStore.currentDriver!.copyWith(
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude));
+      var snackBar = SnackBar(
+        content: Text(
+            'lat: ${location.coords.latitude} long: ${location.coords.longitude}'),
+      );
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    });
+
+    // // Fired whenever the plugin changes motion-state (stationary->moving and vice-versa)
+    // bg.BackgroundGeolocation.onMotionChange((bg.Location location) {
+    //   log('[motionchange] result MPS - $location');
+    // });
+
+    // // Fired whenever the state of location-services changes.  Always fired at boot
+    // bg.BackgroundGeolocation.onProviderChange((bg.ProviderChangeEvent event) {
+    //   log('[providerchange] - $event');
+    // });
+
+    ////
+    // 2.  Configure the plugin
+    //
+    bg.BackgroundGeolocation.ready(bg.Config(
+            desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
+            distanceFilter: 10.0,
+            stopOnTerminate: false,
+            startOnBoot: true,
+            debug: false,
+            logLevel: bg.Config.LOG_LEVEL_VERBOSE))
+        .then((bg.State state) {
+      if (!state.enabled) {
+        ////
+        // 3.  Start the plugin.
+        //
+        bg.BackgroundGeolocation.start();
       }
     });
 

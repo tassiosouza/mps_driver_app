@@ -64,6 +64,7 @@ dependencies:
   flutter_downloader: ^1.8.3
   permission_handler: ^10.0.0
   path_provider: ^2.0.11
+  flutter_background_geolocation: '^4.7.0'
 
 dev_dependencies:
   flutter_test:

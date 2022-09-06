@@ -12,7 +12,7 @@ class CheckList extends StatelessWidget {
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
             Text(
-              ''' Driver's ''',
+              ''' Check ''',
               style: TextStyle(
                   color: Color(0xff363636),
                   fontFamily: 'Poppings',
@@ -20,7 +20,7 @@ class CheckList extends StatelessWidget {
                   fontWeight: FontWeight.w500),
             ),
             Text(
-              'Book',
+              'List',
               style: TextStyle(
                   color: Colors.green,
                   fontFamily: 'Poppings',

@@ -66,11 +66,17 @@ class StateRoutePage extends State<RoutePage> {
       await _routeStore.updateDriver(_routeStore.currentDriver!.copyWith(
           latitude: location.coords.latitude,
           longitude: location.coords.longitude));
+      var snackBar = SnackBar(
+        content: Text(
+            'lat: ${location.coords.latitude} long: ${location.coords.longitude}'),
+      );
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     });
 
     bg.BackgroundGeolocation.ready(bg.Config(
             desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
-            distanceFilter: 10.0,
+            distanceFilter: 50.0,
             stopOnTerminate: false,
             startOnBoot: true,
             debug: false,
@@ -156,11 +162,6 @@ class StateRoutePage extends State<RoutePage> {
   void setRouteStatus(RouteStatus newStatus) {
     MRoute newRoute = _routeStore.assignedRoute!.copyWith(status: newStatus);
     _routeStore.updateAssignedRoute(newRoute);
-
-    // ** Stop share location if the route is done
-    if (newStatus == RouteStatus.DONE) {
-      bg.BackgroundGeolocation.stop();
-    }
   }
 
   RouteStatus? getRouteStatus() {
@@ -266,13 +267,21 @@ class StateRoutePage extends State<RoutePage> {
     );
   }
 
-  void endRoute() {
+  void finishRoute() {
+    // ** Process finish route status
     DateTime time = DateTime.now();
     _routeStore.assignedRoute = _routeStore.assignedRoute!
         .copyWith(endTime: time.millisecondsSinceEpoch.toDouble());
     setRouteStatus(RouteStatus.DONE);
-    _routeStore.updateDriver(_routeStore.currentDriver!
-        .copyWith(assignStatus: AssignStatus.UNASSIGNED));
+
+    // ** Process finish driver status
+    _routeStore.updateDriver(_routeStore.currentDriver!.copyWith(
+        assignStatus: AssignStatus.UNASSIGNED,
+        latitude: null,
+        longitude: null));
+
+    // ** Stop share location and clean route data
+    bg.BackgroundGeolocation.stop();
     _routeStore.cleanLocalData();
     Modular.to.navigate("./");
   }
@@ -280,7 +289,7 @@ class StateRoutePage extends State<RoutePage> {
   Widget routeDone() {
     return Center(
         child: ElevatedButton(
-      onPressed: () async => {endRoute()},
+      onPressed: () async => {finishRoute()},
       style: ElevatedButton.styleFrom(primary: App_Colors.primary_color.value),
       child: const Text("Finish route",
           style: TextStyle(fontSize: 20, fontFamily: 'Poppins')),

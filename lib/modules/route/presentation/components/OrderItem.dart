@@ -58,7 +58,7 @@ class OrderItem extends StatelessWidget {
     if (url.isEmpty) {
       throw Exception('Photo exception');
     } else {
-      // smsService?.sendSmsWithPhoto(order!.phone!, url);
+      smsService?.sendSmsWithPhoto(order!.phone!, url);
       updateOrderStatusTo(OrderStatus.DELIVERED);
       routePageReference.verifyAllOrderStatusChanged(
           OrderStatus.DELIVERED, OrderStatus.CANCELED);
@@ -239,10 +239,10 @@ class OrderItem extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                getButtonIcon(
-                                    CustomIcon.sms_driver_icon, order!, false, context),
-                                getButtonIcon(
-                                    CustomIcon.call_driver_icon, order!, true, context),
+                                getButtonIcon(CustomIcon.sms_driver_icon,
+                                    order!, false, context),
+                                getButtonIcon(CustomIcon.call_driver_icon,
+                                    order!, true, context),
                                 bagIcon(order!.status, context),
                                 const SizedBox(width: 1),
                                 ElevatedButton(
@@ -371,17 +371,17 @@ class OrderItem extends StatelessWidget {
     return widget;
   }
 
-  getButtonIcon(IconData icon, MOrder order, bool? isCall, BuildContext context) {
+  getButtonIcon(
+      IconData icon, MOrder order, bool? isCall, BuildContext context) {
     return SizedBox(
         width: 30,
         height: 28,
         child: ElevatedButton(
-          onPressed: (){
-            if(routePageReference.getRouteStatus() ==
-                RouteStatus.ASSIGNED){
+          onPressed: () {
+            if (routePageReference.getRouteStatus() == RouteStatus.ASSIGNED) {
               needCheckInFirst(context);
             } else {
-              if(isCall == null){
+              if (isCall == null) {
               } else {
                 isCall
                     ? _launchCaller(order.phone!.replaceAll(' ', ''))

@@ -62,33 +62,12 @@ class StateRoutePage extends State<RoutePage> {
       }
     });
 
-    // Fired whenever a location is recorded
     bg.BackgroundGeolocation.onLocation((bg.Location location) async {
-      log('[location] result MPS - $location');
       await _routeStore.updateDriver(_routeStore.currentDriver!.copyWith(
           latitude: location.coords.latitude,
           longitude: location.coords.longitude));
-      var snackBar = SnackBar(
-        content: Text(
-            'lat: ${location.coords.latitude} long: ${location.coords.longitude}'),
-      );
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     });
 
-    // // Fired whenever the plugin changes motion-state (stationary->moving and vice-versa)
-    // bg.BackgroundGeolocation.onMotionChange((bg.Location location) {
-    //   log('[motionchange] result MPS - $location');
-    // });
-
-    // // Fired whenever the state of location-services changes.  Always fired at boot
-    // bg.BackgroundGeolocation.onProviderChange((bg.ProviderChangeEvent event) {
-    //   log('[providerchange] - $event');
-    // });
-
-    ////
-    // 2.  Configure the plugin
-    //
     bg.BackgroundGeolocation.ready(bg.Config(
             desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
             distanceFilter: 10.0,
@@ -98,9 +77,6 @@ class StateRoutePage extends State<RoutePage> {
             logLevel: bg.Config.LOG_LEVEL_VERBOSE))
         .then((bg.State state) {
       if (!state.enabled) {
-        ////
-        // 3.  Start the plugin.
-        //
         bg.BackgroundGeolocation.start();
       }
     });
@@ -137,7 +113,7 @@ class StateRoutePage extends State<RoutePage> {
     TwilioSmsService smsService = TwilioSmsService(_routeStore.currentDriver!);
     int index = 0;
     for (var order in _routeStore.routeOrders!) {
-      // smsService.sendSms(order!.customerName!, order.phone!, order.eta);
+      smsService.sendSms(order!.customerName!, order.phone!, order.eta);
       await setOrderStatus(index, OrderStatus.IN_TRANSIT);
       index += 1;
     }
@@ -180,6 +156,11 @@ class StateRoutePage extends State<RoutePage> {
   void setRouteStatus(RouteStatus newStatus) {
     MRoute newRoute = _routeStore.assignedRoute!.copyWith(status: newStatus);
     _routeStore.updateAssignedRoute(newRoute);
+
+    // ** Stop share location if the route is done
+    if (newStatus == RouteStatus.DONE) {
+      bg.BackgroundGeolocation.stop();
+    }
   }
 
   RouteStatus? getRouteStatus() {

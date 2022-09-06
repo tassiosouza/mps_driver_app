@@ -14,6 +14,7 @@ import '../../../theme/app_colors.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import '../presentation/components/Welcome.dart';
 import 'components/Book.dart';
+import 'components/Terms.dart';
 import 'components/Video.dart';
 
 class OnBoarding extends StatefulWidget {
@@ -69,6 +70,8 @@ class OnBoardingState extends State<OnBoarding> {
         return const Book();
       case 5:
         return const CheckList();
+      case 6:
+        return const Terms();
       default:
         log('could not load');
         return Container();
@@ -87,7 +90,8 @@ class OnBoardingState extends State<OnBoarding> {
         return '''Download the driver's manual book to have access to all the important instructions on how to behave and what to do when making deliveries to our customers.''';
       case 5:
         return '''Download the driver's manual book to have access to all the important instructions on how to behave and what to do when making deliveries to our customers.''';
-
+      case 6:
+        return '''By accessing and using the mobile application, you acknowledge that you have read, understood, and agree to be bound by the terms of this Agreement.''';
       default:
         return '';
     }
@@ -106,7 +110,7 @@ class OnBoardingState extends State<OnBoarding> {
                     Container(
                       padding: const EdgeInsets.only(right: 32),
                       alignment: Alignment.topRight,
-                      child: Text('$_currentStep/5',
+                      child: Text('$_currentStep/6',
                           style: const TextStyle(
                             color: Colors.green,
                             fontSize: 16,
@@ -169,13 +173,14 @@ class OnBoardingState extends State<OnBoarding> {
                                               fontFamily: 'Poppings'),
                                         ))),
                                 SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 3),
+                                    width: MediaQuery.of(context).size.width /
+                                        (_currentStep == 6 ? 4.5 : 3)),
                                 OutlinedButton(
                                     style: OutlinedButton.styleFrom(
                                       side: const BorderSide(
                                           width: 1.0, color: Colors.white),
-                                      fixedSize: const Size(100, 40),
+                                      fixedSize: Size(
+                                          _currentStep == 6 ? 140 : 100, 40),
                                     ),
                                     onPressed: () => {getNextButtonAction()},
                                     child: getNextButtonWidget())
@@ -198,7 +203,7 @@ class OnBoardingState extends State<OnBoarding> {
           _currentMessage = getCurrentMessage();
         });
       }
-    } else if (_currentStep == 5) {
+    } else if (_currentStep == 6) {
       Modular.to.navigate('main/route/');
       Driver updatedDriver = _mainStore.currentDriver!.copyWith(onBoard: true);
       _mainStore.updateDriverInformation(updatedDriver);
@@ -241,7 +246,12 @@ class OnBoardingState extends State<OnBoarding> {
         }
       case 5:
         return const Text(
-          'Finish',
+          'Next',
+          style: TextStyle(color: Color(0xffF2F2F2), fontFamily: 'Poppings'),
+        );
+      case 6:
+        return const Text(
+          'Accept & Finish',
           style: TextStyle(color: Color(0xffF2F2F2), fontFamily: 'Poppings'),
         );
       default:

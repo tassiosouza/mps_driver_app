@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app uses the location information to show the user current location on map</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.transistorsoft.backgroundTask</string>
@@ -42,6 +40,8 @@
 	<key>NSCameraUsageDescription</key>
 	<string>MPS Driver needs to use the camera to provide photos of delivery for customers</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app uses the location information to show the user current location on map</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app uses the location information to show the user current location on map</string>
 	<key>NSMotionUsageDescription</key>
 	<string>This app uses the location information to show the user current location on map</string>
